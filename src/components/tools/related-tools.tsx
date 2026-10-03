@@ -16,6 +16,11 @@ const tools = [
     title: "Title Length Checker",
     description: "Check an eBay title draft against the 80-character title limit.",
   },
+  {
+    href: "/free-tools/sell-through-calculator",
+    title: "Sell-Through Calculator",
+    description: "Calculate observed sell-through from your own sold and active listing counts.",
+  },
 ] as const;
 
 export function RelatedTools({ currentPath }: { currentPath: string }) {
