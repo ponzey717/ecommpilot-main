@@ -1,12 +1,11 @@
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/config/site";
-import { getPublicMarkets, getPublicProducts, type PublicMarket } from "@/lib/api/public-catalog";
+import { getPublicCategories, getPublicMarkets, getPublicProducts, type PublicMarket } from "@/lib/api/public-catalog";
 
 const staticPaths = [
   "/",
   "/winning-products",
   "/markets",
-  "/categories",
   "/free-tools",
   "/free-tools/profit-margin-calculator",
   "/free-tools/ebay-fee-estimator",
@@ -22,7 +21,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: path === "/" ? 1 : path === "/winning-products" ? 0.9 : 0.7,
   }));
 
-  const markets = (await getPublicMarkets())?.filter((market) => market.active) ?? [];
+  const [marketPayload, categories] = await Promise.all([
+    getPublicMarkets(),
+    getPublicCategories(),
+  ]);
+  const markets = marketPayload?.filter((market) => market.active) ?? [];
+
+  const categoryEntries: MetadataRoute.Sitemap = categories?.length
+    ? [{
+        url: new URL("/categories", siteConfig.url).toString(),
+        changeFrequency: "weekly",
+        priority: 0.75,
+      }]
+    : [];
+
   const marketAvailability = await Promise.all(
     markets.map(async (market) => {
       const products = await getPublicProducts({ market: market.code, limit: 1 });
@@ -38,5 +50,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     }));
 
-  return [...staticEntries, ...marketEntries];
+  return [...staticEntries, ...categoryEntries, ...marketEntries];
 }
