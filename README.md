@@ -52,6 +52,7 @@ Do not run `npm audit fix --force` without reviewing dependency impact.
 - [SEO architecture](./docs/SEO_ARCHITECTURE.md)
 - [Brand implementation](./docs/BRAND_IMPLEMENTATION.md)
 - [Manual actions](./docs/MANUAL_ACTIONS.md)
+- [Environment configuration](./docs/ENVIRONMENT.md)
 
 ## Current phase
 
