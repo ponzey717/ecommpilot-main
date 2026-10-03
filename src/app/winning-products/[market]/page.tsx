@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { MarketFilter } from "@/components/products/market-filter";
-import { ProductGrid } from "@/components/products/product-grid";
+import { CatalogProductGrid } from "@/components/products/catalog-product-grid";
 import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
 import {
@@ -56,12 +56,8 @@ export default async function MarketPage({ params }: PageProps) {
         <div className="site-container">
           <MarketFilter />
           <div className="mt-6">
-            <ProductGrid />
+            <CatalogProductGrid market={market.code} />
           </div>
-          <p className="mt-5 text-xs leading-5 text-[var(--muted)]">
-            Current cards are illustrative while the production product endpoint is being
-            connected. The live catalog will show verified, time-stamped market data only.
-          </p>
         </div>
       </section>
     </PageShell>
