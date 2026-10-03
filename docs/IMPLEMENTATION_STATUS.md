@@ -64,8 +64,10 @@ Implemented in GitHub:
 - Learn hub shell;
 - Pricing shell;
 - custom 404;
-- three first free-tool routes;
-- breadcrumbs and breadcrumb schema on mature catalog routes.
+- four free-tool routes, including the user-input Sell-Through Calculator;
+- breadcrumbs and breadcrumb schema across mature catalog and public hub routes;
+- contextual related-tool links and catalog CTA on free-tool pages;
+- placeholder Learn hub kept accessible but noindex and excluded from sitemap until real guide content is ready.
 
 ### Phase 3 — API-first catalog preparation
 
@@ -145,7 +147,8 @@ Do not recreate or duplicate that backend implementation from the public reposit
 6. Verify markets, categories, products and product detail end to end.
 7. Expand sitemap/indexing only for real published catalog URLs.
 8. Continue mobile catalog/filter polish.
-9. Expand free tools based on genuine seller utility and SEO value.
+9. Build real Learn content before enabling Learn indexing.
+10. Expand additional free tools based on genuine seller utility and SEO value.
 
 ## Manual action currently required
 
