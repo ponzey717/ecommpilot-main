@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/config/site";
-import { getPublicMarkets, getPublicProducts } from "@/lib/api/public-catalog";
+import { getPublicMarkets, getPublicProducts, type PublicMarket } from "@/lib/api/public-catalog";
 
 const staticPaths = [
   "/",
@@ -31,7 +31,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   );
 
   const marketEntries: MetadataRoute.Sitemap = marketAvailability
-    .filter((market): market is NonNullable<typeof market> => market != null)
+    .filter((market): market is PublicMarket => market != null)
     .map((market) => ({
       url: new URL("/winning-products/" + market.slug, siteConfig.url).toString(),
       changeFrequency: "weekly",
