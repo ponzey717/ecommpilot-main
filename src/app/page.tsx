@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { MarketFilter } from "@/components/products/market-filter";
-import { ProductGrid } from "@/components/products/product-grid";
+import { CatalogProductGrid } from "@/components/products/catalog-product-grid";
 import { PageShell } from "@/components/site/page-shell";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { routes } from "@/config/routes";
@@ -91,11 +91,7 @@ export default function Home() {
             <Link href={routes.winningProducts} className="text-sm font-extrabold text-[var(--blue)]">Browse all products →</Link>
           </div>
           <div className="mt-8"><MarketFilter /></div>
-          <div className="mt-6"><ProductGrid /></div>
-          <p className="mt-5 text-xs leading-5 text-[var(--muted)]">
-            Illustrative products for design development. Sales, supplier eligibility,
-            delivery and margins require verification before publication.
-          </p>
+          <div className="mt-6"><CatalogProductGrid limit={6} /></div>
         </div>
       </section>
 
