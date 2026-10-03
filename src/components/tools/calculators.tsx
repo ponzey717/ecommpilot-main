@@ -143,3 +143,74 @@ export function TitleLengthChecker() {
     </div>
   );
 }
+
+
+export function SellThroughCalculator() {
+  const [activeListings, setActiveListings] = useState("120");
+  const [soldCount, setSoldCount] = useState("45");
+
+  const result = useMemo(() => {
+    const active = Math.max(0, n(activeListings));
+    const sold = Math.max(0, n(soldCount));
+    const observed = active + sold;
+    const sellThrough = observed > 0 ? (sold / observed) * 100 : 0;
+
+    let interpretation = "Enter your active and sold counts to calculate the rate.";
+    if (observed > 0 && sellThrough < 20) {
+      interpretation = "Lower observed sell-through. Review demand, competition and pricing before listing.";
+    } else if (sellThrough < 40 && observed > 0) {
+      interpretation = "Moderate observed sell-through. Compare competition, delivery and margin before deciding.";
+    } else if (sellThrough < 60 && observed > 0) {
+      interpretation = "Healthy observed sell-through, but supplier quality and profit still need validation.";
+    } else if (observed > 0) {
+      interpretation = "Strong observed sell-through. Recheck the evidence window, competition and economics before listing.";
+    }
+
+    return { active, sold, observed, sellThrough, interpretation };
+  }, [activeListings, soldCount]);
+
+  return (
+    <div className="grid gap-6 lg:grid-cols-[1.1fr_.9fr]">
+      <div className="feature-card grid gap-4">
+        <NumberField
+          label="Active listings"
+          value={activeListings}
+          onChange={setActiveListings}
+        />
+        <NumberField
+          label="Sold count"
+          value={soldCount}
+          onChange={setSoldCount}
+        />
+        <p className="text-xs leading-5 text-[var(--muted)]">
+          Use counts from the same market, product scope and evidence window. This tool
+          does not fetch or infer eBay sold history for you.
+        </p>
+      </div>
+
+      <div className="snapshot-card">
+        <p className="eyebrow">Observed sell-through</p>
+        <p className="mt-4 text-5xl font-extrabold tracking-[-.04em] text-[var(--navy)]">
+          {result.sellThrough.toFixed(1)}%
+        </p>
+        <div className="mt-5 grid grid-cols-2 gap-3">
+          <div className="metric-box">
+            <span className="metric-label">Sold</span>
+            <strong>{result.sold.toFixed(0)}</strong>
+          </div>
+          <div className="metric-box">
+            <span className="metric-label">Observed pool</span>
+            <strong>{result.observed.toFixed(0)}</strong>
+          </div>
+        </div>
+        <p className="mt-5 text-sm leading-6 text-[var(--muted)]">
+          {result.interpretation}
+        </p>
+        <p className="mt-4 text-xs leading-5 text-[var(--muted)]">
+          Formula: sold ÷ (sold + active listings) × 100. Treat this as one demand
+          indicator, not a guarantee that a product will sell.
+        </p>
+      </div>
+    </div>
+  );
+}
