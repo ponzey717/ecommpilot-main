@@ -6,12 +6,15 @@ import { PageShell } from "@/components/site/page-shell";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 
-export const metadata: Metadata = buildMetadata({
-  title: "Learn eBay Product Research",
-  description:
-    "Practical eCommPilot guides for eBay product research, supplier validation, profit calculations and listing preparation.",
-  path: "/learn",
-});
+export const metadata: Metadata = {
+  ...buildMetadata({
+    title: "Learn eBay Product Research",
+    description:
+      "Practical eCommPilot guides for eBay product research, supplier validation, profit calculations and listing preparation.",
+    path: "/learn",
+  }),
+  robots: { index: false, follow: true },
+};
 
 const guides = [
   "How to evaluate an eBay dropshipping product",
