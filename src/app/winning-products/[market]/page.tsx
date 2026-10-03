@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { MarketFilter } from "@/components/products/market-filter";
-import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { CatalogProductGrid } from "@/components/products/catalog-product-grid";
+import { MarketFilter } from "@/components/products/market-filter";
+import { JsonLd } from "@/components/seo/json-ld";
+import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
-import { JsonLd } from "@/components/seo/json-ld";
 import {
   fallbackPublicMarkets,
   getPublicMarketsWithFallback,
@@ -79,8 +79,8 @@ export default async function MarketPage({ params, searchParams }: PageProps) {
           />
           <div className="mt-8">
             <MarketFilter
-            currentMarket={market.code}
-            currentMinProfitBand={minProfitBand}
+              currentMarket={market.code}
+              currentMinProfitBand={minProfitBand}
               basePath={path}
             />
           </div>
