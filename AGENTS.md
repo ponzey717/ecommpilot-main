@@ -102,7 +102,16 @@ Typography direction:
 
 The approved visual mark is the cart + upward arrow eCommPilot logo.
 
-Do not redesign the production homepage until the final Theme Studio direction is explicitly locked.
+The Theme Studio direction is now locked:
+
+- Marketplace Hybrid for catalog/product structure and browse behavior.
+- Energetic Blue/Cyan for brand identity, CTAs and selected highlights.
+- Dark navy/blue hero and header treatment is approved for major public page intros.
+- AliExpress Choice should use a restrained AliExpress-style green treatment.
+- Product/data sections should remain predominantly light, readable and marketplace-oriented.
+- Do not flood the interface with gradients; reserve them for brand moments.
+
+This direction was explicitly approved by the owner on 04 October 2026.
 
 ## SEO non-negotiables
 
