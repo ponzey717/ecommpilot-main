@@ -33,13 +33,28 @@ export async function CatalogProductGrid({
     );
   }
 
-  if (process.env.NODE_ENV !== "production") {
+  if (!payload) {
+    if (process.env.NODE_ENV !== "production") {
+      return (
+        <div>
+          <ProductGrid />
+          <p className="mt-5 text-xs leading-5 text-[var(--muted)]">
+            Development fallback only. These sample cards are automatically replaced by
+            verified API products when the public catalog endpoint is available.
+          </p>
+        </div>
+      );
+    }
+
     return (
-      <div>
-        <ProductGrid />
-        <p className="mt-5 text-xs leading-5 text-[var(--muted)]">
-          Development fallback only. These sample cards are automatically replaced by
-          verified API products when the public catalog endpoint is available.
+      <div className="rounded-[22px] border border-[var(--border)] bg-white p-8 text-center">
+        <p className="eyebrow">Catalog status</p>
+        <h3 className="mt-3 text-2xl font-extrabold text-[var(--navy)]">
+          The product catalog is temporarily unavailable.
+        </h3>
+        <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-[var(--muted)]">
+          eCommPilot could not retrieve the verified public catalog right now. No
+          product evidence is being substituted or guessed.
         </p>
       </div>
     );
