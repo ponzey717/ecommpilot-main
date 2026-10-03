@@ -155,16 +155,13 @@ export function SellThroughCalculator() {
     const observed = active + sold;
     const sellThrough = observed > 0 ? (sold / observed) * 100 : 0;
 
-    let interpretation = "Enter your active and sold counts to calculate the rate.";
-    if (observed > 0 && sellThrough < 20) {
-      interpretation = "Lower observed sell-through. Review demand, competition and pricing before listing.";
-    } else if (sellThrough < 40 && observed > 0) {
-      interpretation = "Moderate observed sell-through. Compare competition, delivery and margin before deciding.";
-    } else if (sellThrough < 60 && observed > 0) {
-      interpretation = "Healthy observed sell-through, but supplier quality and profit still need validation.";
-    } else if (observed > 0) {
-      interpretation = "Strong observed sell-through. Recheck the evidence window, competition and economics before listing.";
-    }
+    const interpretation =
+      observed > 0
+        ? sold.toFixed(0) +
+          " sold out of an observed pool of " +
+          observed.toFixed(0) +
+          " listings using the stated formula."
+        : "Enter your active and sold counts to calculate the observed rate.";
 
     return { active, sold, observed, sellThrough, interpretation };
   }, [activeListings, soldCount]);
