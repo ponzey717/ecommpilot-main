@@ -15,6 +15,7 @@ const tools = [
   ["%", "Profit Margin Calculator", "Estimate net margin from selling price, supplier cost, shipping, tax and marketplace fees.", "/free-tools/profit-margin-calculator"],
   ["F", "eBay Fee Estimator", "Model marketplace fees with a user-entered rate for your market and category.", "/free-tools/ebay-fee-estimator"],
   ["80", "Title Length Checker", "Draft and check an eBay title against the 80-character title limit.", "/free-tools/title-length-checker"],
+  ["ST", "Sell-Through Calculator", "Measure observed sell-through using your own sold and active listing evidence.", "/free-tools/sell-through-calculator"],
 ];
 
 export default function Home() {
@@ -102,7 +103,7 @@ export default function Home() {
             title="Research without the noise."
             description="The public experience stays simple. Behind each published product is a structured research and supplier workflow."
           />
-          <div className="mt-8 grid gap-5 md:grid-cols-3">
+          <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
             {steps.map(([number,title,text]) => (
               <article key={number} className="feature-card">
                 <span className="feature-number">{number}</span>
