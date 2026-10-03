@@ -153,6 +153,14 @@ export default async function ProductPage({ params }: PageProps) {
                       : "Not available"}
                   </p>
                 </div>
+                <div>
+                  <span className="metric-label">Standby supplier</span>
+                  <p className="mt-1 font-extrabold text-[var(--navy)]">
+                    {product.standbySupplier?.available
+                      ? value(product.standbySupplier.provider, "Available")
+                      : "Not currently available"}
+                  </p>
+                </div>
                 <div className="flex flex-wrap gap-2">
                   {product.supplier?.choice ? (
                     <span className="badge badge-choice">✓ AliExpress Choice</span>
@@ -180,6 +188,23 @@ export default async function ProductPage({ params }: PageProps) {
               ) : null}
             </aside>
           </div>
+
+          {product.methodology?.profit ? (
+            <article className="feature-card mt-6">
+              <p className="eyebrow">Methodology</p>
+              <h2 className="mt-3 text-2xl font-extrabold text-[var(--navy)]">
+                How the public profit figure is presented
+              </h2>
+              <p className="mt-4 text-sm leading-7 text-[var(--muted)]">
+                {product.methodology.profit}
+              </p>
+              {product.methodology.optionalAdvertisingExcluded ? (
+                <p className="mt-3 text-sm leading-7 text-[var(--muted)]">
+                  Optional promoted-listing or advertising spend is excluded from this V1 figure.
+                </p>
+              ) : null}
+            </article>
+          ) : null}
         </div>
       </section>
     </PageShell>
