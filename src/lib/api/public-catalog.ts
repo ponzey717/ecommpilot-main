@@ -23,7 +23,7 @@ export type PublicCategory = {
   parentId?: string | null;
   path?: string[];
   publishedProductCount?: number;
-  taxonomyCheckedAt?: string | null;
+  checkedAt?: string | null;
 };
 
 export type PublicProductImage = {
@@ -54,6 +54,7 @@ export type PublicProductSummary = {
     provider?: string | null;
     choice?: boolean | null;
     rating?: number | null;
+    orderCount?: number | null;
     deliveryMinDays?: number | null;
     deliveryMaxDays?: number | null;
     inStock?: boolean | null;
@@ -79,6 +80,14 @@ export type PublicProductSummary = {
 
 export type PublicProductDetail = PublicProductSummary & {
   summary?: string | null;
+  standbySupplier?: {
+    available: boolean;
+    provider?: string | null;
+  } | null;
+  methodology?: {
+    profit?: string | null;
+    optionalAdvertisingExcluded?: boolean;
+  } | null;
   relatedProducts?: PublicProductSummary[];
 };
 
