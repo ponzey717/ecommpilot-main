@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { JsonLd } from "@/components/seo/json-ld";
+import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
 import {
@@ -7,6 +9,7 @@ import {
   getPublicMarketsWithFallback,
 } from "@/lib/api/public-catalog";
 import { buildMetadata } from "@/lib/seo/metadata";
+import { breadcrumbSchema } from "@/lib/seo/schema";
 
 export const metadata: Metadata = buildMetadata({
   title: "eBay Product Categories",
@@ -35,6 +38,12 @@ export default async function CategoriesPage() {
 
   return (
     <PageShell darkHeader>
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Categories", path: "/categories" },
+        ])}
+      />
       <PageHero
         eyebrow="eBay category structure"
         title="Browse opportunities by category."
@@ -43,6 +52,13 @@ export default async function CategoriesPage() {
 
       <section className="py-14 md:py-18">
         <div className="site-container">
+          <Breadcrumbs
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Categories" },
+            ]}
+          />
+          <div className="mt-8">
           {hasVerifiedCategories ? (
             <div className="space-y-10">
               {catalog
@@ -136,6 +152,7 @@ export default async function CategoriesPage() {
               </p>
             </div>
           )}
+          </div>
         </div>
       </section>
     </PageShell>
