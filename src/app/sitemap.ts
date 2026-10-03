@@ -10,6 +10,7 @@ const staticPaths = [
   "/free-tools/profit-margin-calculator",
   "/free-tools/ebay-fee-estimator",
   "/free-tools/title-length-checker",
+  "/free-tools/sell-through-calculator",
   "/learn",
   "/pricing",
 ] as const;
