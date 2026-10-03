@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { MarketFilter } from "@/components/products/market-filter";
-import { ProductGrid } from "@/components/products/product-grid";
+import { CatalogProductGrid } from "@/components/products/catalog-product-grid";
 import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
 import { buildMetadata } from "@/lib/seo/metadata";
@@ -23,10 +23,7 @@ export default function WinningProductsPage() {
       <section className="py-12 md:py-16">
         <div className="site-container">
           <MarketFilter />
-          <div className="mt-6"><ProductGrid /></div>
-          <p className="mt-5 text-xs leading-5 text-[var(--muted)]">
-            Development products are illustrative. Live catalog publication requires verified evidence and freshness checks.
-          </p>
+          <div className="mt-6"><CatalogProductGrid /></div>
         </div>
       </section>
     </PageShell>
