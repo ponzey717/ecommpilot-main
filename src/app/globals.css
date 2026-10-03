@@ -332,8 +332,44 @@ h1, h2, h3, h4 {
   .filter-panel { flex-direction: row; align-items: center; justify-content: space-between; }
 }
 
-.filter-label { margin-right: 4px; color: var(--muted); font-size: 12px; font-weight: 800; }
+.filter-row {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-options {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 2px 1px 5px;
+  scrollbar-width: none;
+  overscroll-behavior-inline: contain;
+}
+
+.filter-options::-webkit-scrollbar { display: none; }
+
+@media (min-width: 820px) {
+  .filter-options {
+    flex-wrap: wrap;
+    overflow: visible;
+    padding: 0;
+  }
+}
+
+.filter-label {
+  flex: 0 0 auto;
+  margin-right: 4px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
 .filter-chip {
+  flex: 0 0 auto;
   min-height: 34px;
   border: 1px solid var(--border);
   border-radius: 999px;
