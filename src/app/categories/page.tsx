@@ -34,7 +34,10 @@ export default async function CategoriesPage() {
       categories: await getPublicCategories({ market: market.code }),
     })),
   );
-  const hasVerifiedCategories = catalog.some(({ categories }) => Boolean(categories?.length));
+
+  const publishedCatalog = catalog.flatMap(({ market, categories }) =>
+    categories?.length ? [{ market, categories }] : [],
+  );
   const catalogUnavailable = catalog.every(({ categories }) => categories === null);
 
   return (
@@ -59,12 +62,11 @@ export default async function CategoriesPage() {
               { label: "Categories" },
             ]}
           />
+
           <div className="mt-8">
-            {hasVerifiedCategories ? (
-            <div className="space-y-10">
-              {catalog
-                .filter(({ categories }) => Boolean(categories?.length))
-                .map(({ market, categories }) => (
+            {publishedCatalog.length ? (
+              <div className="space-y-10">
+                {publishedCatalog.map(({ market, categories }) => (
                   <section key={market.code}>
                     <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
                       <div>
@@ -82,7 +84,7 @@ export default async function CategoriesPage() {
                     </div>
 
                     <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-                      {categories!.map((category) => (
+                      {categories.map((category) => (
                         <Link
                           key={market.code + ":" + category.id}
                           href={
@@ -106,15 +108,9 @@ export default async function CategoriesPage() {
                             {category.name}
                           </h3>
 
-                          {category.path?.length ? (
-                            <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
-                              {category.path.join(" · ")}
-                            </p>
-                          ) : (
-                            <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
-                              Browse verified Winning Product opportunities in this eBay category.
-                            </p>
-                          )}
+                          <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
+                            Browse verified Winning Product opportunities in this eBay category.
+                          </p>
 
                           <p className="mt-5 text-sm font-extrabold text-[var(--blue)]">
                             Explore category →
@@ -124,45 +120,49 @@ export default async function CategoriesPage() {
                     </div>
                   </section>
                 ))}
-            </div>
-          ) : catalogUnavailable && process.env.NODE_ENV === "production" ? (
-            <div className="rounded-[22px] border border-[var(--border)] bg-white p-8 text-center">
-              <p className="eyebrow">Category status</p>
-              <h2 className="mt-3 text-2xl font-extrabold text-[var(--navy)]">
-                The category catalog is temporarily unavailable.
-              </h2>
-              <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-[var(--muted)]">
-                eCommPilot could not retrieve verified public category data right now.
-                No fallback taxonomy is shown in production.
-              </p>
-            </div>
-          ) : process.env.NODE_ENV !== "production" ? (
-            <div>
-              <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-                {developmentCategories.map(([name, text]) => (
-                  <article key={name} className="feature-card">
-                    <span className="tool-icon">↗</span>
-                    <h2 className="mt-5 text-xl font-extrabold text-[var(--navy)]">
-                      {name}
-                    </h2>
-                    <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{text}</p>
-                  </article>
-                ))}
               </div>
-              <p className="mt-5 text-xs leading-5 text-[var(--muted)]">
-                Development fallback only. Verified market-specific categories from the public API replace this list automatically when available.
-              </p>
-            </div>
-          ) : (
-            <div className="rounded-[22px] border border-[var(--border)] bg-white p-8 text-center">
-              <p className="eyebrow">Categories</p>
-              <h2 className="mt-3 text-2xl font-extrabold text-[var(--navy)]">
-                No verified categories are published yet.
-              </h2>
-              <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-[var(--muted)]">
-                eCommPilot will show category pages here only when the public catalog API returns verified marketplace category data.
-              </p>
-            </div>
+            ) : catalogUnavailable && process.env.NODE_ENV === "production" ? (
+              <div className="rounded-[22px] border border-[var(--border)] bg-white p-8 text-center">
+                <p className="eyebrow">Category status</p>
+                <h2 className="mt-3 text-2xl font-extrabold text-[var(--navy)]">
+                  The category catalog is temporarily unavailable.
+                </h2>
+                <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-[var(--muted)]">
+                  eCommPilot could not retrieve verified public category data right now.
+                  No fallback taxonomy is shown in production.
+                </p>
+              </div>
+            ) : process.env.NODE_ENV !== "production" ? (
+              <div>
+                <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+                  {developmentCategories.map(([name, text]) => (
+                    <article key={name} className="feature-card">
+                      <span className="tool-icon">↗</span>
+                      <h2 className="mt-5 text-xl font-extrabold text-[var(--navy)]">
+                        {name}
+                      </h2>
+                      <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
+                        {text}
+                      </p>
+                    </article>
+                  ))}
+                </div>
+                <p className="mt-5 text-xs leading-5 text-[var(--muted)]">
+                  Development fallback only. Verified market-specific categories from
+                  the public API replace this list automatically when available.
+                </p>
+              </div>
+            ) : (
+              <div className="rounded-[22px] border border-[var(--border)] bg-white p-8 text-center">
+                <p className="eyebrow">Categories</p>
+                <h2 className="mt-3 text-2xl font-extrabold text-[var(--navy)]">
+                  No verified categories are published yet.
+                </h2>
+                <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-[var(--muted)]">
+                  eCommPilot will show category pages here only when the public catalog
+                  API returns verified marketplace category data.
+                </p>
+              </div>
             )}
           </div>
         </div>
