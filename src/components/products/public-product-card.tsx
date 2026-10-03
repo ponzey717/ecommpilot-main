@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Image from "next/image";
 import type { PublicProductSummary } from "@/lib/api/public-catalog";
 
@@ -21,6 +22,9 @@ function tierLabel(tier: string | null | undefined) {
 }
 
 export function PublicProductCard({ product }: { product: PublicProductSummary }) {
+  const detailHref = product.category?.slug
+    ? "/winning-products/" + product.market.toLowerCase() + "/" + product.category.slug + "/" + product.slug
+    : "/winning-products/" + product.market.toLowerCase();
   const price = moneyFromMinor(
     product.economics?.recommendedSellingPriceMinor,
     product.economics?.currency,
@@ -108,7 +112,9 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
           <span className="metric-label">Target price</span>
           <p className="font-extrabold text-[var(--navy)]">{price ?? "—"}</p>
         </div>
-        <span className="text-sm font-extrabold text-[var(--blue)]">View product →</span>
+        <Link href={detailHref} className="text-sm font-extrabold text-[var(--blue)]">
+          View product →
+        </Link>
       </div>
     </article>
   );
