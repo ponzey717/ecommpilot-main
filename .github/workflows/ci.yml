@@ -1,15 +1,22 @@
 name: CI
 
 on:
-  push:
-    branches: ["main"]
+  # Keep validation available without spending runner time on every direct push.
+  # Run automatically only when a PR is explicitly ready for review, or trigger
+  # it manually before a deployment/milestone.
   pull_request:
     branches: ["main"]
+    types: [ready_for_review, reopened]
+  workflow_dispatch:
+
+concurrency:
+  group: public-ci-${{ github.event.pull_request.head.ref || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 12
 
     steps:
       - name: Checkout
