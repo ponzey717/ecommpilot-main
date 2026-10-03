@@ -76,6 +76,7 @@ export default function Page() {
               </p>
             </article>
           </div>
+          <RelatedTools currentPath={path} />
         </div>
       </section>
     </PageShell>
