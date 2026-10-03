@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# eCommPilot Public Website
 
-## Getting Started
+Public website for **eCommPilot — Winning Products for eBay Dropshippers**.
 
-First, run the development server:
+## Canonical responsibilities
+
+This repository powers:
+
+- `ecommpilot.net`
+- public Winning Products catalog;
+- market/category/product pages;
+- free eBay tools;
+- Learn/SEO content;
+- pricing and acquisition pages;
+- public SEO, schema, robots and sitemaps.
+
+Authenticated member/admin/product operations belong to `app.ecommpilot.net`.
+
+## Stack
+
+- Next.js 16 App Router
+- React 19
+- TypeScript
+- Tailwind CSS
+- ESLint
+
+## Local development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+`http://localhost:3000`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Quality checks:
 
-## Learn More
+```bash
+npm run lint
+npm run build
+```
 
-To learn more about Next.js, take a look at the following resources:
+Do not run `npm audit fix --force` without reviewing dependency impact.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Architecture and build docs
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- [Agent instructions](./AGENTS.md)
+- [Platform architecture](./docs/ARCHITECTURE.md)
+- [Complete build plan](./docs/PLATFORM_BUILD_PLAN.md)
+- [SEO architecture](./docs/SEO_ARCHITECTURE.md)
+- [Brand implementation](./docs/BRAND_IMPLEMENTATION.md)
+- [Manual actions](./docs/MANUAL_ACTIONS.md)
 
-## Deploy on Vercel
+## Current phase
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Phase 0: foundation and architecture.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The starter homepage remains intentionally unstyled until the Theme Studio visual direction is locked.
