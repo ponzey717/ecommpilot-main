@@ -8,10 +8,12 @@ import {
   fallbackPublicMarkets,
   getPublicMarketsWithFallback,
 } from "@/lib/api/public-catalog";
+import { parseMinProfitBand } from "@/lib/catalog-filters";
 import { buildMetadata } from "@/lib/seo/metadata";
 
 type PageProps = {
   params: Promise<{ market: string }>;
+  searchParams: Promise<{ minProfitBand?: string | string[] }>;
 };
 
 export function generateStaticParams() {
@@ -33,12 +35,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   });
 }
 
-export default async function MarketPage({ params }: PageProps) {
+export default async function MarketPage({ params, searchParams }: PageProps) {
   const { market: slug } = await params;
+  const query = await searchParams;
+  const minProfitBand = parseMinProfitBand(query.minProfitBand);
   const markets = await getPublicMarketsWithFallback();
   const market = markets.find((item) => item.slug === slug && item.active);
 
   if (!market) notFound();
+
+  const path = "/winning-products/" + market.slug;
 
   return (
     <PageShell darkHeader>
@@ -54,9 +60,16 @@ export default async function MarketPage({ params }: PageProps) {
       />
       <section className="py-12 md:py-16">
         <div className="site-container">
-          <MarketFilter />
+          <MarketFilter
+            currentMarket={market.code}
+            currentMinProfitBand={minProfitBand}
+            basePath={path}
+          />
           <div className="mt-6">
-            <CatalogProductGrid market={market.code} />
+            <CatalogProductGrid
+              market={market.code}
+              minProfitBand={minProfitBand}
+            />
           </div>
         </div>
       </section>
