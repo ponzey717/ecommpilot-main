@@ -86,7 +86,12 @@ Implemented in GitHub:
 - market pages connected to the API layer;
 - category pages connected to verified API categories;
 - product detail pages display only API-supplied evidence;
-- safe public filter support for market and minimum profit band.
+- safe public filter support for market and minimum profit band;
+- exact query-name alignment with the private backend contract;
+- separate verified-empty and temporary-unavailable states;
+- non-data loading states for Winning Products and Categories;
+- dynamic sitemap inclusion for market/category catalog routes only when verified public data exists;
+- safe Standby availability and public profit methodology on product detail pages.
 
 ## Important development rules
 
@@ -103,6 +108,8 @@ Implemented in GitHub:
 Draft PR:
 
 **Connect categories and catalog filters to public API**
+
+Review additions now also include the fourth free tool, API contract alignment, conditional sitemap behavior, loading/error states and safe product-detail Standby/methodology rendering.
 
 Branch:
 
@@ -141,9 +148,9 @@ Do not recreate or duplicate that backend implementation from the public reposit
 
 1. Finish static review of the draft public catalog PR.
 2. Run local `npm run lint` and `npm run build` once at the milestone before merge.
-3. Check whether Codex recovered and pushed `feature/public-winning-products-v1`.
-4. Review Codex migrations, publication/qualification ledgers, public economics projection, APIs and focused tests before merging backend work.
-5. After backend approval, connect production `ECOMMPILOT_API_BASE_URL`.
+3. Backend foundation `feature/public-winning-products-v1` is now pushed and under draft PR review (#58).
+4. Review the follow-on `feature/public-winning-products-ops-v1` once Codex pushes it, with special attention to canonical evidence reconciliation, transactional publication mutations and qualification profile defaults.
+5. After backend approval and production migration approval, connect production `ECOMMPILOT_API_BASE_URL`.
 6. Verify markets, categories, products and product detail end to end.
 7. Expand sitemap/indexing only for real published catalog URLs.
 8. Continue mobile catalog/filter polish.
