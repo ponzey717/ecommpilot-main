@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { MarketFilter } from "@/components/products/market-filter";
 import { ProductGrid } from "@/components/products/product-grid";
+import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
 import { buildMetadata } from "@/lib/seo/metadata";
 
@@ -12,17 +13,13 @@ export const metadata: Metadata = buildMetadata({
 
 export default function WinningProductsPage() {
   return (
-    <PageShell>
-      <section className="bg-white py-14 md:py-18">
-        <div className="site-container">
-          <span className="badge badge-market">US · UK · AU</span>
-          <h1 className="mt-6 max-w-4xl text-4xl font-extrabold tracking-[-.04em] text-[var(--navy)] md:text-6xl">Winning Products</h1>
-          <p className="mt-5 max-w-3xl text-lg leading-8 text-[var(--muted)]">
-            Product opportunities organized for eBay dropshippers, with market,
-            supplier, delivery and economics context.
-          </p>
-        </div>
-      </section>
+    <PageShell darkHeader>
+      <PageHero
+        eyebrow="Winning Products"
+        badge="US · UK · AU"
+        title="Browse product opportunities with the research layer already attached."
+        description="Marketplace-style discovery for eBay dropshippers, with supplier, delivery and economics context designed to reduce guesswork."
+      />
       <section className="py-12 md:py-16">
         <div className="site-container">
           <MarketFilter />

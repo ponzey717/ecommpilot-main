@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
 import { routes } from "@/config/routes";
 import { buildMetadata } from "@/lib/seo/metadata";
@@ -18,13 +19,15 @@ const plans = [
 
 export default function PricingPage() {
   return (
-    <PageShell>
-      <section className="bg-white py-16">
+    <PageShell darkHeader>
+      <PageHero
+        eyebrow="Membership"
+        title="Start free. Unlock more research when you need it."
+        description="Free, Pro and Premium are the membership structure. Final commercial pricing, credits and usage limits remain configurable before launch."
+      />
+      <section className="py-14 md:py-18">
         <div className="site-container">
-          <p className="eyebrow">Membership</p>
-          <h1 className="mt-3 max-w-3xl text-4xl font-extrabold tracking-[-.04em] text-[var(--navy)] md:text-6xl">Free, Pro and Premium.</h1>
-          <p className="mt-5 max-w-3xl text-lg leading-8 text-[var(--muted)]">Membership names are locked. Final commercial pricing, credits and limits remain configurable before launch.</p>
-          <div className="mt-10 grid gap-5 md:grid-cols-3">
+          <div className="grid gap-5 md:grid-cols-3">
             {plans.map(([name,description,items],index) => (
               <article key={name as string} className={index === 1 ? "plan-card plan-card-featured" : "plan-card"}>
                 <p className={name === "Premium" ? "eyebrow !text-[var(--premium)]" : "eyebrow"}>{name as string}</p>

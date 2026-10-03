@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
 import { buildMetadata } from "@/lib/seo/metadata";
 
@@ -17,13 +18,15 @@ const tools = [
 
 export default function FreeToolsPage() {
   return (
-    <PageShell>
-      <section className="bg-white py-16">
+    <PageShell darkHeader>
+      <PageHero
+        eyebrow="Free eBay tools"
+        title="Useful tools for everyday eBay decisions."
+        description="Public tools are part of eCommPilot’s SEO and seller-acquisition strategy, but every tool should also be useful on its own."
+      />
+      <section className="py-14 md:py-18">
         <div className="site-container">
-          <p className="eyebrow">Free eBay tools</p>
-          <h1 className="mt-3 max-w-3xl text-4xl font-extrabold tracking-[-.04em] text-[var(--navy)] md:text-6xl">Useful tools for everyday eBay decisions.</h1>
-          <p className="mt-5 max-w-3xl text-lg leading-8 text-[var(--muted)]">Public tools are part of eCommPilot’s SEO and seller-acquisition strategy, but they should also be genuinely useful on their own.</p>
-          <div className="mt-10 grid gap-5 md:grid-cols-3">
+          <div className="grid gap-5 md:grid-cols-3">
             {tools.map(([title,text,href,icon]) => (
               <Link key={href} href={href} className="tool-card">
                 <span className="tool-icon">{icon}</span>

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
 import { buildMetadata } from "@/lib/seo/metadata";
 
@@ -19,20 +20,21 @@ const categories = [
 
 export default function CategoriesPage() {
   return (
-    <PageShell>
-      <section className="bg-white py-16">
+    <PageShell darkHeader>
+      <PageHero
+        eyebrow="eBay category structure"
+        title="Browse opportunities by category."
+        description="Production categories will follow the official eBay taxonomy for each marketplace instead of relying on one universal category tree."
+      />
+      <section className="py-14 md:py-18">
         <div className="site-container">
-          <p className="eyebrow">eBay category structure</p>
-          <h1 className="mt-3 max-w-3xl text-4xl font-extrabold tracking-[-.04em] text-[var(--navy)] md:text-6xl">Browse opportunities by category.</h1>
-          <p className="mt-5 max-w-3xl text-lg leading-8 text-[var(--muted)]">
-            Production categories will follow the official eBay taxonomy for each marketplace instead of relying on one universal category tree.
-          </p>
-          <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             {categories.map(([name,text]) => (
               <article key={name} className="feature-card">
                 <span className="tool-icon">↗</span>
                 <h2 className="mt-5 text-xl font-extrabold text-[var(--navy)]">{name}</h2>
                 <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{text}</p>
+                <p className="mt-5 text-xs font-bold text-[var(--muted)]">Market-specific taxonomy will replace this development list.</p>
               </article>
             ))}
           </div>
