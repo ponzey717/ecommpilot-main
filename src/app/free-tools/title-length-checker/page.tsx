@@ -62,6 +62,7 @@ export default function Page() {
               matter when you prepare the final listing.
             </p>
           </article>
+          <RelatedTools currentPath={path} />
         </div>
       </section>
     </PageShell>
