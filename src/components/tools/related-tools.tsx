@@ -40,7 +40,7 @@ export function RelatedTools({ currentPath }: { currentPath: string }) {
         </Link>
       </div>
 
-      <div className="mt-5 grid gap-5 md:grid-cols-2">
+      <div className="mt-5 grid gap-5 md:grid-cols-3">
         {related.map((tool) => (
           <Link key={tool.href} href={tool.href} className="tool-card group">
             <h3 className="text-lg font-extrabold text-[var(--navy)] group-hover:text-[var(--blue)]">
