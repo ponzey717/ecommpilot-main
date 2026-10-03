@@ -1,15 +1,18 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { MarketFilter } from "@/components/products/market-filter";
+import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { CatalogProductGrid } from "@/components/products/catalog-product-grid";
 import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
+import { JsonLd } from "@/components/seo/json-ld";
 import {
   fallbackPublicMarkets,
   getPublicMarketsWithFallback,
 } from "@/lib/api/public-catalog";
 import { parseMinProfitBand } from "@/lib/catalog-filters";
 import { buildMetadata } from "@/lib/seo/metadata";
+import { breadcrumbSchema } from "@/lib/seo/schema";
 
 type PageProps = {
   params: Promise<{ market: string }>;
@@ -48,6 +51,13 @@ export default async function MarketPage({ params, searchParams }: PageProps) {
 
   return (
     <PageShell darkHeader>
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Winning Products", path: "/winning-products" },
+          { name: market.code, path },
+        ])}
+      />
       <PageHero
         eyebrow={"eBay " + market.code}
         badge={market.currency}
@@ -60,11 +70,20 @@ export default async function MarketPage({ params, searchParams }: PageProps) {
       />
       <section className="py-12 md:py-16">
         <div className="site-container">
-          <MarketFilter
+          <Breadcrumbs
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Winning Products", href: "/winning-products" },
+              { label: market.code },
+            ]}
+          />
+          <div className="mt-8">
+            <MarketFilter
             currentMarket={market.code}
             currentMinProfitBand={minProfitBand}
-            basePath={path}
-          />
+              basePath={path}
+            />
+          </div>
           <div className="mt-6">
             <CatalogProductGrid
               market={market.code}
