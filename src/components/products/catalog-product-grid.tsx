@@ -7,13 +7,19 @@ import {
 
 export async function CatalogProductGrid({
   market,
+  category,
+  minProfitBand,
   limit = 12,
 }: {
   market?: PublicMarket["code"];
+  category?: string;
+  minProfitBand?: number;
   limit?: number;
 }) {
   const payload = await getPublicProducts({
     ...(market ? { market } : {}),
+    ...(category ? { category } : {}),
+    ...(minProfitBand != null ? { minProfitBand } : {}),
     limit,
   });
 
