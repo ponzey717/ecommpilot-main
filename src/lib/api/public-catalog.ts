@@ -60,3 +60,37 @@ export async function getPublicProfitBands(): Promise<PublicProfitBand[] | null>
   const payload = await fetchJson<ProfitBandsResponse>('/api/public/profit-bands');
   return payload?.version === 'public-v1' ? payload.bands : null;
 }
+
+
+export function fallbackPublicMarkets(): PublicMarket[] {
+  return [
+    {
+      code: 'US',
+      marketplace: 'EBAY_US',
+      name: 'United States',
+      slug: 'us',
+      currency: 'USD',
+      active: true,
+    },
+    {
+      code: 'UK',
+      marketplace: 'EBAY_GB',
+      name: 'United Kingdom',
+      slug: 'uk',
+      currency: 'GBP',
+      active: true,
+    },
+    {
+      code: 'AU',
+      marketplace: 'EBAY_AU',
+      name: 'Australia',
+      slug: 'au',
+      currency: 'AUD',
+      active: true,
+    },
+  ];
+}
+
+export async function getPublicMarketsWithFallback(): Promise<PublicMarket[]> {
+  return (await getPublicMarkets()) ?? fallbackPublicMarkets();
+}
