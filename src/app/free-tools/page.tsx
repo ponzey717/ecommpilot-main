@@ -18,6 +18,7 @@ const tools = [
   ["Profit Margin Calculator", "Calculate margin from your real costs and fee assumptions.", "/free-tools/profit-margin-calculator", "%"],
   ["eBay Fee Estimator", "Estimate marketplace fees using the percentage relevant to your market/category.", "/free-tools/ebay-fee-estimator", "F"],
   ["Title Length Checker", "Draft and check an eBay listing title against the 80-character limit.", "/free-tools/title-length-checker", "80"],
+  ["Sell-Through Calculator", "Calculate observed sell-through from your own sold and active listing counts.", "/free-tools/sell-through-calculator", "ST"],
 ];
 
 export default function FreeToolsPage() {
@@ -42,7 +43,7 @@ export default function FreeToolsPage() {
               { label: "Free Tools" },
             ]}
           />
-          <div className="mt-8 grid gap-5 md:grid-cols-3">
+          <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
             {tools.map(([title, text, href, icon]) => (
               <Link key={href} href={href} className="tool-card">
                 <span className="tool-icon">{icon}</span>
