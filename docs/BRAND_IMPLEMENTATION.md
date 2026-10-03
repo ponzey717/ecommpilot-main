@@ -68,13 +68,21 @@ Avoid:
 - fake testimonials/metrics;
 - visually noisy dashboard patterns.
 
-## Preferred Theme Studio direction
+## Locked Theme Studio direction
 
-Current production recommendation, pending owner lock:
+Approved on **04 October 2026**:
 
 **Marketplace Hybrid structure + Energetic Blue/Cyan brand language.**
 
-Use Marketplace Hybrid for catalog/product information architecture and the approved blue/cyan identity for logo, CTAs and selected accents. Deeper navy can support data-heavy surfaces.
+Use Marketplace Hybrid for catalog/product information architecture and the approved blue/cyan identity for logo, CTAs and selected accents.
+
+Additional approved treatment:
+
+- dark navy/blue headers and hero sections for strong brand moments;
+- cyan/blue glow may be used in hero artwork and selected CTAs;
+- product/catalog areas remain light and highly readable;
+- AliExpress Choice uses an AliExpress-style green badge rather than the general eCommPilot blue;
+- deeper navy supports headings and data-heavy surfaces.
 
 See [Theme Studio Review](./THEME_STUDIO_REVIEW.md).
 
@@ -82,7 +90,7 @@ See [Theme Studio Review](./THEME_STUDIO_REVIEW.md).
 
 The Theme Studio is the visual comparison/prototyping surface.
 
-Do not copy a theme into production until the final choice is explicitly locked.
+The final direction is locked. Translate it into reusable production tokens and components rather than copying Theme Studio CSS literally.
 
 When choosing between alternatives, evaluate them on:
 
