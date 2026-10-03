@@ -57,9 +57,11 @@ Risk:
 
 - must keep strong eCommPilot branding so it does not become visually generic.
 
-## Recommended production direction
+## Locked production direction
 
-**Use C — Marketplace Hybrid as the structural/UI direction, combined with the approved A — Energetic Blue/Cyan brand palette and logo language.**
+**Approved by the owner on 04 October 2026: use C — Marketplace Hybrid as the structural/UI direction, combined with the approved A — Energetic Blue/Cyan brand palette and logo language.**
+
+The owner also approved dark navy/blue header and hero treatment from the Theme Studio examples, and requested AliExpress Choice to use a green treatment closer to AliExpress's own Choice presentation.
 
 In practice:
 
