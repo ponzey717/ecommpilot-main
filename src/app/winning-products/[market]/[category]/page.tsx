@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CatalogProductGrid } from "@/components/products/catalog-product-grid";
+import { MarketFilter } from "@/components/products/market-filter";
 import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
@@ -10,11 +11,13 @@ import {
   getPublicCategories,
   getPublicMarketsWithFallback,
 } from "@/lib/api/public-catalog";
+import { parseMinProfitBand } from "@/lib/catalog-filters";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 
 type PageProps = {
   params: Promise<{ market: string; category: string }>;
+  searchParams: Promise<{ minProfitBand?: string | string[] }>;
 };
 
 async function resolveCategory(marketSlug: string, categorySlug: string) {
@@ -57,8 +60,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   });
 }
 
-export default async function CategoryPage({ params }: PageProps) {
+export default async function CategoryPage({ params, searchParams }: PageProps) {
   const { market: marketSlug, category: categorySlug } = await params;
+  const query = await searchParams;
+  const minProfitBand = parseMinProfitBand(query.minProfitBand);
   const resolved = await resolveCategory(marketSlug, categorySlug);
   if (!resolved) notFound();
 
@@ -98,7 +103,18 @@ export default async function CategoryPage({ params }: PageProps) {
             ]}
           />
           <div className="mt-8">
-            <CatalogProductGrid market={market.code} category={category.slug} />
+            <MarketFilter
+              currentMarket={market.code}
+              currentMinProfitBand={minProfitBand}
+              basePath={path}
+            />
+          </div>
+          <div className="mt-6">
+            <CatalogProductGrid
+              market={market.code}
+              category={category.slug}
+              minProfitBand={minProfitBand}
+            />
           </div>
         </div>
       </section>
