@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { MarketFilter } from "@/components/products/market-filter";
 import { CatalogProductGrid } from "@/components/products/catalog-product-grid";
+import { MarketFilter } from "@/components/products/market-filter";
+import { JsonLd } from "@/components/seo/json-ld";
 import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
-import { JsonLd } from "@/components/seo/json-ld";
 import { parseMinProfitBand } from "@/lib/catalog-filters";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema } from "@/lib/seo/schema";
@@ -48,7 +48,7 @@ export default async function WinningProductsPage({ searchParams }: PageProps) {
           />
           <div className="mt-8">
             <MarketFilter
-            currentMinProfitBand={minProfitBand}
+              currentMinProfitBand={minProfitBand}
               basePath="/winning-products"
             />
           </div>
