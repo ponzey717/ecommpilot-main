@@ -31,10 +31,11 @@ export default async function CategoriesPage() {
   const catalog = await Promise.all(
     markets.map(async (market) => ({
       market,
-      categories: (await getPublicCategories({ market: market.code })) ?? [],
+      categories: await getPublicCategories({ market: market.code }),
     })),
   );
-  const hasVerifiedCategories = catalog.some(({ categories }) => categories.length > 0);
+  const hasVerifiedCategories = catalog.some(({ categories }) => Boolean(categories?.length));
+  const catalogUnavailable = catalog.every(({ categories }) => categories === null);
 
   return (
     <PageShell darkHeader>
@@ -62,8 +63,9 @@ export default async function CategoriesPage() {
           {hasVerifiedCategories ? (
             <div className="space-y-10">
               {catalog
-                .filter(({ categories }) => categories.length > 0)
+                .filter(({ categories }) => Boolean(categories?.length))
                 .map(({ market, categories }) => (
+
                   <section key={market.code}>
                     <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
                       <div>
@@ -81,7 +83,7 @@ export default async function CategoriesPage() {
                     </div>
 
                     <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-                      {categories.map((category) => (
+                      {categories!.map((category) => (
                         <Link
                           key={market.code + ":" + category.id}
                           href={
@@ -123,6 +125,17 @@ export default async function CategoriesPage() {
                     </div>
                   </section>
                 ))}
+            </div>
+          ) : catalogUnavailable && process.env.NODE_ENV === "production" ? (
+            <div className="rounded-[22px] border border-[var(--border)] bg-white p-8 text-center">
+              <p className="eyebrow">Category status</p>
+              <h2 className="mt-3 text-2xl font-extrabold text-[var(--navy)]">
+                The category catalog is temporarily unavailable.
+              </h2>
+              <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-[var(--muted)]">
+                eCommPilot could not retrieve verified public category data right now.
+                No fallback taxonomy is shown in production.
+              </p>
             </div>
           ) : process.env.NODE_ENV !== "production" ? (
             <div>
