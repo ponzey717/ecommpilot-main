@@ -46,7 +46,7 @@ Later:
 
 # Phase 0 — Foundation and architecture
 
-**Status:** in progress
+**Status:** complete
 
 Deliverables:
 
@@ -73,6 +73,8 @@ Exit criteria:
 ---
 
 # Phase 1 — Brand implementation and design system
+
+**Status:** in progress
 
 Inputs:
 
@@ -110,6 +112,8 @@ Do not start broad page styling until the Theme Studio choice is locked.
 ---
 
 # Phase 2 — Public site shell
+
+**Status:** in progress
 
 Deliverables:
 
@@ -540,10 +544,10 @@ Our own eBay account(s) may remain connected in the app for API testing and inte
 
 # Immediate sequence
 
-1. Finish Phase 0 foundation.
-2. Lock Theme Studio visual direction.
-3. Implement Phase 1 design system.
-4. Build public shell.
+1. Phase 0 foundation — complete.
+2. Theme Studio visual direction — locked.
+3. Phase 1 design system — in progress.
+4. Public shell — in progress.
 5. Audit app/database and define APIs.
 6. Connect real catalog data.
 7. Build product pages.
