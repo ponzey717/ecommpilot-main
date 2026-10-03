@@ -162,18 +162,18 @@ export async function getPublicProducts(input?: {
   maxDeliveryDays?: number;
   minSales30d?: number;
   supplier?: string;
-  freshness?: string;
+  freshnessHours?: number;
   cursor?: string;
   limit?: number;
 }): Promise<ProductsResponse | null> {
   const query = new URLSearchParams();
   if (input?.market) query.set('market', input.market);
   if (input?.category) query.set('category', input.category);
-  if (input?.minProfitBand != null) query.set('minProfitBand', String(input.minProfitBand));
-  if (input?.maxDeliveryDays != null) query.set('maxDeliveryDays', String(input.maxDeliveryDays));
-  if (input?.minSales30d != null) query.set('minSales30d', String(input.minSales30d));
+  if (input?.minProfitBand != null) query.set('minimumProfitBand', String(input.minProfitBand));
+  if (input?.maxDeliveryDays != null) query.set('maximumDeliveryDays', String(input.maxDeliveryDays));
+  if (input?.minSales30d != null) query.set('minimumSales30d', String(input.minSales30d));
   if (input?.supplier) query.set('supplier', input.supplier);
-  if (input?.freshness) query.set('freshness', input.freshness);
+  if (input?.freshnessHours != null) query.set('freshnessHours', String(input.freshnessHours));
   if (input?.cursor) query.set('cursor', input.cursor);
   if (input?.limit != null) query.set('limit', String(input.limit));
 
