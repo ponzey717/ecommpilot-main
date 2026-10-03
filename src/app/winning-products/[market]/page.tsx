@@ -2,8 +2,12 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { MarketFilter } from "@/components/products/market-filter";
 import { ProductGrid } from "@/components/products/product-grid";
+import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
-import { siteConfig } from "@/config/site";
+import {
+  fallbackPublicMarkets,
+  getPublicMarketsWithFallback,
+} from "@/lib/api/public-catalog";
 import { buildMetadata } from "@/lib/seo/metadata";
 
 type PageProps = {
@@ -11,44 +15,52 @@ type PageProps = {
 };
 
 export function generateStaticParams() {
-  return siteConfig.markets.map((market) => ({ market: market.slug }));
+  return fallbackPublicMarkets().map((market) => ({ market: market.slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { market: slug } = await params;
-  const market = siteConfig.markets.find((item) => item.slug === slug);
+  const market = fallbackPublicMarkets().find((item) => item.slug === slug);
   if (!market) return {};
+
   return buildMetadata({
     title: "Winning Products for eBay " + market.code,
-    description: "Browse eCommPilot Winning Products for eBay " + market.name + " with supplier, delivery and profit context.",
+    description:
+      "Browse eCommPilot Winning Products for eBay " +
+      market.name +
+      " with supplier, delivery and profit context.",
     path: "/winning-products/" + market.slug,
   });
 }
 
 export default async function MarketPage({ params }: PageProps) {
   const { market: slug } = await params;
-  const market = siteConfig.markets.find((item) => item.slug === slug);
+  const markets = await getPublicMarketsWithFallback();
+  const market = markets.find((item) => item.slug === slug && item.active);
+
   if (!market) notFound();
 
   return (
-    <PageShell>
-      <section className="bg-white py-14">
-        <div className="site-container">
-          <span className="badge badge-market">{market.code}</span>
-          <h1 className="mt-6 max-w-4xl text-4xl font-extrabold tracking-[-.04em] text-[var(--navy)] md:text-6xl">
-            Winning Products for eBay {market.code}
-          </h1>
-          <p className="mt-5 max-w-3xl text-lg leading-8 text-[var(--muted)]">
-            Marketplace-specific product research for {market.name}. Production results will be filtered from verified catalog data.
-          </p>
-        </div>
-      </section>
-      <section className="py-12">
+    <PageShell darkHeader>
+      <PageHero
+        eyebrow={"eBay " + market.code}
+        badge={market.currency}
+        title={"Winning Products for eBay " + market.code}
+        description={
+          "Marketplace-specific product research for " +
+          market.name +
+          ", with supplier, delivery and economics context."
+        }
+      />
+      <section className="py-12 md:py-16">
         <div className="site-container">
           <MarketFilter />
-          <div className="mt-6"><ProductGrid /></div>
+          <div className="mt-6">
+            <ProductGrid />
+          </div>
           <p className="mt-5 text-xs leading-5 text-[var(--muted)]">
-            Current cards are illustrative while the public API and production inventory are being connected.
+            Current cards are illustrative while the production product endpoint is being
+            connected. The live catalog will show verified, time-stamped market data only.
           </p>
         </div>
       </section>
