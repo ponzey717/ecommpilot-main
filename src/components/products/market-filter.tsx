@@ -1,31 +1,90 @@
-const markets = ["US", "UK", "AU"] as const;
-const margins = ["10%+", "20%+", "30%+", "40%+", "50%+"] as const;
+import Link from "next/link";
+import {
+  getPublicMarketsWithFallback,
+  getPublicProfitBands,
+  type PublicMarket,
+} from "@/lib/api/public-catalog";
 
-export function MarketFilter() {
+const fallbackBands = [10, 15, 20, 25, 30, 35, 40, 50];
+
+function withProfitBand(path: string, band?: number) {
+  if (band == null) return path;
+  const query = new URLSearchParams({ minProfitBand: String(band) });
+  return path + "?" + query.toString();
+}
+
+export async function MarketFilter({
+  currentMarket,
+  currentMinProfitBand,
+  basePath = "/winning-products",
+}: {
+  currentMarket?: PublicMarket["code"];
+  currentMinProfitBand?: number;
+  basePath?: string;
+}) {
+  const [markets, apiBands] = await Promise.all([
+    getPublicMarketsWithFallback(),
+    getPublicProfitBands(),
+  ]);
+  const bands = (apiBands?.length
+    ? apiBands.map((band) => band.minimumPercent)
+    : fallbackBands
+  ).filter((band, index, values) => values.indexOf(band) === index);
+
   return (
     <div className="filter-panel">
       <div className="flex flex-wrap items-center gap-2">
         <span className="filter-label">Market</span>
-        {markets.map((market, index) => (
-          <button
-            key={market}
-            type="button"
-            className={index === 0 ? "filter-chip filter-chip-active" : "filter-chip"}
-          >
-            {market}
-          </button>
-        ))}
+        <Link
+          href={withProfitBand("/winning-products", currentMinProfitBand)}
+          className={!currentMarket ? "filter-chip filter-chip-active" : "filter-chip"}
+        >
+          All
+        </Link>
+        {markets
+          .filter((market) => market.active)
+          .map((market) => (
+            <Link
+              key={market.code}
+              href={withProfitBand(
+                "/winning-products/" + market.slug,
+                currentMinProfitBand,
+              )}
+              className={
+                currentMarket === market.code
+                  ? "filter-chip filter-chip-active"
+                  : "filter-chip"
+              }
+            >
+              {market.code}
+            </Link>
+          ))}
       </div>
+
       <div className="flex flex-wrap items-center gap-2">
         <span className="filter-label">Minimum profit</span>
-        {margins.map((margin, index) => (
-          <button
-            key={margin}
-            type="button"
-            className={index === 0 ? "filter-chip filter-chip-active" : "filter-chip"}
+        <Link
+          href={basePath}
+          className={
+            currentMinProfitBand == null
+              ? "filter-chip filter-chip-active"
+              : "filter-chip"
+          }
+        >
+          All
+        </Link>
+        {bands.map((band) => (
+          <Link
+            key={band}
+            href={withProfitBand(basePath, band)}
+            className={
+              currentMinProfitBand === band
+                ? "filter-chip filter-chip-active"
+                : "filter-chip"
+            }
           >
-            {margin}
-          </button>
+            {band}%+
+          </Link>
         ))}
       </div>
     </div>
