@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { JsonLd } from "@/components/seo/json-ld";
+import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
 import { getPublicMarketsWithFallback } from "@/lib/api/public-catalog";
 import { buildMetadata } from "@/lib/seo/metadata";
+import { breadcrumbSchema } from "@/lib/seo/schema";
 
 export const metadata: Metadata = buildMetadata({
   title: "eBay Markets",
@@ -17,6 +20,12 @@ export default async function MarketsPage() {
 
   return (
     <PageShell darkHeader>
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Markets", path: "/markets" },
+        ])}
+      />
       <PageHero
         eyebrow="Browse by market"
         title="Research the market you actually sell in."
@@ -24,7 +33,13 @@ export default async function MarketsPage() {
       />
       <section className="py-14 md:py-18">
         <div className="site-container">
-          <div className="grid gap-5 md:grid-cols-3">
+          <Breadcrumbs
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Markets" },
+            ]}
+          />
+          <div className="mt-8 grid gap-5 md:grid-cols-3">
             {markets.map((market) => (
               <Link
                 key={market.code}
