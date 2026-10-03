@@ -60,12 +60,11 @@ export default async function CategoriesPage() {
             ]}
           />
           <div className="mt-8">
-          {hasVerifiedCategories ? (
+            {hasVerifiedCategories ? (
             <div className="space-y-10">
               {catalog
                 .filter(({ categories }) => Boolean(categories?.length))
                 .map(({ market, categories }) => (
-
                   <section key={market.code}>
                     <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
                       <div>
@@ -164,7 +163,7 @@ export default async function CategoriesPage() {
                 eCommPilot will show category pages here only when the public catalog API returns verified marketplace category data.
               </p>
             </div>
-          )}
+            )}
           </div>
         </div>
       </section>
