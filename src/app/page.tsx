@@ -103,7 +103,7 @@ export default function Home() {
             title="Research without the noise."
             description="The public experience stays simple. Behind each published product is a structured research and supplier workflow."
           />
-          <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-8 grid gap-5 md:grid-cols-3">
             {steps.map(([number,title,text]) => (
               <article key={number} className="feature-card">
                 <span className="feature-number">{number}</span>
@@ -125,7 +125,7 @@ export default function Home() {
             />
             <Link href={routes.freeTools} className="text-sm font-extrabold text-[var(--blue)]">View all tools →</Link>
           </div>
-          <div className="mt-8 grid gap-5 md:grid-cols-3">
+          <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
             {tools.map(([icon,title,text,href]) => (
               <Link key={href} href={href} className="tool-card group">
                 <span className="tool-icon">{icon}</span>
