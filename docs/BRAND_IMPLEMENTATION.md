@@ -68,6 +68,16 @@ Avoid:
 - fake testimonials/metrics;
 - visually noisy dashboard patterns.
 
+## Preferred Theme Studio direction
+
+Current production recommendation, pending owner lock:
+
+**Marketplace Hybrid structure + Energetic Blue/Cyan brand language.**
+
+Use Marketplace Hybrid for catalog/product information architecture and the approved blue/cyan identity for logo, CTAs and selected accents. Deeper navy can support data-heavy surfaces.
+
+See [Theme Studio Review](./THEME_STUDIO_REVIEW.md).
+
 ## Theme Studio
 
 The Theme Studio is the visual comparison/prototyping surface.
