@@ -29,63 +29,69 @@ export async function MarketFilter({
   const bands = (apiBands?.length
     ? apiBands.map((band) => band.minimumPercent)
     : fallbackBands
-  ).filter((band, index, values) => values.indexOf(band) === index);
+  )
+    .filter((band, index, values) => values.indexOf(band) === index)
+    .sort((a, b) => a - b);
 
   return (
     <div className="filter-panel">
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="filter-row">
         <span className="filter-label">Market</span>
-        <Link
-          href={withProfitBand("/winning-products", currentMinProfitBand)}
-          className={!currentMarket ? "filter-chip filter-chip-active" : "filter-chip"}
-        >
-          All
-        </Link>
-        {markets
-          .filter((market) => market.active)
-          .map((market) => (
-            <Link
-              key={market.code}
-              href={withProfitBand(
-                "/winning-products/" + market.slug,
-                currentMinProfitBand,
-              )}
-              className={
-                currentMarket === market.code
-                  ? "filter-chip filter-chip-active"
-                  : "filter-chip"
-              }
-            >
-              {market.code}
-            </Link>
-          ))}
+        <div className="filter-options">
+          <Link
+            href={withProfitBand("/winning-products", currentMinProfitBand)}
+            className={!currentMarket ? "filter-chip filter-chip-active" : "filter-chip"}
+          >
+            All
+          </Link>
+          {markets
+            .filter((market) => market.active)
+            .map((market) => (
+              <Link
+                key={market.code}
+                href={withProfitBand(
+                  "/winning-products/" + market.slug,
+                  currentMinProfitBand,
+                )}
+                className={
+                  currentMarket === market.code
+                    ? "filter-chip filter-chip-active"
+                    : "filter-chip"
+                }
+              >
+                {market.code}
+              </Link>
+            ))}
+        </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="filter-row">
         <span className="filter-label">Minimum profit</span>
-        <Link
-          href={basePath}
-          className={
-            currentMinProfitBand == null
-              ? "filter-chip filter-chip-active"
-              : "filter-chip"
-          }
-        >
-          All
-        </Link>
-        {bands.map((band) => (
+        <div className="filter-options">
           <Link
-            key={band}
-            href={withProfitBand(basePath, band)}
+            href={basePath}
             className={
-              currentMinProfitBand === band
+              currentMinProfitBand == null
                 ? "filter-chip filter-chip-active"
                 : "filter-chip"
             }
           >
-            {band}%+
+            All
           </Link>
-        ))}
+          {bands.map((band) => (
+            <Link
+              key={band}
+              href={withProfitBand(basePath, band)}
+              className={
+                currentMinProfitBand === band
+                  ? "filter-chip filter-chip-active"
+                  : "filter-chip"
+              }
+            >
+              {band}%+
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   );
