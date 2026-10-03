@@ -64,6 +64,7 @@ export default function Page() {
               correct for every seller.
             </p>
           </article>
+          <RelatedTools currentPath={path} />
         </div>
       </section>
     </PageShell>
