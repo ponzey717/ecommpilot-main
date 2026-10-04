@@ -146,11 +146,13 @@ Completed and pushed:
 
 Reviewed operations improvements include canonical DB evidence reconstruction and transaction-scoped writes through `withWorkspaceTransaction`.
 
-Next Codex branch requested:
+Launch-readiness branch is now pushed and under draft review:
 
 `feature/public-winning-products-launch-readiness-v1`
 
-This branch is expected to harden server identity derivation, add migration preflight/postflight tooling, PostgreSQL workflow integration tests, deployment safeguards and the production migration checkpoint.
+It adds server-derived publication identity, migration preflight/postflight tooling, PostgreSQL workflow integration tests, deployment safeguards, dependency security remediation and the production migration checkpoint.
+
+Lead review added further hardening for retired controls, marketplace-matched evidence/quotes, hostile cross-market PostgreSQL fixtures and cleaner partial-schema verification. The branch now needs one local validation rerun before migration approval is considered.
 
 Do not recreate or duplicate that backend implementation from the public repository.
 
@@ -158,8 +160,8 @@ Do not recreate or duplicate that backend implementation from the public reposit
 
 1. Public static review is at the local validation checkpoint.
 2. Run local `npm run lint` and `npm run build` once before merging public PR #1.
-3. Review `feature/public-winning-products-launch-readiness-v1` as soon as Codex pushes it.
-4. Keep backend foundation/operations PRs unmerged until launch-readiness and migration sequencing are reviewed.
+3. Rerun local validation on `feature/public-winning-products-launch-readiness-v1` after lead-review hardening.
+4. Keep backend foundation/operations/launch-readiness PRs unmerged until that rerun is clean.
 5. Do not merge/deploy the private app before explicit migration approval because its root production build runs the migration command.
 6. After backend approval and migration application, configure production `ECOMMPILOT_API_BASE_URL`.
 7. Verify markets, categories, products, filters, cursor pagination and product detail end to end against real published data.
