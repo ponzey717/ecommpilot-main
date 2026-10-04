@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/config/site";
 import {
-  getPublicCategories,
+  getAllPublicCategories,
   getPublicMarkets,
   getPublicProducts,
   type PublicMarket,
@@ -56,7 +56,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const catalogByMarket = await Promise.all(
     markets.map(async (market) => {
       const [categories, products] = await Promise.all([
-        getPublicCategories({ market: market.code, limit: 100 }),
+        getAllPublicCategories({ market: market.code }),
         sitemapProducts(market),
       ]);
       return {
