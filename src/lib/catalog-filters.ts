@@ -44,3 +44,20 @@ export function parseSupplierProvider(
   if (!raw || raw.length > 40) return undefined;
   return /^[a-z0-9_-]+$/.test(raw) ? raw : undefined;
 }
+
+
+export function hasCatalogQuery(
+  query: Record<string, string | string[] | undefined>,
+): boolean {
+  return [
+    "minProfitBand",
+    "minSales30d",
+    "maxDeliveryDays",
+    "supplier",
+    "freshnessHours",
+    "cursor",
+  ].some((key) => {
+    const value = query[key];
+    return Array.isArray(value) ? value.some(Boolean) : Boolean(value);
+  });
+}
