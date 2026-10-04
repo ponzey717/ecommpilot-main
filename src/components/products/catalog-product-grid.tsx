@@ -10,15 +10,25 @@ function nextPageHref({
   basePath,
   cursor,
   minProfitBand,
+  minSales30d,
+  maxDeliveryDays,
+  supplier,
+  freshnessHours,
 }: {
   basePath: string;
   cursor: string;
   minProfitBand?: number;
+  minSales30d?: number;
+  maxDeliveryDays?: number;
+  supplier?: string;
+  freshnessHours?: number;
 }) {
   const query = new URLSearchParams({ cursor });
-  if (minProfitBand != null) {
-    query.set("minProfitBand", String(minProfitBand));
-  }
+  if (minProfitBand != null) query.set("minProfitBand", String(minProfitBand));
+  if (minSales30d != null) query.set("minSales30d", String(minSales30d));
+  if (maxDeliveryDays != null) query.set("maxDeliveryDays", String(maxDeliveryDays));
+  if (supplier) query.set("supplier", supplier);
+  if (freshnessHours != null) query.set("freshnessHours", String(freshnessHours));
   return basePath + "?" + query.toString();
 }
 
@@ -26,6 +36,10 @@ export async function CatalogProductGrid({
   market,
   category,
   minProfitBand,
+  minSales30d,
+  maxDeliveryDays,
+  supplier,
+  freshnessHours,
   cursor,
   basePath = "/winning-products",
   limit = 12,
@@ -33,6 +47,10 @@ export async function CatalogProductGrid({
   market?: PublicMarket["code"];
   category?: string;
   minProfitBand?: number;
+  minSales30d?: number;
+  maxDeliveryDays?: number;
+  supplier?: string;
+  freshnessHours?: number;
   cursor?: string;
   basePath?: string;
   limit?: number;
@@ -41,6 +59,10 @@ export async function CatalogProductGrid({
     ...(market ? { market } : {}),
     ...(category ? { category } : {}),
     ...(minProfitBand != null ? { minProfitBand } : {}),
+    ...(minSales30d != null ? { minSales30d } : {}),
+    ...(maxDeliveryDays != null ? { maxDeliveryDays } : {}),
+    ...(supplier ? { supplier } : {}),
+    ...(freshnessHours != null ? { freshnessHours } : {}),
     ...(cursor ? { cursor } : {}),
     limit,
   });
@@ -61,6 +83,10 @@ export async function CatalogProductGrid({
                 basePath,
                 cursor: payload.nextCursor,
                 minProfitBand,
+                minSales30d,
+                maxDeliveryDays,
+                supplier,
+                freshnessHours,
               })}
               className="button button-secondary"
               rel="next"
