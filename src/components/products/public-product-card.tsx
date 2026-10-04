@@ -31,6 +31,8 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
   );
   const requiredTier = tierLabel(product.access?.requiredTier);
   const localImage = product.image?.url?.startsWith("/") ? product.image : null;
+  const remoteImage =
+    product.image?.url?.startsWith("https://") ? product.image : null;
 
   return (
     <article className="product-card">
@@ -41,6 +43,16 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
             alt={localImage.alt}
             width={localImage.width ?? 600}
             height={localImage.height ?? 420}
+            className="aspect-[10/7] w-full object-cover"
+          />
+        ) : remoteImage ? (
+          <img
+            src={remoteImage.url}
+            alt={remoteImage.alt}
+            width={remoteImage.width ?? 600}
+            height={remoteImage.height ?? 420}
+            loading="lazy"
+            referrerPolicy="no-referrer"
             className="aspect-[10/7] w-full object-cover"
           />
         ) : (
