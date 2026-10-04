@@ -90,8 +90,10 @@ Implemented in GitHub:
 - exact query-name alignment with the private backend contract;
 - separate verified-empty and temporary-unavailable states;
 - non-data loading states for Winning Products and Categories;
-- dynamic sitemap inclusion for market/category catalog routes only when verified public data exists;
-- safe Standby availability and public profit methodology on product detail pages.
+- dynamic sitemap inclusion for market/category/product catalog routes only when verified public data exists, with bounded cursor pagination;
+- safe Standby availability and public profit methodology on product detail pages;
+- real cursor pagination for catalog grids;
+- approved hosted HTTPS product images rendered on cards/detail pages and available to social metadata.
 
 ## Important development rules
 
