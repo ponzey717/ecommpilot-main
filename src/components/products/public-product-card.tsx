@@ -66,7 +66,9 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
             className="aspect-[10/7] w-full object-cover"
           />
         ) : remoteImage ? (
-          <img
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
             src={remoteImage.url}
             alt={remoteImage.alt}
             width={remoteImage.width ?? 600}
@@ -74,7 +76,8 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
             loading="lazy"
             referrerPolicy="no-referrer"
             className="aspect-[10/7] w-full object-cover"
-          />
+            />
+          </>
         ) : (
           <div className="flex aspect-[10/7] w-full items-center justify-center bg-[linear-gradient(135deg,#edf7ff,#eafcff)] p-8 text-center">
             <div>
