@@ -112,7 +112,7 @@ Draft PR:
 
 **Connect categories and catalog filters to public API**
 
-Review additions now also include the fourth free tool, API contract alignment, conditional sitemap behavior, loading/error states and safe product-detail Standby/methodology rendering.
+Review additions now also include advanced catalog filtering, real cursor pagination, false-404 outage protection, verified freshness timestamps, safe hosted-image rendering, completed Learn content, conditional real-data sitemap expansion, filter-query noindex rules, calculator economics improvements and accessibility fixes.
 
 Branch:
 
@@ -120,45 +120,51 @@ Branch:
 
 Current scope:
 
-- replace production hardcoded Categories hub with market-specific API categories;
-- keep category samples development-only;
-- make market filters functional;
-- make profit-band filters functional;
-- support configured profit bands, with approved V1 bands as fallback;
-- pass `minProfitBand` through hub, market and category product queries.
+- API-first production Categories and Winning Products surfaces;
+- development-only catalog fallbacks;
+- market/profit/sales/delivery/supplier/freshness filters;
+- cursor pagination with filter preservation;
+- correct backend query contract;
+- safe unavailable vs empty vs not-found behavior;
+- verified category/product sitemap discovery only;
+- safe product detail evidence, Standby summary and methodology;
+- real Learn content and seller tools;
+- filtered query URLs marked noindex/follow;
+- mobile/accessibility polish.
 
 This branch must remain unmerged until local lint/build validation is run at the milestone.
 
 ## Private backend dependency
 
-The private `ponzey717/ecommpilot` backend task is being implemented separately by Codex.
+The private `ponzey717/ecommpilot` backend is handled separately.
 
-Requested branch:
+Completed and pushed:
 
-`feature/public-winning-products-v1`
+- `feature/public-winning-products-v1` at `3349ec9`;
+- draft backend foundation PR #58;
+- `feature/public-winning-products-ops-v1` at `1cada14`, with private qualification/economics/supplier/publication operations and UI.
 
-Codex had already:
+Reviewed operations improvements include canonical DB evidence reconstruction and transaction-scoped writes through `withWorkspaceTransaction`.
 
-- audited canonical docs/schema;
-- confirmed publication must remain additive to the internal `winning-v1` engine;
-- confirmed existing supplier pool/quotes/evidence should remain authoritative;
-- identified the need for a separate public-economics projection because the internal Research economics include promoted-listing/other assumptions that do not match the public V1 formula;
-- started editing before a network reconnect.
+Next Codex branch requested:
+
+`feature/public-winning-products-launch-readiness-v1`
+
+This branch is expected to harden server identity derivation, add migration preflight/postflight tooling, PostgreSQL workflow integration tests, deployment safeguards and the production migration checkpoint.
 
 Do not recreate or duplicate that backend implementation from the public repository.
 
 ## Next engineering work
 
-1. Finish static review of the draft public catalog PR.
-2. Run local `npm run lint` and `npm run build` once at the milestone before merge.
-3. Backend foundation `feature/public-winning-products-v1` is now pushed and under draft PR review (#58).
-4. Review the follow-on `feature/public-winning-products-ops-v1` once Codex pushes it, with special attention to canonical evidence reconciliation, transactional publication mutations and qualification profile defaults.
-5. After backend approval and production migration approval, connect production `ECOMMPILOT_API_BASE_URL`.
-6. Verify markets, categories, products and product detail end to end.
-7. Expand sitemap/indexing only for real published catalog URLs.
-8. Continue mobile catalog/filter polish.
-9. Expand Learn with additional genuinely useful guides as topics mature.
-10. Expand additional free tools based on genuine seller utility and SEO value.
+1. Public static review is at the local validation checkpoint.
+2. Run local `npm run lint` and `npm run build` once before merging public PR #1.
+3. Review `feature/public-winning-products-launch-readiness-v1` as soon as Codex pushes it.
+4. Keep backend foundation/operations PRs unmerged until launch-readiness and migration sequencing are reviewed.
+5. Do not merge/deploy the private app before explicit migration approval because its root production build runs the migration command.
+6. After backend approval and migration application, configure production `ECOMMPILOT_API_BASE_URL`.
+7. Verify markets, categories, products, filters, cursor pagination and product detail end to end against real published data.
+8. Then perform production sitemap/robots/metadata/schema checks before Search Console submission.
+9. Expand Learn/tools only where genuine utility justifies new pages.
 
 ## Manual action currently required
 
