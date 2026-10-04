@@ -22,8 +22,14 @@ function tierLabel(tier: string | null | undefined) {
 }
 
 export function PublicProductCard({ product }: { product: PublicProductSummary }) {
-  const detailHref = product.category?.slug
-    ? "/winning-products/" + product.market.toLowerCase() + "/" + product.category.slug + "/" + product.slug
+  const hasDetailRoute = Boolean(product.category?.slug);
+  const detailHref = hasDetailRoute
+    ? "/winning-products/" +
+      product.market.toLowerCase() +
+      "/" +
+      product.category!.slug +
+      "/" +
+      product.slug
     : "/winning-products/" + product.market.toLowerCase();
   const price = moneyFromMinor(
     product.economics?.recommendedSellingPriceMinor,
@@ -130,7 +136,7 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
           <p className="font-extrabold text-[var(--navy)]">{price ?? "—"}</p>
         </div>
         <Link href={detailHref} className="text-sm font-extrabold text-[var(--blue)]">
-          View product →
+          {hasDetailRoute ? "View product →" : "Browse market →"}
         </Link>
       </div>
     </article>
