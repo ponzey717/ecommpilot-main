@@ -62,40 +62,39 @@ Do not infer membership access from the numerical band itself. Entitlements are 
 
 ## GET /api/public/categories
 
-Query:
+Query parameters:
 
 - `market`
-- optional `parent`
-- cursor/limit
+- `cursor`
+- `limit`
 
-Category response fields:
+V1 category response fields:
 
 - market;
 - marketplace;
 - eBay category ID;
 - name;
 - slug;
-- parent;
-- path;
 - published product count;
-- taxonomy checked timestamp.
+- checked timestamp.
 
-Production categories come from market-specific eBay taxonomy snapshots.
+Current V1 categories are derived from published-product category evidence. The backend explicitly marks the taxonomy projection as incomplete. Parent/path hierarchy and official full eBay Taxonomy synchronization remain a later phase and must not be fabricated.
 
 ## GET /api/public/products
 
-Filters:
+Supported query parameters:
 
-- market;
-- category;
-- minimum profit band;
-- supplier;
-- maximum delivery days;
-- minimum 30-day sales;
-- minimum supplier rating;
-- freshness;
-- sort;
-- cursor/limit.
+- `market`
+- `category`
+- `minimumProfitBand`
+- `supplier`
+- `maximumDeliveryDays`
+- `minimumSales30d`
+- `freshnessHours`
+- `cursor`
+- `limit`
+
+The public frontend may use friendlier internal option names, but its server-side adapter must map them to these exact API parameter names.
 
 Anonymous list item:
 
@@ -154,12 +153,12 @@ Anonymous list item:
 
 Public detail may add:
 
-- richer eBay demand summary;
-- supplier quality summary;
-- profit explanation;
-- freshness;
-- related products;
-- locked-section metadata.
+- Standby supplier availability/provider summary;
+- public profit methodology;
+- explicit note that optional advertising is excluded;
+- richer eBay demand/supplier/freshness context when safely available;
+- related products later;
+- locked-section metadata later.
 
 Anonymous response must not expose private supplier URL, competitor URL, exact protected cost breakdown or internal evidence notes when those fields are member-gated.
 

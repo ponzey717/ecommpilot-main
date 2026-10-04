@@ -15,6 +15,18 @@ function moneyFromMinor(value: number | null | undefined, currency: string | nul
   }
 }
 
+function checkedDate(value: string | null | undefined) {
+  if (!value) return null;
+  const timestamp = Date.parse(value);
+  if (!Number.isFinite(timestamp)) return null;
+  return new Intl.DateTimeFormat("en", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(timestamp);
+}
+
 function tierLabel(tier: string | null | undefined) {
   if (tier === "premium") return "Premium";
   if (tier === "pro") return "Pro";
@@ -22,15 +34,25 @@ function tierLabel(tier: string | null | undefined) {
 }
 
 export function PublicProductCard({ product }: { product: PublicProductSummary }) {
-  const detailHref = product.category?.slug
-    ? "/winning-products/" + product.market.toLowerCase() + "/" + product.category.slug + "/" + product.slug
+  const categorySlug = product.category?.slug;
+  const hasDetailRoute = Boolean(categorySlug);
+  const detailHref = categorySlug
+    ? "/winning-products/" +
+      product.market.toLowerCase() +
+      "/" +
+      categorySlug +
+      "/" +
+      product.slug
     : "/winning-products/" + product.market.toLowerCase();
   const price = moneyFromMinor(
     product.economics?.recommendedSellingPriceMinor,
     product.economics?.currency,
   );
+  const checkedAt = checkedDate(product.freshness?.checkedAt);
   const requiredTier = tierLabel(product.access?.requiredTier);
   const localImage = product.image?.url?.startsWith("/") ? product.image : null;
+  const remoteImage =
+    product.image?.url?.startsWith("https://") ? product.image : null;
 
   return (
     <article className="product-card">
@@ -43,6 +65,19 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
             height={localImage.height ?? 420}
             className="aspect-[10/7] w-full object-cover"
           />
+        ) : remoteImage ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={remoteImage.url}
+              alt={remoteImage.alt}
+              width={remoteImage.width ?? 600}
+              height={remoteImage.height ?? 420}
+              loading="lazy"
+              referrerPolicy="no-referrer"
+              className="aspect-[10/7] w-full object-cover"
+            />
+          </>
         ) : (
           <div className="flex aspect-[10/7] w-full items-center justify-center bg-[linear-gradient(135deg,#edf7ff,#eafcff)] p-8 text-center">
             <div>
@@ -87,6 +122,11 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
             {product.supplier.deliveryMaxDays} days
           </span>
         ) : null}
+        {product.supplier?.orderCount != null ? (
+          <span className="badge badge-neutral">
+            {product.supplier.orderCount.toLocaleString()} supplier orders
+          </span>
+        ) : null}
         {product.freshness?.status ? (
           <span className="badge badge-neutral">{product.freshness.status}</span>
         ) : null}
@@ -107,14 +147,21 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
         </div>
       </div>
 
-      <div className="mt-5 flex items-center justify-between border-t border-[var(--border)] pt-4">
-        <div>
-          <span className="metric-label">Target price</span>
-          <p className="font-extrabold text-[var(--navy)]">{price ?? "—"}</p>
+      <div className="mt-5 border-t border-[var(--border)] pt-4">
+        {checkedAt ? (
+          <p className="mb-3 text-xs font-semibold text-[var(--muted)]">
+            Evidence checked {checkedAt} UTC
+          </p>
+        ) : null}
+        <div className="flex items-center justify-between">
+          <div>
+            <span className="metric-label">Target price</span>
+            <p className="font-extrabold text-[var(--navy)]">{price ?? "—"}</p>
+          </div>
+          <Link href={detailHref} className="text-sm font-extrabold text-[var(--blue)]">
+            {hasDetailRoute ? "View product →" : "Browse market →"}
+          </Link>
         </div>
-        <Link href={detailHref} className="text-sm font-extrabold text-[var(--blue)]">
-          View product →
-        </Link>
       </div>
     </article>
   );
