@@ -23,20 +23,22 @@ type PageProps = {
 async function resolveCategory(marketSlug: string, categorySlug: string) {
   const markets = await getPublicMarketsWithFallback();
   const market = markets.find((item) => item.slug === marketSlug && item.active);
-  if (!market) return null;
+  if (!market) return { state: "not_found" as const };
 
   const categories = await getPublicCategories({ market: market.code });
-  const category = categories?.find((item) => item.slug === categorySlug);
-  if (!category) return null;
+  if (categories === null) return { state: "unavailable" as const };
 
-  return { market, category };
+  const category = categories.find((item) => item.slug === categorySlug);
+  if (!category) return { state: "not_found" as const };
+
+  return { state: "ok" as const, market, category };
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { market: marketSlug, category: categorySlug } = await params;
   const resolved = await resolveCategory(marketSlug, categorySlug);
 
-  if (!resolved) {
+  if (resolved.state !== "ok") {
     const market = fallbackPublicMarkets().find((item) => item.slug === marketSlug);
     return {
       title: market ? "eBay " + market.code + " Products" : "Winning Products",
@@ -66,7 +68,10 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
   const minProfitBand = parseMinProfitBand(query.minProfitBand);
   const cursor = parseCatalogCursor(query.cursor);
   const resolved = await resolveCategory(marketSlug, categorySlug);
-  if (!resolved) notFound();
+  if (resolved.state === "unavailable") {
+    throw new Error("Public category catalog is temporarily unavailable.");
+  }
+  if (resolved.state === "not_found") notFound();
 
   const { market, category } = resolved;
   const path = "/winning-products/" + market.slug + "/" + category.slug;
