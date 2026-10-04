@@ -128,6 +128,7 @@ export default async function ProductPage({ params }: PageProps) {
           (product.image.url.startsWith("/") ||
             product.image.url.startsWith("https://")) ? (
             <div className="mb-6 overflow-hidden rounded-[24px] border border-[var(--border)] bg-white">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={product.image.url}
                 alt={product.image.alt}
