@@ -18,6 +18,12 @@ const tools = [
   ["ST", "Sell-Through Calculator", "Measure observed sell-through using your own sold and active listing evidence.", "/free-tools/sell-through-calculator"],
 ];
 
+const guides = [
+  ["Product evaluation", "How to Evaluate an eBay Dropshipping Product", "Use an evidence-first sequence for demand, competition, supplier, operational fit and economics.", "/learn/evaluate-ebay-dropshipping-product"],
+  ["Economics", "Profit Margin vs ROI", "Understand what the two percentages measure and why landed supplier cost matters.", "/learn/profit-margin-vs-roi"],
+  ["Supplier resilience", "Why a Standby Supplier Matters", "Build a safer recovery path when Primary supplier evidence changes.", "/learn/why-standby-supplier-matters"],
+];
+
 export default function Home() {
   return (
     <PageShell darkHeader>
@@ -131,6 +137,35 @@ export default function Home() {
                 <span className="tool-icon">{icon}</span>
                 <h3 className="mt-5 text-lg font-extrabold text-[var(--navy)] group-hover:text-[var(--blue)]">{title}</h3>
                 <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{text}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="soft-section py-16 md:py-20">
+        <div className="site-container">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <SectionHeading
+              eyebrow="Learn"
+              title="Build a repeatable research process."
+              description="Practical guides connect product discovery, supplier validation and economics into one evidence-first workflow."
+            />
+            <Link href={routes.learn} className="text-sm font-extrabold text-[var(--blue)]">
+              View all guides →
+            </Link>
+          </div>
+          <div className="mt-8 grid gap-5 md:grid-cols-3">
+            {guides.map(([eyebrow, title, text, href]) => (
+              <Link key={href} href={href} className="feature-card group">
+                <p className="eyebrow">{eyebrow}</p>
+                <h3 className="mt-4 text-xl font-extrabold text-[var(--navy)] group-hover:text-[var(--blue)]">
+                  {title}
+                </h3>
+                <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{text}</p>
+                <p className="mt-5 text-sm font-extrabold text-[var(--blue)]">
+                  Read guide →
+                </p>
               </Link>
             ))}
           </div>
