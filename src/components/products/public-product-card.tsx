@@ -15,6 +15,18 @@ function moneyFromMinor(value: number | null | undefined, currency: string | nul
   }
 }
 
+function checkedDate(value: string | null | undefined) {
+  if (!value) return null;
+  const timestamp = Date.parse(value);
+  if (!Number.isFinite(timestamp)) return null;
+  return new Intl.DateTimeFormat("en", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(timestamp);
+}
+
 function tierLabel(tier: string | null | undefined) {
   if (tier === "premium") return "Premium";
   if (tier === "pro") return "Pro";
@@ -35,6 +47,7 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
     product.economics?.recommendedSellingPriceMinor,
     product.economics?.currency,
   );
+  const checkedAt = checkedDate(product.freshness?.checkedAt);
   const requiredTier = tierLabel(product.access?.requiredTier);
   const localImage = product.image?.url?.startsWith("/") ? product.image : null;
   const remoteImage =
@@ -130,7 +143,13 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
         </div>
       </div>
 
-      <div className="mt-5 flex items-center justify-between border-t border-[var(--border)] pt-4">
+      <div className="mt-5 border-t border-[var(--border)] pt-4">
+        {checkedAt ? (
+          <p className="mb-3 text-xs font-semibold text-[var(--muted)]">
+            Evidence checked {checkedAt} UTC
+          </p>
+        ) : null}
+        <div className="flex items-center justify-between">
         <div>
           <span className="metric-label">Target price</span>
           <p className="font-extrabold text-[var(--navy)]">{price ?? "—"}</p>
@@ -138,6 +157,7 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
         <Link href={detailHref} className="text-sm font-extrabold text-[var(--blue)]">
           {hasDetailRoute ? "View product →" : "Browse market →"}
         </Link>
+        </div>
       </div>
     </article>
   );
