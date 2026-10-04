@@ -38,7 +38,7 @@ export default function Page() {
       <PageHero
         eyebrow="Free eBay tool"
         title="eBay Profit Margin Calculator"
-        description="Estimate landed cost, marketplace fees, net profit, margin and ROI from your own assumptions before you list."
+        description="Estimate landed cost, marketplace fees, net profit, margin, ROI and break-even selling price from your own assumptions before you list."
       />
       <section className="py-12 md:py-16">
         <div className="site-container">
@@ -62,6 +62,7 @@ export default function Page() {
                 Landed supplier cost is product cost plus supplier shipping plus any
                 purchase tax, GST or VAT you enter. eBay cost is calculated from your
                 marketplace fee assumption and any mandatory fixed fee you include.
+                Break-even selling price is derived from those same cost and fee inputs.
               </p>
             </article>
             <article className="feature-card">
