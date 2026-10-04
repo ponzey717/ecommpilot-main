@@ -5,7 +5,7 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
-import { parseMinProfitBand } from "@/lib/catalog-filters";
+import { parseCatalogCursor, parseMinProfitBand } from "@/lib/catalog-filters";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 
@@ -17,12 +17,13 @@ export const metadata: Metadata = buildMetadata({
 });
 
 type PageProps = {
-  searchParams: Promise<{ minProfitBand?: string | string[] }>;
+  searchParams: Promise<{ minProfitBand?: string | string[]; cursor?: string | string[] }>;
 };
 
 export default async function WinningProductsPage({ searchParams }: PageProps) {
   const query = await searchParams;
   const minProfitBand = parseMinProfitBand(query.minProfitBand);
+  const cursor = parseCatalogCursor(query.cursor);
 
   return (
     <PageShell darkHeader>
@@ -53,7 +54,11 @@ export default async function WinningProductsPage({ searchParams }: PageProps) {
             />
           </div>
           <div className="mt-6">
-            <CatalogProductGrid minProfitBand={minProfitBand} />
+            <CatalogProductGrid
+              minProfitBand={minProfitBand}
+              cursor={cursor}
+              basePath="/winning-products"
+            />
           </div>
         </div>
       </section>
