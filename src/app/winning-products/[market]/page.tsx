@@ -10,13 +10,13 @@ import {
   fallbackPublicMarkets,
   getPublicMarketsWithFallback,
 } from "@/lib/api/public-catalog";
-import { parseMinProfitBand } from "@/lib/catalog-filters";
+import { parseCatalogCursor, parseMinProfitBand } from "@/lib/catalog-filters";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 
 type PageProps = {
   params: Promise<{ market: string }>;
-  searchParams: Promise<{ minProfitBand?: string | string[] }>;
+  searchParams: Promise<{ minProfitBand?: string | string[]; cursor?: string | string[] }>;
 };
 
 export function generateStaticParams() {
@@ -42,6 +42,7 @@ export default async function MarketPage({ params, searchParams }: PageProps) {
   const { market: slug } = await params;
   const query = await searchParams;
   const minProfitBand = parseMinProfitBand(query.minProfitBand);
+  const cursor = parseCatalogCursor(query.cursor);
   const markets = await getPublicMarketsWithFallback();
   const market = markets.find((item) => item.slug === slug && item.active);
 
@@ -88,6 +89,8 @@ export default async function MarketPage({ params, searchParams }: PageProps) {
             <CatalogProductGrid
               market={market.code}
               minProfitBand={minProfitBand}
+              cursor={cursor}
+              basePath={path}
             />
           </div>
         </div>
