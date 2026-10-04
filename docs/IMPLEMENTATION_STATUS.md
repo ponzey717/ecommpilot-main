@@ -67,7 +67,7 @@ Implemented in GitHub:
 - four free-tool routes, including the user-input Sell-Through Calculator;
 - breadcrumbs and breadcrumb schema across mature catalog and public hub routes;
 - contextual related-tool links and catalog CTA on free-tool pages;
-- Learn hub is now indexable with three completed evergreen guides, Article schema, ItemList schema and sitemap coverage.
+- Learn hub is now indexable with three completed evergreen guides, Article schema, ItemList schema, homepage discovery and sitemap coverage.
 
 ### Phase 3 — API-first catalog preparation
 
@@ -93,6 +93,7 @@ Implemented in GitHub:
 - dynamic sitemap inclusion for market/category/product catalog routes only when verified public data exists, with bounded cursor pagination;
 - safe Standby availability and public profit methodology on product detail pages;
 - real cursor pagination for catalog grids;
+- public catalog filters for supplier, maximum delivery, minimum 30-day sales and evidence freshness, with sanitized query handling and filter preservation;
 - approved hosted HTTPS product images rendered on cards/detail pages and available to social metadata.
 
 ## Important development rules
