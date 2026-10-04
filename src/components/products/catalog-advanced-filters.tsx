@@ -25,6 +25,7 @@ export function CatalogAdvancedFilters({
     <form
       method="get"
       action={basePath}
+      aria-label="Advanced catalog filters"
       className="mt-4 rounded-[18px] border border-[var(--border)] bg-white p-4"
     >
       {minProfitBand != null ? (
