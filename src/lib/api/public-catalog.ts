@@ -104,6 +104,7 @@ type ProfitBandsResponse = {
 type CategoriesResponse = {
   version: PublicCatalogVersion;
   categories: PublicCategory[];
+  nextCursor?: string | null;
 };
 
 type ProductsResponse = {
@@ -169,18 +170,51 @@ export async function getPublicProfitBands(): Promise<PublicProfitBand[] | null>
   return payload?.version === 'public-v1' ? payload.bands : null;
 }
 
-export async function getPublicCategories(input?: {
+export async function getPublicCategoriesPage(input?: {
   market?: PublicMarket['code'];
   cursor?: string;
   limit?: number;
-}): Promise<PublicCategory[] | null> {
+}): Promise<CategoriesResponse | null> {
   const query = new URLSearchParams();
   if (input?.market) query.set('market', input.market);
   if (input?.cursor) query.set('cursor', input.cursor);
   if (input?.limit != null) query.set('limit', String(input.limit));
   const suffix = query.size ? '?' + query.toString() : '';
   const payload = await fetchJson<CategoriesResponse>('/api/public/categories' + suffix);
-  return payload?.version === 'public-v1' ? payload.categories : null;
+  return payload?.version === 'public-v1' ? payload : null;
+}
+
+export async function getPublicCategories(input?: {
+  market?: PublicMarket['code'];
+  cursor?: string;
+  limit?: number;
+}): Promise<PublicCategory[] | null> {
+  const payload = await getPublicCategoriesPage(input);
+  return payload?.categories ?? null;
+}
+
+export async function getAllPublicCategories(input?: {
+  market?: PublicMarket['code'];
+  maxPages?: number;
+}): Promise<PublicCategory[] | null> {
+  const categories: PublicCategory[] = [];
+  const maxPages = Math.min(Math.max(input?.maxPages ?? 10, 1), 10);
+  let cursor: string | undefined;
+
+  for (let page = 0; page < maxPages; page += 1) {
+    const payload = await getPublicCategoriesPage({
+      ...(input?.market ? { market: input.market } : {}),
+      ...(cursor ? { cursor } : {}),
+      limit: 100,
+    });
+    if (!payload) return page === 0 ? null : categories;
+
+    categories.push(...payload.categories);
+    if (!payload.nextCursor) break;
+    cursor = payload.nextCursor;
+  }
+
+  return categories;
 }
 
 export async function getPublicProducts(input?: {
