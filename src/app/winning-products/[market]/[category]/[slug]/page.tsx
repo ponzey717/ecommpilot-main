@@ -5,7 +5,7 @@ import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
 import { JsonLd } from "@/components/seo/json-ld";
-import { getPublicProduct } from "@/lib/api/public-catalog";
+import { getPublicProductResult, type PublicProductDetail } from "@/lib/api/public-catalog";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 
@@ -14,7 +14,7 @@ type PageProps = {
 };
 
 function matchesRoute(
-  product: NonNullable<Awaited<ReturnType<typeof getPublicProduct>>>,
+  product: PublicProductDetail,
   market: string,
   category: string,
 ) {
@@ -26,14 +26,16 @@ function matchesRoute(
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { market, category, slug } = await params;
-  const product = await getPublicProduct(slug);
+  const lookup = await getPublicProductResult(slug);
 
-  if (!product || !matchesRoute(product, market, category)) {
+  if (lookup.state !== "ok" || !matchesRoute(lookup.product, market, category)) {
     return {
       title: "Winning Product",
       robots: { index: false, follow: true },
     };
   }
+
+  const product = lookup.product;
 
   return buildMetadata({
     title: product.name + " | eBay " + product.market + " Product Research",
@@ -59,8 +61,15 @@ function value(value: string | number | null | undefined, fallback = "Not availa
 
 export default async function ProductPage({ params }: PageProps) {
   const { market, category, slug } = await params;
-  const product = await getPublicProduct(slug);
-  if (!product || !matchesRoute(product, market, category)) notFound();
+  const lookup = await getPublicProductResult(slug);
+  if (lookup.state === "unavailable") {
+    throw new Error("Public product catalog is temporarily unavailable.");
+  }
+  if (lookup.state === "not_found" || !matchesRoute(lookup.product, market, category)) {
+    notFound();
+  }
+
+  const product = lookup.product;
 
   const productPath =
     "/winning-products/" + market + "/" + category + "/" + product.slug;
