@@ -1,3 +1,5 @@
+const supportedProfitBands = new Set([10, 15, 20, 25, 30, 35, 40, 50]);
+
 export function parseMinProfitBand(
   value: string | string[] | undefined,
 ): number | undefined {
@@ -5,9 +7,9 @@ export function parseMinProfitBand(
   if (!raw) return undefined;
 
   const parsed = Number(raw);
-  if (!Number.isFinite(parsed) || parsed < 0 || parsed > 100) return undefined;
-
-  return parsed;
+  return Number.isSafeInteger(parsed) && supportedProfitBands.has(parsed)
+    ? parsed
+    : undefined;
 }
 
 export function parseCatalogCursor(
