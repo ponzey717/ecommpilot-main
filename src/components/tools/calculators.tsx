@@ -37,44 +37,89 @@ function n(value: string) {
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
+type ToolCurrency = "USD" | "GBP" | "AUD";
+
+function currencySymbol(currency: ToolCurrency) {
+  if (currency === "GBP") return "£";
+  if (currency === "AUD") return "A$";
+  return "$";
+}
+
+function CurrencyField({
+  value,
+  onChange,
+}: {
+  value: ToolCurrency;
+  onChange: (value: ToolCurrency) => void;
+}) {
+  return (
+    <label className="grid gap-2 text-sm font-bold text-[var(--navy)]">
+      Currency
+      <select
+        value={value}
+        onChange={(event) => onChange(event.target.value as ToolCurrency)}
+        className="min-h-12 rounded-xl border border-[var(--border)] bg-white px-3 outline-none focus:border-[var(--blue)]"
+      >
+        <option value="USD">USD</option>
+        <option value="GBP">GBP</option>
+        <option value="AUD">AUD</option>
+      </select>
+    </label>
+  );
+}
+
 export function ProfitMarginCalculator() {
+  const [currency, setCurrency] = useState<ToolCurrency>("USD");
   const [selling, setSelling] = useState("34.99");
   const [cost, setCost] = useState("14.20");
   const [shipping, setShipping] = useState("0");
   const [tax, setTax] = useState("1.42");
   const [feeRate, setFeeRate] = useState("13.25");
+  const [fixedFee, setFixedFee] = useState("0");
 
   const result = useMemo(() => {
-    const sale = n(selling);
-    const landed = n(cost) + n(shipping) + n(tax);
-    const fee = sale * (n(feeRate) / 100);
+    const sale = Math.max(0, n(selling));
+    const landed = Math.max(0, n(cost)) + Math.max(0, n(shipping)) + Math.max(0, n(tax));
+    const rate = Math.max(0, n(feeRate)) / 100;
+    const fixed = Math.max(0, n(fixedFee));
+    const fee = sale * rate + fixed;
     const profit = sale - landed - fee;
     const margin = sale > 0 ? (profit / sale) * 100 : 0;
     const roi = landed > 0 ? (profit / landed) * 100 : 0;
-    return { landed, fee, profit, margin, roi };
-  }, [selling, cost, shipping, tax, feeRate]);
+    const breakEven = rate < 1 ? (landed + fixed) / (1 - rate) : null;
+    return { landed, fee, profit, margin, roi, breakEven };
+  }, [selling, cost, shipping, tax, feeRate, fixedFee]);
+
+  const symbol = currencySymbol(currency);
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1.1fr_.9fr]">
       <div className="feature-card grid gap-4 sm:grid-cols-2">
-        <NumberField label="Selling price" value={selling} onChange={setSelling} prefix="$" />
-        <NumberField label="Product cost" value={cost} onChange={setCost} prefix="$" />
-        <NumberField label="Supplier shipping" value={shipping} onChange={setShipping} prefix="$" />
-        <NumberField label="Purchase tax / GST / VAT" value={tax} onChange={setTax} prefix="$" />
-        <NumberField label="eBay fee rate" value={feeRate} onChange={setFeeRate} suffix="%" />
+        <CurrencyField value={currency} onChange={setCurrency} />
+        <NumberField label="Selling price" value={selling} onChange={setSelling} prefix={symbol} />
+        <NumberField label="Product cost" value={cost} onChange={setCost} prefix={symbol} />
+        <NumberField label="Supplier shipping" value={shipping} onChange={setShipping} prefix={symbol} />
+        <NumberField label="Purchase tax / GST / VAT" value={tax} onChange={setTax} prefix={symbol} />
+        <NumberField label="Marketplace fee rate" value={feeRate} onChange={setFeeRate} suffix="%" />
+        <NumberField label="Mandatory fixed transaction fee" value={fixedFee} onChange={setFixedFee} prefix={symbol} />
       </div>
       <div className="snapshot-card">
         <p className="eyebrow">Estimate</p>
         <div className="mt-5 grid grid-cols-2 gap-3">
-          <div className="metric-box"><span className="metric-label">Landed cost</span><strong>${result.landed.toFixed(2)}</strong></div>
-          <div className="metric-box"><span className="metric-label">eBay fee</span><strong>${result.fee.toFixed(2)}</strong></div>
-          <div className="metric-box"><span className="metric-label">Net profit</span><strong>${result.profit.toFixed(2)}</strong></div>
+          <div className="metric-box"><span className="metric-label">Landed cost</span><strong>{symbol}{result.landed.toFixed(2)}</strong></div>
+          <div className="metric-box"><span className="metric-label">Marketplace cost</span><strong>{symbol}{result.fee.toFixed(2)}</strong></div>
+          <div className="metric-box"><span className="metric-label">Net profit</span><strong>{symbol}{result.profit.toFixed(2)}</strong></div>
           <div className="metric-box"><span className="metric-label">Profit margin</span><strong>{result.margin.toFixed(1)}%</strong></div>
         </div>
-        <p className="mt-4 text-sm text-[var(--muted)]">ROI on landed cost: <strong>{result.roi.toFixed(1)}%</strong></p>
+        <p className="mt-4 text-sm text-[var(--muted)]">
+          ROI on landed cost: <strong>{result.roi.toFixed(1)}%</strong>
+        </p>
+        <p className="mt-2 text-sm text-[var(--muted)]">
+          Break-even selling price: <strong>{result.breakEven == null ? "Not available" : symbol + result.breakEven.toFixed(2)}</strong>
+        </p>
         <p className="mt-4 text-xs leading-5 text-[var(--muted)]">
           Estimate only. Enter the fee and tax assumptions that apply to your actual marketplace and category.
-          Optional promoted listing or ad spend is not included unless you add it to your costs.
+          Optional promoted listing or ad spend is excluded from this base calculation.
         </p>
       </div>
     </div>
@@ -82,28 +127,31 @@ export function ProfitMarginCalculator() {
 }
 
 export function EbayFeeEstimator() {
+  const [currency, setCurrency] = useState<ToolCurrency>("USD");
   const [selling, setSelling] = useState("34.99");
   const [feeRate, setFeeRate] = useState("13.25");
   const [fixedFee, setFixedFee] = useState("0");
 
   const fee = useMemo(
-    () => n(selling) * (n(feeRate) / 100) + n(fixedFee),
+    () => Math.max(0, n(selling)) * (Math.max(0, n(feeRate)) / 100) + Math.max(0, n(fixedFee)),
     [selling, feeRate, fixedFee],
   );
+  const symbol = currencySymbol(currency);
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1.1fr_.9fr]">
       <div className="feature-card grid gap-4">
-        <NumberField label="Selling price" value={selling} onChange={setSelling} prefix="$" />
+        <CurrencyField value={currency} onChange={setCurrency} />
+        <NumberField label="Selling price" value={selling} onChange={setSelling} prefix={symbol} />
         <NumberField label="Marketplace fee rate" value={feeRate} onChange={setFeeRate} suffix="%" />
-        <NumberField label="Fixed transaction fee (if any)" value={fixedFee} onChange={setFixedFee} prefix="$" />
+        <NumberField label="Fixed transaction fee (if any)" value={fixedFee} onChange={setFixedFee} prefix={symbol} />
       </div>
       <div className="snapshot-card">
         <p className="eyebrow">Estimated marketplace fee</p>
-        <p className="mt-4 text-5xl font-extrabold tracking-[-.04em] text-[var(--navy)]">${fee.toFixed(2)}</p>
+        <p className="mt-4 text-5xl font-extrabold tracking-[-.04em] text-[var(--navy)]">{symbol}{fee.toFixed(2)}</p>
         <p className="mt-5 text-xs leading-5 text-[var(--muted)]">
-          eBay fees vary by marketplace, category, seller status and other factors.
-          This tool intentionally uses the rate you enter rather than hardcoding one universal fee.
+          Marketplace fees vary by marketplace, category, seller status and other factors.
+          This tool intentionally uses the rate and fixed fee you enter rather than hardcoding one universal fee.
         </p>
       </div>
     </div>
