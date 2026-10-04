@@ -12,7 +12,7 @@ import {
   getPublicMarketsWithFallback,
   getPublicProducts,
 } from "@/lib/api/public-catalog";
-import { parseCatalogCursor, parseCatalogInteger, parseMinProfitBand, parseSupplierProvider } from "@/lib/catalog-filters";
+import { hasCatalogQuery, parseCatalogCursor, parseCatalogInteger, parseMinProfitBand, parseSupplierProvider } from "@/lib/catalog-filters";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 
@@ -41,8 +41,11 @@ async function resolveCategory(marketSlug: string, categorySlug: string) {
   return { state: "ok" as const, market, category };
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { market: marketSlug, category: categorySlug } = await params;
+export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
+  const [{ market: marketSlug, category: categorySlug }, query] = await Promise.all([
+    params,
+    searchParams,
+  ]);
   const resolved = await resolveCategory(marketSlug, categorySlug);
 
   if (resolved.state !== "ok") {
@@ -66,6 +69,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       resolved.market.slug +
       "/" +
       resolved.category.slug,
+    noIndex: hasCatalogQuery(query),
   });
 }
 
