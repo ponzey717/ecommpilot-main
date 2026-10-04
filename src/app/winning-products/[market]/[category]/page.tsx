@@ -8,7 +8,7 @@ import { PageShell } from "@/components/site/page-shell";
 import { JsonLd } from "@/components/seo/json-ld";
 import {
   fallbackPublicMarkets,
-  getPublicCategories,
+  getAllPublicCategories,
   getPublicMarketsWithFallback,
 } from "@/lib/api/public-catalog";
 import { parseCatalogCursor, parseMinProfitBand } from "@/lib/catalog-filters";
@@ -25,7 +25,7 @@ async function resolveCategory(marketSlug: string, categorySlug: string) {
   const market = markets.find((item) => item.slug === marketSlug && item.active);
   if (!market) return { state: "not_found" as const };
 
-  const categories = await getPublicCategories({ market: market.code });
+  const categories = await getAllPublicCategories({ market: market.code });
   if (categories === null) return { state: "unavailable" as const };
 
   const category = categories.find((item) => item.slug === categorySlug);
