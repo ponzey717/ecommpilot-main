@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { CatalogAdvancedFilters } from "@/components/products/catalog-advanced-filters";
 import { CatalogProductGrid } from "@/components/products/catalog-product-grid";
 import { MarketFilter } from "@/components/products/market-filter";
 import { Breadcrumbs } from "@/components/site/breadcrumbs";
@@ -11,13 +12,13 @@ import {
   getAllPublicCategories,
   getPublicMarketsWithFallback,
 } from "@/lib/api/public-catalog";
-import { parseCatalogCursor, parseMinProfitBand } from "@/lib/catalog-filters";
+import { parseCatalogCursor, parseCatalogInteger, parseMinProfitBand, parseSupplierProvider } from "@/lib/catalog-filters";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 
 type PageProps = {
   params: Promise<{ market: string; category: string }>;
-  searchParams: Promise<{ minProfitBand?: string | string[]; cursor?: string | string[] }>;
+  searchParams: Promise<{ minProfitBand?: string | string[]; minSales30d?: string | string[]; maxDeliveryDays?: string | string[]; supplier?: string | string[]; freshnessHours?: string | string[]; cursor?: string | string[] }>;
 };
 
 async function resolveCategory(marketSlug: string, categorySlug: string) {
@@ -66,6 +67,10 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
   const { market: marketSlug, category: categorySlug } = await params;
   const query = await searchParams;
   const minProfitBand = parseMinProfitBand(query.minProfitBand);
+  const minSales30d = parseCatalogInteger(query.minSales30d, 100000);
+  const maxDeliveryDays = parseCatalogInteger(query.maxDeliveryDays, 365);
+  const supplier = parseSupplierProvider(query.supplier);
+  const freshnessHours = parseCatalogInteger(query.freshnessHours, 8760);
   const cursor = parseCatalogCursor(query.cursor);
   const resolved = await resolveCategory(marketSlug, categorySlug);
   if (resolved.state === "unavailable") {
@@ -112,7 +117,19 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
             <MarketFilter
               currentMarket={market.code}
               currentMinProfitBand={minProfitBand}
+              minSales30d={minSales30d}
+              maxDeliveryDays={maxDeliveryDays}
+              supplier={supplier}
+              freshnessHours={freshnessHours}
               basePath={path}
+            />
+            <CatalogAdvancedFilters
+              basePath={path}
+              minProfitBand={minProfitBand}
+              minSales30d={minSales30d}
+              maxDeliveryDays={maxDeliveryDays}
+              supplier={supplier}
+              freshnessHours={freshnessHours}
             />
           </div>
           <div className="mt-6">
@@ -120,6 +137,10 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
               market={market.code}
               category={category.slug}
               minProfitBand={minProfitBand}
+              minSales30d={minSales30d}
+              maxDeliveryDays={maxDeliveryDays}
+              supplier={supplier}
+              freshnessHours={freshnessHours}
               cursor={cursor}
               basePath={path}
             />
