@@ -5,7 +5,7 @@ import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
 import {
-  getPublicCategories,
+  getAllPublicCategories,
   getPublicMarketsWithFallback,
 } from "@/lib/api/public-catalog";
 import { buildMetadata } from "@/lib/seo/metadata";
@@ -31,7 +31,7 @@ export default async function CategoriesPage() {
   const catalog = await Promise.all(
     markets.map(async (market) => ({
       market,
-      categories: await getPublicCategories({ market: market.code }),
+      categories: await getAllPublicCategories({ market: market.code }),
     })),
   );
 
