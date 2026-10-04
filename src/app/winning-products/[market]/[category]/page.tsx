@@ -9,8 +9,8 @@ import { PageShell } from "@/components/site/page-shell";
 import { JsonLd } from "@/components/seo/json-ld";
 import {
   fallbackPublicMarkets,
-  getAllPublicCategories,
   getPublicMarketsWithFallback,
+  getPublicProducts,
 } from "@/lib/api/public-catalog";
 import { parseCatalogCursor, parseCatalogInteger, parseMinProfitBand, parseSupplierProvider } from "@/lib/catalog-filters";
 import { buildMetadata } from "@/lib/seo/metadata";
@@ -26,11 +26,17 @@ async function resolveCategory(marketSlug: string, categorySlug: string) {
   const market = markets.find((item) => item.slug === marketSlug && item.active);
   if (!market) return { state: "not_found" as const };
 
-  const categories = await getAllPublicCategories({ market: market.code });
-  if (categories === null) return { state: "unavailable" as const };
+  const payload = await getPublicProducts({
+    market: market.code,
+    category: categorySlug,
+    limit: 1,
+  });
+  if (payload === null) return { state: "unavailable" as const };
 
-  const category = categories.find((item) => item.slug === categorySlug);
-  if (!category) return { state: "not_found" as const };
+  const category = payload.products[0]?.category;
+  if (!category || category.slug !== categorySlug) {
+    return { state: "not_found" as const };
+  }
 
   return { state: "ok" as const, market, category };
 }
