@@ -76,7 +76,7 @@ export async function MarketFilter({
     <div className="filter-panel">
       <div className="filter-row">
         <span className="filter-label">Market</span>
-        <div className="filter-options">
+        <div className="filter-options" role="group" aria-label="Market filter">
           <Link
             href={withFilters("/winning-products", {
               ...preserved,
@@ -85,6 +85,7 @@ export async function MarketFilter({
                 : {}),
             })}
             className={!currentMarket ? "filter-chip filter-chip-active" : "filter-chip"}
+            aria-current={!currentMarket ? "page" : undefined}
           >
             All
           </Link>
@@ -104,6 +105,7 @@ export async function MarketFilter({
                     ? "filter-chip filter-chip-active"
                     : "filter-chip"
                 }
+                aria-current={currentMarket === market.code ? "page" : undefined}
               >
                 {market.code}
               </Link>
@@ -113,7 +115,7 @@ export async function MarketFilter({
 
       <div className="filter-row">
         <span className="filter-label">Minimum profit</span>
-        <div className="filter-options">
+        <div className="filter-options" role="group" aria-label="Minimum profit filter">
           <Link
             href={withFilters(basePath, preserved)}
             className={
@@ -121,6 +123,7 @@ export async function MarketFilter({
                 ? "filter-chip filter-chip-active"
                 : "filter-chip"
             }
+            aria-current={currentMinProfitBand == null ? "page" : undefined}
           >
             All
           </Link>
@@ -136,6 +139,7 @@ export async function MarketFilter({
                   ? "filter-chip filter-chip-active"
                   : "filter-chip"
               }
+              aria-current={currentMinProfitBand === band ? "page" : undefined}
             >
               {band}%+
             </Link>
