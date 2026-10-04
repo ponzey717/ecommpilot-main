@@ -99,6 +99,11 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
             {product.supplier.deliveryMaxDays} days
           </span>
         ) : null}
+        {product.supplier?.orderCount != null ? (
+          <span className="badge badge-neutral">
+            {product.supplier.orderCount.toLocaleString()} supplier orders
+          </span>
+        ) : null}
         {product.freshness?.status ? (
           <span className="badge badge-neutral">{product.freshness.status}</span>
         ) : null}
