@@ -57,10 +57,19 @@ export default function Page() {
               Character count is only one part of a good title.
             </h2>
             <p className="mt-4 max-w-4xl text-sm leading-7 text-[var(--muted)]">
+              eBay currently states that listing titles can use up to 80 characters.
               The checker does not claim that a title will rank or convert. Product
               accuracy, relevant search terms, item specifics and eBay policy still
               matter when you prepare the final listing.
             </p>
+            <a
+              href="https://www.ebay.com/sellercenter/listings/create-listings"
+              target="_blank"
+              rel="noreferrer"
+              className="mt-4 inline-block text-sm font-extrabold text-[var(--blue)]"
+            >
+              Verify the current title guidance on eBay →
+            </a>
           </article>
           <RelatedTools currentPath={path} />
         </div>
