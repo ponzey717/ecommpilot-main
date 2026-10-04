@@ -11,7 +11,7 @@ import {
   fallbackPublicMarkets,
   getPublicMarketsWithFallback,
 } from "@/lib/api/public-catalog";
-import { parseCatalogCursor, parseCatalogInteger, parseMinProfitBand, parseSupplierProvider } from "@/lib/catalog-filters";
+import { hasCatalogQuery, parseCatalogCursor, parseCatalogInteger, parseMinProfitBand, parseSupplierProvider } from "@/lib/catalog-filters";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 
@@ -24,8 +24,8 @@ export function generateStaticParams() {
   return fallbackPublicMarkets().map((market) => ({ market: market.slug }));
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { market: slug } = await params;
+export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
+  const [{ market: slug }, query] = await Promise.all([params, searchParams]);
   const market = fallbackPublicMarkets().find((item) => item.slug === slug);
   if (!market) return {};
 
@@ -36,6 +36,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       market.name +
       " with supplier, delivery and profit context.",
     path: "/winning-products/" + market.slug,
+    noIndex: hasCatalogQuery(query),
   });
 }
 
