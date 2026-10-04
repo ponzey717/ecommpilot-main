@@ -246,6 +246,37 @@ export default async function ProductPage({ params }: PageProps) {
             </aside>
           </div>
 
+          <div className="mt-6 grid gap-5 md:grid-cols-2">
+            <Link href={categoryPath} className="feature-card group">
+              <p className="eyebrow">More opportunities</p>
+              <h2 className="mt-3 text-xl font-extrabold text-[var(--navy)] group-hover:text-[var(--blue)]">
+                Browse more {product.category?.name ?? "products"}
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
+                Return to the verified category catalog for this eBay {product.market} market.
+              </p>
+              <p className="mt-5 text-sm font-extrabold text-[var(--blue)]">
+                View category →
+              </p>
+            </Link>
+
+            <div className="feature-card">
+              <p className="eyebrow">eCommPilot account</p>
+              <h2 className="mt-3 text-xl font-extrabold text-[var(--navy)]">
+                Continue your product research in the app.
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
+                Join free to move from public discovery into the private eCommPilot workflow as account features become available.
+              </p>
+              <Link
+                href="https://app.ecommpilot.net/register"
+                className="button button-primary mt-5"
+              >
+                Join eCommPilot Free
+              </Link>
+            </div>
+          </div>
+
           {product.methodology?.profit ? (
             <article className="feature-card mt-6">
               <p className="eyebrow">Methodology</p>
