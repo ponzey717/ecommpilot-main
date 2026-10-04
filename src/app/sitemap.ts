@@ -17,6 +17,10 @@ const staticPaths = [
   "/free-tools/ebay-fee-estimator",
   "/free-tools/title-length-checker",
   "/free-tools/sell-through-calculator",
+  "/learn",
+  "/learn/evaluate-ebay-dropshipping-product",
+  "/learn/profit-margin-vs-roi",
+  "/learn/why-standby-supplier-matters",
   "/pricing",
 ] as const;
 
