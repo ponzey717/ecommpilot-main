@@ -207,7 +207,7 @@ export async function getAllPublicCategories(input?: {
       ...(cursor ? { cursor } : {}),
       limit: 100,
     });
-    if (!payload) return page === 0 ? null : categories;
+    if (!payload) return null;
 
     categories.push(...payload.categories);
     if (!payload.nextCursor) break;
