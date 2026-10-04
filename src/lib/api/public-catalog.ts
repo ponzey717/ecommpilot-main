@@ -122,9 +122,17 @@ function apiBase(): string | null {
   return value ? value.replace(/\/$/, '') : null;
 }
 
-async function fetchJson<T>(path: string, revalidate = 3600): Promise<T | null> {
+type PublicApiResult<T> =
+  | { state: 'ok'; data: T }
+  | { state: 'not_found' }
+  | { state: 'unavailable' };
+
+async function fetchJsonResult<T>(
+  path: string,
+  revalidate = 3600,
+): Promise<PublicApiResult<T>> {
   const base = apiBase();
-  if (!base) return null;
+  if (!base) return { state: 'unavailable' };
 
   try {
     const response = await fetch(base + path, {
@@ -137,11 +145,18 @@ async function fetchJson<T>(path: string, revalidate = 3600): Promise<T | null> 
       },
     });
 
-    if (!response.ok) return null;
-    return (await response.json()) as T;
+    if (response.status === 404) return { state: 'not_found' };
+    if (!response.ok) return { state: 'unavailable' };
+
+    return { state: 'ok', data: (await response.json()) as T };
   } catch {
-    return null;
+    return { state: 'unavailable' };
   }
+}
+
+async function fetchJson<T>(path: string, revalidate = 3600): Promise<T | null> {
+  const result = await fetchJsonResult<T>(path, revalidate);
+  return result.state === 'ok' ? result.data : null;
 }
 
 export async function getPublicMarkets(): Promise<PublicMarket[] | null> {
@@ -195,14 +210,28 @@ export async function getPublicProducts(input?: {
   return payload?.version === 'public-v1' ? payload : null;
 }
 
-export async function getPublicProduct(slug: string): Promise<PublicProductDetail | null> {
+export type PublicProductLookup =
+  | { state: 'ok'; product: PublicProductDetail }
+  | { state: 'not_found' }
+  | { state: 'unavailable' };
+
+export async function getPublicProductResult(slug: string): Promise<PublicProductLookup> {
   const normalized = slug.trim();
-  if (!normalized) return null;
-  const payload = await fetchJson<ProductResponse>(
+  if (!normalized) return { state: 'not_found' };
+
+  const result = await fetchJsonResult<ProductResponse>(
     '/api/public/products/' + encodeURIComponent(normalized),
     900,
   );
-  return payload?.version === 'public-v1' ? payload.product : null;
+  if (result.state !== 'ok') return result;
+  if (result.data.version !== 'public-v1') return { state: 'unavailable' };
+
+  return { state: 'ok', product: result.data.product };
+}
+
+export async function getPublicProduct(slug: string): Promise<PublicProductDetail | null> {
+  const result = await getPublicProductResult(slug);
+  return result.state === 'ok' ? result.product : null;
 }
 
 export function fallbackPublicMarkets(): PublicMarket[] {
