@@ -49,7 +49,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       category +
       "/" +
       product.slug,
-    image: product.image?.url?.startsWith("/") ? product.image.url : undefined,
+    image: product.image?.url ?? undefined,
   });
 }
 
@@ -100,6 +100,19 @@ export default async function ProductPage({ params }: PageProps) {
               { label: product.name },
             ]}
           />
+
+          {product.image?.url?.startsWith("https://") ? (
+            <div className="mb-6 overflow-hidden rounded-[24px] border border-[var(--border)] bg-white">
+              <img
+                src={product.image.url}
+                alt={product.image.alt}
+                width={product.image.width ?? 1200}
+                height={product.image.height ?? 840}
+                referrerPolicy="no-referrer"
+                className="max-h-[560px] w-full object-cover"
+              />
+            </div>
+          ) : null}
 
           <div className="mt-8 grid gap-6 lg:grid-cols-[1.1fr_.9fr]">
             <article className="feature-card">
