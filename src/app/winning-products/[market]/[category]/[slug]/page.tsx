@@ -169,6 +169,14 @@ export default async function ProductPage({ params }: PageProps) {
                   </p>
                 </div>
                 <div>
+                  <span className="metric-label">Supplier orders</span>
+                  <p className="mt-1 font-extrabold text-[var(--navy)]">
+                    {product.supplier?.orderCount != null
+                      ? product.supplier.orderCount.toLocaleString()
+                      : "Not available"}
+                  </p>
+                </div>
+                <div>
                   <span className="metric-label">Standby supplier</span>
                   <p className="mt-1 font-extrabold text-[var(--navy)]">
                     {product.standbySupplier?.available
