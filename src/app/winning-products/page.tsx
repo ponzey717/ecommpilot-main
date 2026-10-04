@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
+import { CatalogAdvancedFilters } from "@/components/products/catalog-advanced-filters";
 import { CatalogProductGrid } from "@/components/products/catalog-product-grid";
 import { MarketFilter } from "@/components/products/market-filter";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
-import { parseCatalogCursor, parseMinProfitBand } from "@/lib/catalog-filters";
+import { parseCatalogCursor, parseCatalogInteger, parseMinProfitBand, parseSupplierProvider } from "@/lib/catalog-filters";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 
@@ -17,12 +18,16 @@ export const metadata: Metadata = buildMetadata({
 });
 
 type PageProps = {
-  searchParams: Promise<{ minProfitBand?: string | string[]; cursor?: string | string[] }>;
+  searchParams: Promise<{ minProfitBand?: string | string[]; minSales30d?: string | string[]; maxDeliveryDays?: string | string[]; supplier?: string | string[]; freshnessHours?: string | string[]; cursor?: string | string[] }>;
 };
 
 export default async function WinningProductsPage({ searchParams }: PageProps) {
   const query = await searchParams;
   const minProfitBand = parseMinProfitBand(query.minProfitBand);
+  const minSales30d = parseCatalogInteger(query.minSales30d, 100000);
+  const maxDeliveryDays = parseCatalogInteger(query.maxDeliveryDays, 365);
+  const supplier = parseSupplierProvider(query.supplier);
+  const freshnessHours = parseCatalogInteger(query.freshnessHours, 8760);
   const cursor = parseCatalogCursor(query.cursor);
 
   return (
@@ -50,12 +55,28 @@ export default async function WinningProductsPage({ searchParams }: PageProps) {
           <div className="mt-8">
             <MarketFilter
               currentMinProfitBand={minProfitBand}
+              minSales30d={minSales30d}
+              maxDeliveryDays={maxDeliveryDays}
+              supplier={supplier}
+              freshnessHours={freshnessHours}
               basePath="/winning-products"
+            />
+            <CatalogAdvancedFilters
+              basePath="/winning-products"
+              minProfitBand={minProfitBand}
+              minSales30d={minSales30d}
+              maxDeliveryDays={maxDeliveryDays}
+              supplier={supplier}
+              freshnessHours={freshnessHours}
             />
           </div>
           <div className="mt-6">
             <CatalogProductGrid
               minProfitBand={minProfitBand}
+              minSales30d={minSales30d}
+              maxDeliveryDays={maxDeliveryDays}
+              supplier={supplier}
+              freshnessHours={freshnessHours}
               cursor={cursor}
               basePath="/winning-products"
             />
