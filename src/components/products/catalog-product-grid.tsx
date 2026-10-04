@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ProductGrid } from "@/components/products/product-grid";
 import { PublicProductCard } from "@/components/products/public-product-card";
 import {
@@ -5,30 +6,69 @@ import {
   type PublicMarket,
 } from "@/lib/api/public-catalog";
 
+function nextPageHref({
+  basePath,
+  cursor,
+  minProfitBand,
+}: {
+  basePath: string;
+  cursor: string;
+  minProfitBand?: number;
+}) {
+  const query = new URLSearchParams({ cursor });
+  if (minProfitBand != null) {
+    query.set("minProfitBand", String(minProfitBand));
+  }
+  return basePath + "?" + query.toString();
+}
+
 export async function CatalogProductGrid({
   market,
   category,
   minProfitBand,
+  cursor,
+  basePath = "/winning-products",
   limit = 12,
 }: {
   market?: PublicMarket["code"];
   category?: string;
   minProfitBand?: number;
+  cursor?: string;
+  basePath?: string;
   limit?: number;
 }) {
   const payload = await getPublicProducts({
     ...(market ? { market } : {}),
     ...(category ? { category } : {}),
     ...(minProfitBand != null ? { minProfitBand } : {}),
+    ...(cursor ? { cursor } : {}),
     limit,
   });
 
   if (payload?.products?.length) {
     return (
-      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-        {payload.products.map((product) => (
-          <PublicProductCard key={product.id} product={product} />
-        ))}
+      <div>
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {payload.products.map((product) => (
+            <PublicProductCard key={product.id} product={product} />
+          ))}
+        </div>
+
+        {payload.nextCursor ? (
+          <div className="mt-8 flex justify-center">
+            <Link
+              href={nextPageHref({
+                basePath,
+                cursor: payload.nextCursor,
+                minProfitBand,
+              })}
+              className="button button-secondary"
+              rel="next"
+            >
+              View more products
+            </Link>
+          </div>
+        ) : null}
       </div>
     );
   }
