@@ -191,7 +191,7 @@ function publicCategory(value: unknown): PublicCategory | null {
   };
 }
 
-function publicProduct(value: unknown, detail = false): PublicProductDetail | null {
+export function projectPublicProduct(value: unknown, detail = false): PublicProductDetail | null {
   const item = record(value);
   if (!item) return null;
   const id = stringValue(item.id);
@@ -299,7 +299,7 @@ function publicProduct(value: unknown, detail = false): PublicProductDetail | nu
       : item.methodology === null ? { methodology: null } : {}),
     ...(Array.isArray(item.relatedProducts)
       ? { relatedProducts: item.relatedProducts
-          .map((related) => publicProduct(related))
+          .map((related) => projectPublicProduct(related))
           .filter((related): related is PublicProductSummary => related !== null) }
       : {}),
   };
@@ -451,7 +451,7 @@ export async function getPublicProducts(input?: {
   const payload = await fetchJson<unknown>('/api/public/products' + suffix, 900);
   const response = record(payload);
   if (response?.version !== 'public-v1' || !Array.isArray(response.products)) return null;
-  const products = response.products.map((product) => publicProduct(product));
+  const products = response.products.map((product) => projectPublicProduct(product));
   if (!products.every((product): product is PublicProductSummary => product !== null)) return null;
   return {
     version: 'public-v1',
@@ -478,7 +478,7 @@ export async function getPublicProductResult(slug: string): Promise<PublicProduc
   if (result.state !== 'ok') return result;
   const response = record(result.data);
   if (response?.version !== 'public-v1') return { state: 'unavailable' };
-  const product = publicProduct(response.product, true);
+  const product = projectPublicProduct(response.product, true);
   if (!product) return { state: 'unavailable' };
 
   return { state: 'ok', product };
