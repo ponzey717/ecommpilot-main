@@ -156,9 +156,13 @@ export async function getPublicProfitBands(): Promise<PublicProfitBand[] | null>
 
 export async function getPublicCategories(input?: {
   market?: PublicMarket['code'];
+  cursor?: string;
+  limit?: number;
 }): Promise<PublicCategory[] | null> {
   const query = new URLSearchParams();
   if (input?.market) query.set('market', input.market);
+  if (input?.cursor) query.set('cursor', input.cursor);
+  if (input?.limit != null) query.set('limit', String(input.limit));
   const suffix = query.size ? '?' + query.toString() : '';
   const payload = await fetchJson<CategoriesResponse>('/api/public/categories' + suffix);
   return payload?.version === 'public-v1' ? payload.categories : null;
