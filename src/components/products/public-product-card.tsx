@@ -34,12 +34,13 @@ function tierLabel(tier: string | null | undefined) {
 }
 
 export function PublicProductCard({ product }: { product: PublicProductSummary }) {
-  const hasDetailRoute = Boolean(product.category?.slug);
-  const detailHref = hasDetailRoute
+  const categorySlug = product.category?.slug;
+  const hasDetailRoute = Boolean(categorySlug);
+  const detailHref = categorySlug
     ? "/winning-products/" +
       product.market.toLowerCase() +
       "/" +
-      product.category!.slug +
+      categorySlug +
       "/" +
       product.slug
     : "/winning-products/" + product.market.toLowerCase();
@@ -150,13 +151,13 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
           </p>
         ) : null}
         <div className="flex items-center justify-between">
-        <div>
-          <span className="metric-label">Target price</span>
-          <p className="font-extrabold text-[var(--navy)]">{price ?? "—"}</p>
-        </div>
-        <Link href={detailHref} className="text-sm font-extrabold text-[var(--blue)]">
-          {hasDetailRoute ? "View product →" : "Browse market →"}
-        </Link>
+          <div>
+            <span className="metric-label">Target price</span>
+            <p className="font-extrabold text-[var(--navy)]">{price ?? "—"}</p>
+          </div>
+          <Link href={detailHref} className="text-sm font-extrabold text-[var(--blue)]">
+            {hasDetailRoute ? "View product →" : "Browse market →"}
+          </Link>
         </div>
       </div>
     </article>
