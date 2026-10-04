@@ -59,6 +59,20 @@ function value(value: string | number | null | undefined, fallback = "Not availa
   return value == null || value === "" ? fallback : String(value);
 }
 
+function checkedDate(value: string | null | undefined) {
+  if (!value) return "Not available";
+  const timestamp = Date.parse(value);
+  if (!Number.isFinite(timestamp)) return "Not available";
+  return (
+    new Intl.DateTimeFormat("en", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      timeZone: "UTC",
+    }).format(timestamp) + " UTC"
+  );
+}
+
 export default async function ProductPage({ params }: PageProps) {
   const { market, category, slug } = await params;
   const lookup = await getPublicProductResult(slug);
@@ -150,7 +164,12 @@ export default async function ProductPage({ params }: PageProps) {
                   </strong>
                 </div>
               </div>
-              <p className="mt-5 text-xs leading-5 text-[var(--muted)]">
+              <div className="mt-5 grid gap-2 text-xs leading-5 text-[var(--muted)]">
+                <p>Market evidence checked: {checkedDate(product.ebay?.checkedAt)}</p>
+                <p>Economics checked: {checkedDate(product.economics?.checkedAt)}</p>
+                <p>Publication freshness checked: {checkedDate(product.freshness?.checkedAt)}</p>
+              </div>
+              <p className="mt-4 text-xs leading-5 text-[var(--muted)]">
                 Market and economics values are shown only when the public API supplies
                 verified evidence. Missing evidence is not estimated or fabricated.
               </p>
@@ -175,6 +194,12 @@ export default async function ProductPage({ params }: PageProps) {
                         product.supplier.deliveryMaxDays +
                         " days"
                       : "Not available"}
+                  </p>
+                </div>
+                <div>
+                  <span className="metric-label">Supplier checked</span>
+                  <p className="mt-1 font-extrabold text-[var(--navy)]">
+                    {checkedDate(product.supplier?.checkedAt)}
                   </p>
                 </div>
                 <div>
