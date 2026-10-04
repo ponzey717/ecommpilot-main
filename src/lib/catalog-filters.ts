@@ -9,3 +9,11 @@ export function parseMinProfitBand(
 
   return parsed;
 }
+
+export function parseCatalogCursor(
+  value: string | string[] | undefined,
+): string | undefined {
+  const raw = Array.isArray(value) ? value[0] : value;
+  if (!raw || raw.length > 512) return undefined;
+  return /^[A-Za-z0-9_-]+$/.test(raw) ? raw : undefined;
+}
