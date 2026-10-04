@@ -69,13 +69,13 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
           <>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-            src={remoteImage.url}
-            alt={remoteImage.alt}
-            width={remoteImage.width ?? 600}
-            height={remoteImage.height ?? 420}
-            loading="lazy"
-            referrerPolicy="no-referrer"
-            className="aspect-[10/7] w-full object-cover"
+              src={remoteImage.url}
+              alt={remoteImage.alt}
+              width={remoteImage.width ?? 600}
+              height={remoteImage.height ?? 420}
+              loading="lazy"
+              referrerPolicy="no-referrer"
+              className="aspect-[10/7] w-full object-cover"
             />
           </>
         ) : (
