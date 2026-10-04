@@ -50,6 +50,9 @@ export function SiteHeader({ dark = false }: { dark?: boolean }) {
                   {label}
                 </Link>
               ))}
+              <Link href={routes.login} className="mobile-menu-link sm:hidden">
+                Member Login
+              </Link>
             </div>
           </details>
         </div>
