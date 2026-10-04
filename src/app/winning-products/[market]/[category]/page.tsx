@@ -11,13 +11,13 @@ import {
   getPublicCategories,
   getPublicMarketsWithFallback,
 } from "@/lib/api/public-catalog";
-import { parseMinProfitBand } from "@/lib/catalog-filters";
+import { parseCatalogCursor, parseMinProfitBand } from "@/lib/catalog-filters";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 
 type PageProps = {
   params: Promise<{ market: string; category: string }>;
-  searchParams: Promise<{ minProfitBand?: string | string[] }>;
+  searchParams: Promise<{ minProfitBand?: string | string[]; cursor?: string | string[] }>;
 };
 
 async function resolveCategory(marketSlug: string, categorySlug: string) {
@@ -64,6 +64,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
   const { market: marketSlug, category: categorySlug } = await params;
   const query = await searchParams;
   const minProfitBand = parseMinProfitBand(query.minProfitBand);
+  const cursor = parseCatalogCursor(query.cursor);
   const resolved = await resolveCategory(marketSlug, categorySlug);
   if (!resolved) notFound();
 
@@ -114,6 +115,8 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
               market={market.code}
               category={category.slug}
               minProfitBand={minProfitBand}
+              cursor={cursor}
+              basePath={path}
             />
           </div>
         </div>
