@@ -1,6 +1,6 @@
 import Link from "next/link";
-import Image from "next/image";
 import type { PublicProductSummary } from "@/lib/api/public-catalog";
+import { PublicProductImage } from "@/components/products/public-product-image";
 
 function moneyFromMinor(value: number | null | undefined, currency: string | null | undefined) {
   if (value == null || !currency) return null;
@@ -50,46 +50,15 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
   );
   const checkedAt = checkedDate(product.freshness?.checkedAt);
   const requiredTier = tierLabel(product.access?.requiredTier);
-  const localImage = product.image?.url?.startsWith("/") ? product.image : null;
-  const remoteImage =
-    product.image?.url?.startsWith("https://") ? product.image : null;
-
   return (
     <article className="product-card">
       <div className="relative overflow-hidden rounded-[18px] bg-[var(--surface-soft)]">
-        {localImage ? (
-          <Image
-            src={localImage.url}
-            alt={localImage.alt}
-            width={localImage.width ?? 600}
-            height={localImage.height ?? 420}
-            className="aspect-[10/7] w-full object-cover"
-          />
-        ) : remoteImage ? (
-          <>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={remoteImage.url}
-              alt={remoteImage.alt}
-              width={remoteImage.width ?? 600}
-              height={remoteImage.height ?? 420}
-              loading="lazy"
-              referrerPolicy="no-referrer"
-              className="aspect-[10/7] w-full object-cover"
-            />
-          </>
-        ) : (
-          <div className="flex aspect-[10/7] w-full items-center justify-center bg-[linear-gradient(135deg,#edf7ff,#eafcff)] p-8 text-center">
-            <div>
-              <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-xl font-black text-[var(--blue)] shadow-sm">
-                ↗
-              </span>
-              <p className="mt-4 text-sm font-extrabold text-[var(--navy)]">
-                {product.category?.name ?? "Winning Product"}
-              </p>
-            </div>
-          </div>
-        )}
+        <PublicProductImage
+          image={product.image}
+          fallbackLabel={product.category?.name ?? "Winning Product"}
+          className="aspect-[10/7] w-full object-cover"
+          fallbackClassName="flex aspect-[10/7] w-full items-center justify-center bg-[linear-gradient(135deg,#edf7ff,#eafcff)] p-8 text-center"
+        />
         <span className="absolute left-3 top-3 badge badge-market">{product.market}</span>
         {requiredTier ? (
           <span className="absolute right-3 top-3 badge bg-white/95 text-[var(--premium)]">

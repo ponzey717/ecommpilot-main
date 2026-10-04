@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/site/breadcrumbs";
+import { PublicProductImage } from "@/components/products/public-product-image";
 import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -124,18 +125,14 @@ export default async function ProductPage({ params }: PageProps) {
             ]}
           />
 
-          {product.image?.url &&
-          (product.image.url.startsWith("/") ||
-            product.image.url.startsWith("https://")) ? (
+          {product.image?.url ? (
             <div className="mb-6 overflow-hidden rounded-[24px] border border-[var(--border)] bg-white">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={product.image.url}
-                alt={product.image.alt}
-                width={product.image.width ?? 1200}
-                height={product.image.height ?? 840}
-                referrerPolicy="no-referrer"
+              <PublicProductImage
+                image={product.image}
+                fallbackLabel={product.category?.name ?? "Winning Product"}
                 className="max-h-[560px] w-full object-cover"
+                fallbackClassName="flex min-h-72 w-full items-center justify-center bg-[linear-gradient(135deg,#edf7ff,#eafcff)] p-8 text-center"
+                priority
               />
             </div>
           ) : null}
