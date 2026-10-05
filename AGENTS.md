@@ -1,5 +1,16 @@
 # eCommPilot Public Website Agent Instructions
 
+## Canonical product lock
+
+Read `docs/CANONICAL_PUBLIC_PRODUCT_LOCK_2026-10-05.md` before public UX, messaging, navigation or homepage work.
+
+That file is authoritative for product positioning and conversion flow. eCommPilot is an **eBay dropshipping operating platform**. Winning Products is the primary commercial attraction; What's Trending and calculators are secondary engagement tools.
+
+Locked member handoff:
+**Winning Products -> My Products -> Listed -> Orders -> Alerts -> What's Trending**
+
+Do not expose the private app's internal Product Discovery/Research/Suppliers workflow as the normal customer journey.
+
 This repository powers the public eCommPilot website at `https://ecommpilot.net`.
 
 ## Product architecture
@@ -17,7 +28,9 @@ The public website must consume safe public/member APIs. It must not directly ex
 
 Primary positioning:
 
-> Winning Products for eBay Dropshippers
+> **Stop Searching. Start Listing Winning eBay Products.**
+
+Core promise: ready-to-list eBay dropshipping products with verified suppliers, calculated profits, optimized listings and ongoing monitoring.
 
 Initial markets:
 
