@@ -1,3 +1,6 @@
+> **CURRENT INTERPRETATION — 2026-10-06**
+> Treat app-engine findings as dependency/context only. The public site consumes approved public contracts from the app; it must not reproduce app inventory/research logic. See `docs/ECOMMPILOT_PUBLIC_SITE_COMPLETION_LOCK_2026-10-06.md`.
+
 # Existing eCommPilot App Engine Audit
 
 **Source repository:** `ponzey717/ecommpilot`  

@@ -1,3 +1,6 @@
+> **CURRENT TIMING — 2026-10-06**
+> Manual public-site actions should follow the app-first completion sequence. Do not perform launch/deployment actions merely because documentation was updated. See `docs/ECOMMPILOT_PUBLIC_SITE_COMPLETION_LOCK_2026-10-06.md`.
+
 # Manual Actions Register
 
 This file records actions that require the owner because they involve local-machine state, account authentication, DNS, billing, verification or secrets.
