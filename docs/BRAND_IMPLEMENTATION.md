@@ -1,3 +1,6 @@
+> **CURRENT PLAN NOTICE — 2026-10-06**
+> This document remains valid where consistent with `docs/ECOMMPILOT_PUBLIC_SITE_COMPLETION_LOCK_2026-10-06.md`. Public-site work starts from stable app publication contracts and has no dependency on deferred desktop/research-worker systems.
+
 # eCommPilot Brand Implementation
 
 ## Current approved direction

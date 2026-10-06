@@ -1,3 +1,6 @@
+> **CURRENT DELIVERY OVERRIDE — 2026-10-06**
+> Public-site work is sequenced to begin after app EP-05 stabilizes Inventory Review/Publish and the public product contract, then may proceed in parallel with later app phases. Research-worker/desktop automation is deferred until app + public-site completion. See `docs/ECOMMPILOT_PUBLIC_SITE_COMPLETION_LOCK_2026-10-06.md`.
+
 # eCommPilot Complete Platform Build Plan
 
 ## Product direction

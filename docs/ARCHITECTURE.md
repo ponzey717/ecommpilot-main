@@ -1,3 +1,6 @@
+> **CURRENT PLAN NOTICE — 2026-10-06**
+> This document remains valid where consistent with `docs/ECOMMPILOT_PUBLIC_SITE_COMPLETION_LOCK_2026-10-06.md`. ecommpilot.net is a public marketing/discovery surface over app-owned canonical inventory; it is not a second research or inventory system.
+
 # eCommPilot Platform Architecture
 
 ## 1. Canonical platform split
