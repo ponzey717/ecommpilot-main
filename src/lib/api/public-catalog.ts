@@ -182,7 +182,9 @@ export async function getPublicCategories(input?: {
   const categories: PublicCategory[] = [];
   let cursor: string | undefined;
 
-  for (let page = 0; page < 20; page += 1) {
+  // Up to 10,000 published categories per marketplace. If that ceiling is
+  // ever reached, fail closed instead of returning a silently partial taxonomy.
+  for (let page = 0; page < 100; page += 1) {
     const query = new URLSearchParams();
     if (input?.market) query.set('market', input.market);
     query.set('limit', '100');
