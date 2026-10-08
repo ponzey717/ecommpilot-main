@@ -126,4 +126,5 @@ See `docs/ENVIRONMENT.md` and `docs/MANUAL_ACTIONS.md` for the complete launch c
 - [Manual actions](./docs/MANUAL_ACTIONS.md)
 - [Environment configuration](./docs/ENVIRONMENT.md)
 - [Hostinger deployment runbook](./docs/HOSTINGER_DEPLOYMENT.md)
+- [EP-10 exact-head validation runbook](./docs/EP10_EXACT_HEAD_VALIDATION_RUNBOOK_2026-10-09.md)
 - [Legacy WordPress redirects](./docs/LEGACY_WORDPRESS_REDIRECTS_2026-10-09.md)
