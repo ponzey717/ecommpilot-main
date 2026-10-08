@@ -238,7 +238,9 @@ test("public indexing fails closed until production approval", async () => {
   assert.ok(indexing.includes('ECOMMPILOT_PUBLIC_INDEXING_ENABLED === "true"'));
   assert.ok(root.includes("publicIndexingEnabled"));
   assert.ok(metadata.includes("publicIndexingEnabled"));
-  assert.ok(metadata.includes("const canIndex = publicIndexingEnabled() && !noIndex"));
+  assert.ok(metadata.includes("const indexingEnabled = publicIndexingEnabled()"));
+  assert.ok(metadata.includes("const canIndex = indexingEnabled && !noIndex"));
+  assert.ok(metadata.includes("follow: indexingEnabled"));
   assert.ok(robots.includes('disallow: "/"'));
   assert.ok(robots.includes('allow: "/"'));
 });
@@ -465,4 +467,33 @@ test("overlong website search is clamped instead of becoming unfiltered", async 
   const filters = await source("src/lib/catalog-filters.ts");
   assert.ok(filters.includes("normalized.slice(0, 100)"));
   assert.equal(filters.includes("normalized.length <= 100 ? normalized : undefined"), false);
+});
+
+
+test("faceted catalog and Trending URLs are noindex while clean routes stay canonical", async () => {
+  const [filters, hub, market, trending] = await Promise.all([
+    source("src/lib/catalog-filters.ts"),
+    source("src/app/winning-products/page.tsx"),
+    source("src/app/winning-products/[market]/page.tsx"),
+    source("src/app/whats-trending/page.tsx"),
+  ]);
+
+  assert.ok(filters.includes("export function hasPublicCatalogQuery"));
+  for (const key of [
+    '"category"',
+    '"search"',
+    '"supplier"',
+    '"profit"',
+    '"sales"',
+    '"delivery"',
+    '"freshness"',
+    '"sort"',
+    '"cursor"',
+  ]) assert.ok(filters.includes(key), key);
+
+  assert.ok(hub.includes("noIndex: hasPublicCatalogQuery(params)"));
+  assert.ok(market.includes("noIndex: hasPublicCatalogQuery(query)"));
+  assert.ok(trending.includes('noIndex: hasPublicCatalogQuery(params, ["market"])'));
+  assert.ok(hub.includes('path: "/winning-products"'));
+  assert.ok(trending.includes('path: "/whats-trending"'));
 });
