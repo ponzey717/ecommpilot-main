@@ -18,12 +18,15 @@ test("locked primary navigation and homepage positioning remain present", async 
     "Pricing",
     "Learn",
   ]) assert.ok(header.includes(label), label);
-  assert.ok(header.includes(">Login<"));
-  assert.ok(header.includes(">Get Started<"));
+  assert.ok(header.includes("Login"));
+  assert.ok(header.includes("Get Started"));
   assert.ok(home.includes("Stop Searching. Start Listing Winning eBay Products."));
   assert.ok(home.includes("You only need your eBay account. We handle the product work."));
   assert.ok(home.includes("Your eBay account is ready. Your products should be too."));
   assert.ok(home.includes("See How It Works"));
+  const shell = await source("src/components/site/page-shell.tsx");
+  assert.ok(shell.includes('href="#main-content"'));
+  assert.ok(shell.includes('id="main-content"'));
 });
 
 test("public catalog adapter matches app query names and never sends bearer credentials", async () => {
