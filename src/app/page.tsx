@@ -257,7 +257,7 @@ export default function Home() {
           <SectionHeading
             eyebrow="Membership"
             title="Start free. Unlock more when your workflow needs it."
-            description="Free, Pro and Premium are the membership structure. Commercial pricing remains configurable until the launch package is approved."
+            description="Free, Pro and Premium are the eCommPilot membership structure. Paid plan prices and exact allowances will be shown before paid subscriptions are offered."
           />
           <div className="mt-8 grid gap-5 md:grid-cols-3">
             {plans.map(([name, text], index) => (
