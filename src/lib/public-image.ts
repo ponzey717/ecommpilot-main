@@ -23,7 +23,8 @@ export function publicImageHosts(): readonly string[] {
 
 export function approvedPublicImageUrl(value: string | null | undefined): string | null {
   if (!value) return null;
-  if (value.startsWith("/")) return value;
+  if (value.startsWith("/") && !value.startsWith("//")) return value;
+  if (value.startsWith("//")) return null;
 
   try {
     const parsed = new URL(value);
