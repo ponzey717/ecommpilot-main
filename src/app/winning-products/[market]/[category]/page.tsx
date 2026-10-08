@@ -77,7 +77,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
           eyebrow={"eBay " + resolved.market.code}
           badge={resolved.market.currency}
           title="Category data is temporarily unavailable."
-          description="eCommPilot could not load the current published category projection, so this page is not substituting demo products or an invented category result."
+          description="eCommPilot could not load the current published category projection, so this page is not substituting invented products or an invented category result."
         />
         <section className="py-12 md:py-16">
           <div className="site-container">
