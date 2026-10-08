@@ -10,6 +10,7 @@ import {
   publicFreshnessThresholds,
   publicProfitBands,
   publicSalesThresholds,
+  hasPublicCatalogQuery,
   parsePublicCatalogFilters,
 } from "@/lib/catalog-filters";
 import {
@@ -19,12 +20,20 @@ import {
 } from "@/lib/api/public-catalog";
 import { buildMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = buildMetadata({
-  title: "What's Trending on eBay",
-  description:
-    "Explore currently published eCommPilot product opportunities ranked by verified 30-day eBay SOLD demand across the US, UK and Australia.",
-  path: "/whats-trending",
-});
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}): Promise<Metadata> {
+  const params = await searchParams;
+  return buildMetadata({
+    title: "What's Trending on eBay",
+    description:
+      "Explore currently published eCommPilot product opportunities ranked by verified 30-day eBay SOLD demand across the US, UK and Australia.",
+    path: "/whats-trending",
+    noIndex: hasPublicCatalogQuery(params, ["market"]),
+  });
+}
 
 function one(value: string | string[] | undefined): string {
   return typeof value === "string" ? value.trim() : "";
