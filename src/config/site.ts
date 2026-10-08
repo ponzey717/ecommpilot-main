@@ -1,27 +1,29 @@
-function normalizedPublicUrl(value: string | undefined, fallback: string): string {
-  const candidate = value?.trim() || fallback;
+function configuredBaseUrl(value: string | undefined, fallback: string) {
+  const candidate = value?.trim().replace(/\/+$/, "") || fallback;
   try {
     const parsed = new URL(candidate);
-    if (parsed.protocol !== "https:" && parsed.protocol !== "http:") return fallback;
-    return parsed.toString().replace(/\/$/, "");
+    return parsed.protocol === "https:" || parsed.protocol === "http:"
+      ? parsed.toString().replace(/\/$/, "")
+      : fallback;
   } catch {
     return fallback;
   }
 }
 
-const siteUrl = normalizedPublicUrl(
+const publicSiteUrl = configuredBaseUrl(
   process.env.NEXT_PUBLIC_SITE_URL,
   "https://ecommpilot.net",
 );
-const appUrl = normalizedPublicUrl(
+
+const appUrl = configuredBaseUrl(
   process.env.NEXT_PUBLIC_APP_URL,
   "https://app.ecommpilot.net",
 );
 
 export const siteConfig = {
   name: "eCommPilot",
-  domain: new URL(siteUrl).hostname,
-  url: siteUrl,
+  domain: new URL(publicSiteUrl).hostname,
+  url: publicSiteUrl,
   appUrl,
   locale: "en",
   title: "eCommPilot | Winning Products for eBay Dropshippers",
