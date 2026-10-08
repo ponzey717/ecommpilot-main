@@ -59,6 +59,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   });
 }
 
+function supplierLabel(value: string | null | undefined) {
+  if (!value) return "Not available";
+  return value.toLowerCase() === "aliexpress" ? "AliExpress" : value;
+}
+
 function value(value: string | number | null | undefined, fallback = "Not available") {
   return value == null || value === "" ? fallback : String(value);
 }
@@ -208,7 +213,7 @@ export default async function ProductPage({ params }: PageProps) {
                 <div>
                   <span className="metric-label">Provider</span>
                   <p className="mt-1 font-extrabold text-[var(--navy)]">
-                    {value(product.supplier?.provider)}
+                    {supplierLabel(product.supplier?.provider)}
                   </p>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
