@@ -13,6 +13,8 @@ export const publicSorts = [
 export type PublicCatalogSort = (typeof publicSorts)[number][0];
 
 export interface PublicCatalogFilterState {
+  readonly category?: string;
+  readonly search?: string;
   readonly profit?: number;
   readonly sales?: number;
   readonly delivery?: number;
@@ -22,6 +24,17 @@ export interface PublicCatalogFilterState {
 
 function one(value: string | string[] | undefined): string {
   return typeof value === "string" ? value.trim() : "";
+}
+
+function safeSlug(value: string): string | undefined {
+  return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value) && value.length <= 120
+    ? value
+    : undefined;
+}
+
+function safeSearch(value: string): string | undefined {
+  const normalized = value.replace(/\s+/g, " ").trim();
+  return normalized && normalized.length <= 120 ? normalized : undefined;
 }
 
 function allowedNumber(
@@ -39,7 +52,11 @@ export function parsePublicCatalogFilters(
   const sort = publicSorts.some(([value]) => value === sortValue)
     ? (sortValue as PublicCatalogSort)
     : undefined;
+  const category = safeSlug(one(params.category));
+  const search = safeSearch(one(params.search));
   return {
+    ...(category ? { category } : {}),
+    ...(search ? { search } : {}),
     ...(allowedNumber(params.profit, publicProfitBands) != null
       ? { profit: allowedNumber(params.profit, publicProfitBands)! }
       : {}),
@@ -62,6 +79,8 @@ export function catalogFilterQuery(
 ): string {
   const value = { ...filters, ...overrides };
   const query = new URLSearchParams();
+  if (value.category) query.set("category", value.category);
+  if (value.search) query.set("search", value.search);
   if (value.profit != null) query.set("profit", String(value.profit));
   if (value.sales != null) query.set("sales", String(value.sales));
   if (value.delivery != null) query.set("delivery", String(value.delivery));
