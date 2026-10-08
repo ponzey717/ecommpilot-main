@@ -191,3 +191,30 @@ test("legacy WordPress URLs are preserved or permanently redirected", async () =
   assert.ok(footer.includes("Data Deletion"));
   assert.ok(deletion.includes("app.ecommpilot.net/data-deletion"));
 });
+
+
+test("public legal pages preserve the current policy substance", async () => {
+  const [privacy, terms, deletion] = await Promise.all([
+    source("src/app/privacy/page.tsx"),
+    source("src/app/terms/page.tsx"),
+    source("src/app/data-deletion/page.tsx"),
+  ]);
+
+  for (const page of [privacy, terms, deletion]) {
+    assert.ok(page.includes("Last updated: 14 September 2026"));
+    assert.ok(page.includes('import type { ReactNode } from "react"'));
+    assert.equal(page.includes("React.ReactNode"), false);
+  }
+
+  assert.ok(privacy.includes("eBay data and marketplace account deletion"));
+  assert.ok(privacy.includes("We do not sell personal information"));
+  assert.ok(privacy.includes("Cookies and browser storage"));
+
+  assert.ok(terms.includes("Acceptable use"));
+  assert.ok(terms.includes("AI-assisted features"));
+  assert.ok(terms.includes("Disclaimer and limitation"));
+
+  assert.ok(deletion.includes("eBay Marketplace Account Deletion/Closure"));
+  assert.ok(deletion.includes("must not be restored or reintroduced from backups"));
+  assert.ok(deletion.includes("Identity and authorization checks"));
+});
