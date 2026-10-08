@@ -1,6 +1,8 @@
 export const routes = {
   home: "/",
   winningProducts: "/winning-products",
+  trending: "/whats-trending",
+  howItWorks: "/#how-it-works",
   markets: "/markets",
   categories: "/categories",
   freeTools: "/free-tools",
