@@ -95,3 +95,21 @@ test("sitemap derives category and product routes from the public catalog", asyn
   assert.ok(sitemap.includes("privacy"));
   assert.ok(sitemap.includes("terms"));
 });
+
+
+test("catalog outage stays distinct from empty and product not-found states", async () => {
+  const [api, grid, categories, categoryPage, productPage] = await Promise.all([
+    source("src/lib/api/public-catalog.ts"),
+    source("src/components/products/catalog-product-grid.tsx"),
+    source("src/app/categories/page.tsx"),
+    source("src/app/winning-products/[market]/[category]/page.tsx"),
+    source("src/app/winning-products/[market]/[category]/[slug]/page.tsx"),
+  ]);
+  assert.ok(api.includes("getPublicProductState"));
+  assert.ok(api.includes("result.status !== 404"));
+  assert.ok(grid.includes("Catalog temporarily unavailable"));
+  assert.ok(categories.includes("Categories temporarily unavailable"));
+  assert.ok(categoryPage.includes('kind: "unavailable"'));
+  assert.ok(productPage.includes("state.unavailable"));
+  assert.ok(productPage.includes("Product data is temporarily unavailable."));
+});
