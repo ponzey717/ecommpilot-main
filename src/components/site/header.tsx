@@ -34,7 +34,7 @@ export function SiteHeader({ dark = false }: { dark?: boolean }) {
             Login
           </Link>
           <Link href={routes.join} className="button button-cyan">
-            Join Free
+            Get Started
           </Link>
           <details className="relative xl:hidden">
             <summary
