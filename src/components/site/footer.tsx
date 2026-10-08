@@ -38,6 +38,7 @@ export function SiteFooter() {
             <Link href={routes.contact}>Contact</Link>
             <Link href={routes.privacy}>Privacy</Link>
             <Link href={routes.terms}>Terms</Link>
+            <Link href={routes.dataDeletion}>Data Deletion</Link>
           </div>
         </div>
       </div>
