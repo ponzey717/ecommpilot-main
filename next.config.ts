@@ -10,16 +10,23 @@ const securityHeaders = [
   },
 ];
 
+const configuredImageHosts = process.env.ECOMMPILOT_PUBLIC_IMAGE_HOSTS
+  ?.split(",")
+  .map((value) => value.trim().toLowerCase())
+  .filter(Boolean);
+
+const publicImageHosts = configuredImageHosts?.length
+  ? configuredImageHosts
+  : ["media.ecommpilot.net"];
+
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "media.ecommpilot.net",
-        pathname: "/**",
-      },
-    ],
+    remotePatterns: publicImageHosts.map((hostname) => ({
+      protocol: "https" as const,
+      hostname,
+      pathname: "/**",
+    })),
   },
   async headers() {
     return [
