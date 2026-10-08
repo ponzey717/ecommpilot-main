@@ -388,3 +388,15 @@ test("public category adapter consumes pagination instead of truncating at the f
   assert.ok(api.includes("if (!payload || payload.version !== 'public-v1') return null"));
   assert.ok(api.includes("if (!payload.nextCursor) return categories"));
 });
+
+
+test("public URL configuration is origin-only and sitemap scales to the XML ceiling", async () => {
+  const [site, sitemap] = await Promise.all([
+    source("src/config/site.ts"),
+    source("src/app/sitemap.ts"),
+  ]);
+  assert.ok(site.includes("? parsed.origin"));
+  assert.equal(site.includes("parsed.toString().replace"), false);
+  assert.ok(sitemap.includes("page < 500"));
+  assert.ok(sitemap.includes("50,000 URLs"));
+});
