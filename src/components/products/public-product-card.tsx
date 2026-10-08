@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { PublicProductSummary } from "@/lib/api/public-catalog";
+import { approvedPublicImageUrl } from "@/lib/public-image";
 
 function moneyFromMinor(value: number | null | undefined, currency: string | null | undefined) {
   if (value == null || !currency) return null;
@@ -24,15 +25,8 @@ function tierLabel(tier: string | null | undefined) {
 function safeProductImage(product: PublicProductSummary) {
   const image = product.image;
   if (!image?.url) return null;
-  if (image.url.startsWith("/")) return image;
-  try {
-    const parsed = new URL(image.url);
-    return parsed.protocol === "https:" && parsed.hostname === "media.ecommpilot.net"
-      ? image
-      : null;
-  } catch {
-    return null;
-  }
+  const url = approvedPublicImageUrl(image.url);
+  return url ? { ...image, url } : null;
 }
 
 export function PublicProductCard({ product }: { product: PublicProductSummary }) {
