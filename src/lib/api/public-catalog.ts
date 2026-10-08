@@ -127,20 +127,28 @@ type FetchJsonResult<T> = {
   readonly status: number | null;
 };
 
+const PUBLIC_API_TIMEOUT_MS = 6_000;
+
 async function fetchJsonResult<T>(path: string, revalidate = 3600): Promise<FetchJsonResult<T>> {
   const base = apiBase();
   if (!base) return { payload: null, status: null };
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), PUBLIC_API_TIMEOUT_MS);
 
   try {
     const response = await fetch(base + path, {
       next: { revalidate },
       headers: { Accept: 'application/json' },
+      signal: controller.signal,
     });
 
     if (!response.ok) return { payload: null, status: response.status };
     return { payload: (await response.json()) as T, status: response.status };
   } catch {
     return { payload: null, status: null };
+  } finally {
+    clearTimeout(timeout);
   }
 }
 
