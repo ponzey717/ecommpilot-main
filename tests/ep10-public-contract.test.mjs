@@ -377,3 +377,14 @@ test("brand metadata and logo loading stay explicit and efficient", async () => 
   assert.ok(header.includes("<Logo light={dark} priority />"));
   assert.ok(card.includes('sizes="(min-width: 1280px) 31vw, (min-width: 768px) 48vw, 100vw"'));
 });
+
+
+test("public category adapter consumes pagination instead of truncating at the first page", async () => {
+  const api = await source("src/lib/api/public-catalog.ts");
+  assert.ok(api.includes("nextCursor?: string | null"));
+  assert.ok(api.includes("for (let page = 0; page < 20; page += 1)"));
+  assert.ok(api.includes("query.set('limit', '100')"));
+  assert.ok(api.includes("if (cursor) query.set('cursor', cursor)"));
+  assert.ok(api.includes("if (!payload || payload.version !== 'public-v1') return null"));
+  assert.ok(api.includes("if (!payload.nextCursor) return categories"));
+});
