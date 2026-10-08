@@ -18,7 +18,7 @@ import {
 import { buildMetadata } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = buildMetadata({
-  title: "What's Trending on eBay | eCommPilot",
+  title: "What's Trending on eBay",
   description:
     "Explore currently published eCommPilot product opportunities ranked by verified 30-day eBay SOLD demand across the US, UK and Australia.",
   path: "/whats-trending",
