@@ -1,0 +1,66 @@
+export const publicProfitBands = [10, 15, 20, 25, 30, 35, 40, 50] as const;
+export const publicSalesThresholds = [20, 30, 50, 100, 250, 500] as const;
+export const publicDeliveryThresholds = [7, 10, 15, 20] as const;
+export const publicSorts = [
+  ["published", "Recently published"],
+  ["most_sold", "Most sold · 30d"],
+  ["highest_profit", "Highest profit"],
+  ["freshest", "Freshest evidence"],
+  ["fastest_delivery", "Fastest delivery"],
+] as const;
+
+export type PublicCatalogSort = (typeof publicSorts)[number][0];
+
+export interface PublicCatalogFilterState {
+  readonly profit?: number;
+  readonly sales?: number;
+  readonly delivery?: number;
+  readonly sort?: PublicCatalogSort;
+}
+
+function one(value: string | string[] | undefined): string {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function allowedNumber(
+  value: string | string[] | undefined,
+  allowed: readonly number[],
+): number | undefined {
+  const parsed = Number(one(value));
+  return allowed.includes(parsed) ? parsed : undefined;
+}
+
+export function parsePublicCatalogFilters(
+  params: Record<string, string | string[] | undefined>,
+): PublicCatalogFilterState {
+  const sortValue = one(params.sort);
+  const sort = publicSorts.some(([value]) => value === sortValue)
+    ? (sortValue as PublicCatalogSort)
+    : undefined;
+  return {
+    ...(allowedNumber(params.profit, publicProfitBands) != null
+      ? { profit: allowedNumber(params.profit, publicProfitBands)! }
+      : {}),
+    ...(allowedNumber(params.sales, publicSalesThresholds) != null
+      ? { sales: allowedNumber(params.sales, publicSalesThresholds)! }
+      : {}),
+    ...(allowedNumber(params.delivery, publicDeliveryThresholds) != null
+      ? { delivery: allowedNumber(params.delivery, publicDeliveryThresholds)! }
+      : {}),
+    ...(sort ? { sort } : {}),
+  };
+}
+
+export function catalogFilterQuery(
+  filters: PublicCatalogFilterState,
+  overrides: Partial<PublicCatalogFilterState>,
+): string {
+  const value = { ...filters, ...overrides };
+  const query = new URLSearchParams();
+  if (value.profit != null) query.set("profit", String(value.profit));
+  if (value.sales != null) query.set("sales", String(value.sales));
+  if (value.delivery != null) query.set("delivery", String(value.delivery));
+  if (value.sort && value.sort !== "published") query.set("sort", value.sort);
+  const text = query.toString();
+  return text ? "?" + text : "";
+}
