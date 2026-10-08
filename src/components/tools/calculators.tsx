@@ -210,7 +210,8 @@ export function EbayFeeEstimator() {
 
 export function TitleLengthChecker() {
   const [title, setTitle] = useState("Portable adjustable desktop phone stand");
-  const remaining = 80 - title.length;
+  const titleLength = Array.from(title).length;
+  const remaining = 80 - titleLength;
   const okay = remaining >= 0;
 
   return (
@@ -229,7 +230,7 @@ export function TitleLengthChecker() {
       <div className="snapshot-card">
         <p className="eyebrow">Title length</p>
         <p className={"mt-4 text-5xl font-extrabold tracking-[-.04em] " + (okay ? "text-[var(--navy)]" : "text-red-600")}>
-          {title.length}/80
+          {titleLength}/80
         </p>
         <p className="mt-4 text-sm text-[var(--muted)]">
           {okay ? remaining + " characters remaining." : Math.abs(remaining) + " characters over the limit."}
