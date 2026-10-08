@@ -60,6 +60,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   });
 }
 
+function profitBandLabel(value: string | null | undefined) {
+  const match = value?.match(/^(\d+)-plus$/);
+  return match ? `${match[1]}%+ profit` : undefined;
+}
+
 function supplierLabel(value: string | null | undefined) {
   if (!value) return "Not available";
   return value.toLowerCase() === "aliexpress" ? "AliExpress" : value;
@@ -124,7 +129,7 @@ export default async function ProductPage({ params }: PageProps) {
       />
       <PageHero
         eyebrow={"eBay " + product.market + " product research"}
-        badge={product.economics?.profitBand ?? undefined}
+        badge={profitBandLabel(product.economics?.profitBand)}
         title={product.name}
         description={
           product.summary ??
