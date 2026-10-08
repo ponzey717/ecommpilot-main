@@ -8,17 +8,13 @@ import {
   fallbackPublicMarkets,
   getPublicMarketsWithFallback,
 } from "@/lib/api/public-catalog";
+import { parsePublicCatalogFilters } from "@/lib/catalog-filters";
 import { buildMetadata } from "@/lib/seo/metadata";
 
 type PageProps = {
   params: Promise<{ market: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
-
-function profitBand(value: string | string[] | undefined): number | undefined {
-  const raw = typeof value === "string" ? Number(value) : Number.NaN;
-  return [10, 15, 20, 25, 30, 35, 40, 50].includes(raw) ? raw : undefined;
-}
 
 export function generateStaticParams() {
   return fallbackPublicMarkets().map((market) => ({ market: market.slug }));
@@ -41,7 +37,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function MarketPage({ params, searchParams }: PageProps) {
   const [{ market: slug }, query] = await Promise.all([params, searchParams]);
-  const minimumProfitBand = profitBand(query.profit);
+  const filters = parsePublicCatalogFilters(query);
   const markets = await getPublicMarketsWithFallback();
   const market = markets.find((item) => item.slug === slug && item.active);
 
@@ -61,9 +57,15 @@ export default async function MarketPage({ params, searchParams }: PageProps) {
       />
       <section className="py-12 md:py-16">
         <div className="site-container">
-          <MarketFilter market={market.code} minimumProfitBand={minimumProfitBand} />
+          <MarketFilter market={market.code} filters={filters} />
           <div className="mt-6">
-            <CatalogProductGrid market={market.code} minimumProfitBand={minimumProfitBand} />
+            <CatalogProductGrid
+              market={market.code}
+              minimumProfitBand={filters.profit}
+              minimumSales30d={filters.sales}
+              maximumDeliveryDays={filters.delivery}
+              sort={filters.sort}
+            />
           </div>
         </div>
       </section>
