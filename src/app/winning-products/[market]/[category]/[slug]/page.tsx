@@ -68,7 +68,7 @@ function profitBandLabel(value: string | null | undefined) {
 
 function supplierLabel(value: string | null | undefined) {
   if (!value) return "Not available";
-  return value.toLowerCase() === "aliexpress" ? "AliExpress" : value;
+  return value.toLowerCase() === "aliexpress" ? "AliExpress" : "Supplier";
 }
 
 function value(value: string | number | null | undefined, fallback = "Not available") {
