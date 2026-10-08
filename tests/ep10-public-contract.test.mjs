@@ -358,3 +358,22 @@ test("manual noindex metadata also respects staging nofollow", async () => {
     assert.equal(page.includes("robots: { index: false, follow: true }"), false);
   }
 });
+
+
+test("brand metadata and logo loading stay explicit and efficient", async () => {
+  const [manifest, schema, logo, header, card] = await Promise.all([
+    source("src/app/manifest.ts"),
+    source("src/lib/seo/schema.ts"),
+    source("src/components/site/logo.tsx"),
+    source("src/components/site/header.tsx"),
+    source("src/components/products/public-product-card.tsx"),
+  ]);
+  assert.ok(manifest.includes('src: "/icon.svg"'));
+  assert.ok(manifest.includes('type: "image/svg+xml"'));
+  assert.ok(schema.includes('logo: toAbsoluteUrl("/icon.svg")'));
+  assert.ok(schema.includes("inLanguage: siteConfig.locale"));
+  assert.ok(logo.includes("priority = false"));
+  assert.ok(logo.includes("priority={priority}"));
+  assert.ok(header.includes("<Logo light={dark} priority />"));
+  assert.ok(card.includes('sizes="(min-width: 1280px) 31vw, (min-width: 768px) 48vw, 100vw"'));
+});
