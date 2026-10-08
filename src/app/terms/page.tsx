@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
@@ -10,7 +11,7 @@ export const metadata: Metadata = buildMetadata({
   path: "/terms",
 });
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="feature-card">
       <h2 className="text-2xl font-extrabold text-[var(--navy)]">{title}</h2>
