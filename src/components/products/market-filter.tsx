@@ -1,31 +1,56 @@
-const markets = ["US", "UK", "AU"] as const;
-const margins = ["10%+", "20%+", "30%+", "40%+", "50%+"] as const;
+import Link from "next/link";
 
-export function MarketFilter() {
+const markets = ["US", "UK", "AU"] as const;
+const profitBands = [10, 15, 20, 25, 30, 35, 40, 50] as const;
+
+function productsPath(market?: string, profit?: number) {
+  const path = market ? `/winning-products/${market.toLowerCase()}` : "/winning-products";
+  return profit ? `${path}?profit=${profit}` : path;
+}
+
+export function MarketFilter({
+  market,
+  minimumProfitBand,
+}: {
+  market?: (typeof markets)[number];
+  minimumProfitBand?: number;
+}) {
   return (
     <div className="filter-panel">
       <div className="flex flex-wrap items-center gap-2">
         <span className="filter-label">Market</span>
-        {markets.map((market, index) => (
-          <button
-            key={market}
-            type="button"
-            className={index === 0 ? "filter-chip filter-chip-active" : "filter-chip"}
+        <Link
+          href={productsPath(undefined, minimumProfitBand)}
+          className={!market ? "filter-chip filter-chip-active" : "filter-chip"}
+        >
+          All
+        </Link>
+        {markets.map((item) => (
+          <Link
+            key={item}
+            href={productsPath(item, minimumProfitBand)}
+            className={market === item ? "filter-chip filter-chip-active" : "filter-chip"}
           >
-            {market}
-          </button>
+            {item}
+          </Link>
         ))}
       </div>
       <div className="flex flex-wrap items-center gap-2">
         <span className="filter-label">Minimum profit</span>
-        {margins.map((margin, index) => (
-          <button
-            key={margin}
-            type="button"
-            className={index === 0 ? "filter-chip filter-chip-active" : "filter-chip"}
+        <Link
+          href={productsPath(market)}
+          className={minimumProfitBand == null ? "filter-chip filter-chip-active" : "filter-chip"}
+        >
+          All
+        </Link>
+        {profitBands.map((band) => (
+          <Link
+            key={band}
+            href={productsPath(market, band)}
+            className={minimumProfitBand === band ? "filter-chip filter-chip-active" : "filter-chip"}
           >
-            {margin}
-          </button>
+            {band}%+
+          </Link>
         ))}
       </div>
     </div>
