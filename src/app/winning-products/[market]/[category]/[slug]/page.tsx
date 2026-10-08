@@ -88,6 +88,17 @@ function money(value: number | null | undefined, currency: string | null | undef
   }
 }
 
+function checkedAtLabel(value: string | null | undefined) {
+  if (!value) return "Not available";
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return "Not available";
+  return new Intl.DateTimeFormat("en", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "UTC",
+  }).format(date) + " UTC";
+}
+
 
 export default async function ProductPage({ params }: PageProps) {
   const { market, category, slug } = await params;
@@ -209,6 +220,26 @@ export default async function ProductPage({ params }: PageProps) {
                   </strong>
                 </div>
               </div>
+              <div className="mt-5 grid gap-3 border-t border-[var(--border)] pt-5 sm:grid-cols-3">
+                <div>
+                  <span className="metric-label">Marketplace evidence checked</span>
+                  <p className="mt-1 text-xs font-bold leading-5 text-[var(--navy)]">
+                    {checkedAtLabel(product.ebay?.checkedAt)}
+                  </p>
+                </div>
+                <div>
+                  <span className="metric-label">Economics checked</span>
+                  <p className="mt-1 text-xs font-bold leading-5 text-[var(--navy)]">
+                    {checkedAtLabel(product.economics?.checkedAt)}
+                  </p>
+                </div>
+                <div>
+                  <span className="metric-label">Publication freshness</span>
+                  <p className="mt-1 text-xs font-bold leading-5 text-[var(--navy)]">
+                    {checkedAtLabel(product.freshness?.checkedAt)}
+                  </p>
+                </div>
+              </div>
               <p className="mt-5 text-xs leading-5 text-[var(--muted)]">
                 Public values are shown only when the allowlisted publication API supplies current evidence. Optional advertising is excluded from the V1 profit model unless explicitly stated.
               </p>
@@ -236,6 +267,12 @@ export default async function ProductPage({ params }: PageProps) {
                       {value(product.supplier?.orderCount, "—")}
                     </p>
                   </div>
+                </div>
+                <div>
+                  <span className="metric-label">Supplier checked</span>
+                  <p className="mt-1 font-extrabold text-[var(--navy)]">
+                    {checkedAtLabel(product.supplier?.checkedAt)}
+                  </p>
                 </div>
                 <div>
                   <span className="metric-label">Delivery</span>
