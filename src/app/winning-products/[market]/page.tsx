@@ -75,6 +75,7 @@ export default async function MarketPage({ params, searchParams }: PageProps) {
               minimumProfitBand={filters.profit}
               minimumSales30d={filters.sales}
               maximumDeliveryDays={filters.delivery}
+              freshnessHours={filters.freshness}
               sort={filters.sort}
             />
           </div>
