@@ -38,6 +38,9 @@ export function CatalogQueryForm({
       {filters.sort && filters.sort !== "published" ? (
         <input type="hidden" name="sort" value={filters.sort} />
       ) : null}
+      {categoriesUnavailable && filters.category ? (
+        <input type="hidden" name="category" value={filters.category} />
+      ) : null}
 
       <label className="grid gap-2 text-sm font-extrabold text-[var(--navy)]">
         Category
