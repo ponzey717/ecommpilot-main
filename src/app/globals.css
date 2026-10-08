@@ -385,3 +385,31 @@ h1, h2, h3, h4 {
     radial-gradient(circle at 90% 80%, rgba(20,108,255,.07), transparent 28%),
     #f1f6fc;
 }
+
+
+.catalog-input {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: white;
+  padding: 0 12px;
+  color: var(--navy);
+  font: inherit;
+  font-weight: 650;
+}
+
+textarea.catalog-input {
+  min-height: 120px;
+  padding-block: 10px;
+}
+
+.catalog-input::placeholder {
+  color: #94a3b8;
+}
+
+.catalog-input:disabled {
+  cursor: not-allowed;
+  background: #f4f7fb;
+  color: #94a3b8;
+}
