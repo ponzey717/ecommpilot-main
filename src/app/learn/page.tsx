@@ -75,12 +75,12 @@ export default function LearnPage() {
           </div>
 
           <div className="mt-10 rounded-[24px] border border-[var(--border)] bg-white p-6 md:p-8">
-            <p className="eyebrow">Content quality rule</p>
+            <p className="eyebrow">Learning principle</p>
             <h2 className="mt-3 text-2xl font-extrabold text-[var(--navy)]">
-              Individual guide URLs launch only when the full article is useful.
+              Learn the evidence behind the product decision.
             </h2>
             <p className="mt-4 max-w-4xl text-sm leading-7 text-[var(--muted)]">
-              eCommPilot will not create thin SEO pages just to increase URL count. Future guides will be published with meaningful original content, clear methodology, contextual links to tools and Winning Products, and appropriate evidence where factual marketplace claims are made.
+              eCommPilot learning content focuses on practical seller decisions: what a metric means, what evidence supports it, what can change, and what should be checked before acting. Marketplace facts are not replaced with invented numbers.
             </p>
           </div>
         </div>
