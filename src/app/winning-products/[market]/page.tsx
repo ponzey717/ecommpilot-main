@@ -42,13 +42,20 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function MarketPage({ params, searchParams }: PageProps) {
   const [{ market: slug }, query] = await Promise.all([params, searchParams]);
-  const filters = parsePublicCatalogFilters(query);
+  const parsedFilters = parsePublicCatalogFilters(query);
   const cursor = parsePublicCatalogCursor(query.cursor);
   const markets = await getPublicMarketsWithFallback();
   const market = markets.find((item) => item.slug === slug && item.active);
 
   if (!market) notFound();
+
   const categories = await getPublicCategories({ market: market.code });
+  const category = categories == null
+    ? parsedFilters.category
+    : categories.some((item) => item.slug === parsedFilters.category)
+      ? parsedFilters.category
+      : undefined;
+  const filters = { ...parsedFilters, category };
 
   return (
     <PageShell darkHeader>
