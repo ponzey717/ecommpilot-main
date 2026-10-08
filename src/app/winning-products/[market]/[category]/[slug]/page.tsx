@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/site/breadcrumbs";
@@ -57,6 +58,32 @@ function value(value: string | number | null | undefined, fallback = "Not availa
   return value == null || value === "" ? fallback : String(value);
 }
 
+function money(value: number | null | undefined, currency: string | null | undefined) {
+  if (value == null || !currency) return "Not available";
+  try {
+    return new Intl.NumberFormat("en", {
+      style: "currency",
+      currency,
+      maximumFractionDigits: 2,
+    }).format(value / 100);
+  } catch {
+    return "Not available";
+  }
+}
+
+function approvedImage(url: string | null | undefined): string | null {
+  if (!url) return null;
+  if (url.startsWith("/")) return url;
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "https:" && parsed.hostname === "media.ecommpilot.net"
+      ? url
+      : null;
+  } catch {
+    return null;
+  }
+}
+
 export default async function ProductPage({ params }: PageProps) {
   const { market, category, slug } = await params;
   const product = await getPublicProduct(slug);
@@ -101,12 +128,25 @@ export default async function ProductPage({ params }: PageProps) {
             ]}
           />
 
+          {approvedImage(product.image?.url) ? (
+            <div className="mt-8 overflow-hidden rounded-[24px] border border-[var(--border)] bg-white">
+              <Image
+                src={approvedImage(product.image?.url)!}
+                alt={product.image?.alt ?? product.name}
+                width={product.image?.width ?? 1200}
+                height={product.image?.height ?? 800}
+                className="max-h-[520px] w-full object-contain bg-[var(--surface-soft)]"
+                priority
+              />
+            </div>
+          ) : null}
+
           <div className="mt-8 grid gap-6 lg:grid-cols-[1.1fr_.9fr]">
             <article className="feature-card">
-              <p className="eyebrow">Market evidence</p>
-              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              <p className="eyebrow">Demand & economics</p>
+              <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                 <div className="metric-box">
-                  <span className="metric-label">30-day sales</span>
+                  <span className="metric-label">30-day SOLD</span>
                   <strong>{value(product.ebay?.sales30d, "—")}</strong>
                 </div>
                 <div className="metric-box">
@@ -114,21 +154,39 @@ export default async function ProductPage({ params }: PageProps) {
                   <strong>{value(product.ebay?.activeListings, "—")}</strong>
                 </div>
                 <div className="metric-box">
-                  <span className="metric-label">Supplier rating</span>
-                  <strong>{value(product.supplier?.rating, "—")}</strong>
+                  <span className="metric-label">Target price</span>
+                  <strong className="!text-lg">
+                    {money(
+                      product.economics?.recommendedSellingPriceMinor,
+                      product.economics?.currency,
+                    )}
+                  </strong>
                 </div>
                 <div className="metric-box">
-                  <span className="metric-label">Est. net margin</span>
+                  <span className="metric-label">Est. net profit</span>
+                  <strong className="!text-lg !text-emerald-700">
+                    {money(product.economics?.netProfitMinor, product.economics?.currency)}
+                  </strong>
+                </div>
+                <div className="metric-box">
+                  <span className="metric-label">Est. margin</span>
                   <strong className="!text-emerald-700">
                     {product.economics?.profitPercent != null
                       ? product.economics.profitPercent.toFixed(1) + "%"
                       : "—"}
                   </strong>
                 </div>
+                <div className="metric-box">
+                  <span className="metric-label">ROI</span>
+                  <strong>
+                    {product.economics?.roiPercent != null
+                      ? product.economics.roiPercent.toFixed(1) + "%"
+                      : "—"}
+                  </strong>
+                </div>
               </div>
               <p className="mt-5 text-xs leading-5 text-[var(--muted)]">
-                Market and economics values are shown only when the public API supplies
-                verified evidence. Missing evidence is not estimated or fabricated.
+                Public values are shown only when the allowlisted publication API supplies current evidence. Optional advertising is excluded from the V1 profit model unless explicitly stated.
               </p>
             </article>
 
@@ -140,6 +198,20 @@ export default async function ProductPage({ params }: PageProps) {
                   <p className="mt-1 font-extrabold text-[var(--navy)]">
                     {value(product.supplier?.provider)}
                   </p>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <span className="metric-label">Rating</span>
+                    <p className="mt-1 font-extrabold text-[var(--navy)]">
+                      {product.supplier?.rating != null ? product.supplier.rating.toFixed(1) : "—"}
+                    </p>
+                  </div>
+                  <div>
+                    <span className="metric-label">Supplier orders</span>
+                    <p className="mt-1 font-extrabold text-[var(--navy)]">
+                      {value(product.supplier?.orderCount, "—")}
+                    </p>
+                  </div>
                 </div>
                 <div>
                   <span className="metric-label">Delivery</span>
@@ -157,27 +229,32 @@ export default async function ProductPage({ params }: PageProps) {
                   {product.supplier?.choice ? (
                     <span className="badge badge-choice">✓ AliExpress Choice</span>
                   ) : null}
+                  {product.supplier?.inStock === true ? (
+                    <span className="badge badge-neutral">In stock</span>
+                  ) : null}
+                  {product.standbySupplier?.available ? (
+                    <span className="badge badge-neutral">Standby supplier available</span>
+                  ) : null}
                   {product.freshness?.status ? (
-                    <span className="badge badge-neutral">
-                      {product.freshness.status}
-                    </span>
+                    <span className="badge badge-neutral">{product.freshness.status}</span>
                   ) : null}
                 </div>
               </div>
 
-              {product.access?.details === "locked" ? (
-                <div className="mt-6 rounded-2xl border border-[var(--border)] bg-white p-4">
-                  <p className="text-sm font-extrabold text-[var(--navy)]">
-                    More supplier and listing detail is available to members.
-                  </p>
-                  <Link
-                    href="https://app.ecommpilot.net/register"
-                    className="button button-primary mt-4"
-                  >
-                    Join Free
-                  </Link>
-                </div>
-              ) : null}
+              <div className="mt-6 rounded-2xl border border-[var(--border)] bg-white p-4">
+                <p className="text-sm font-extrabold text-[var(--navy)]">
+                  Want the exact supplier and listing-ready workflow?
+                </p>
+                <p className="mt-2 text-xs leading-5 text-[var(--muted)]">
+                  Member access is filtered server-side. Private supplier URLs, protected costs, competitor links and internal evidence are never exposed by the public page.
+                </p>
+                <Link
+                  href="https://app.ecommpilot.net/register"
+                  className="button button-primary mt-4"
+                >
+                  Get Started Free
+                </Link>
+              </div>
             </aside>
           </div>
         </div>
