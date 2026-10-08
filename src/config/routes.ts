@@ -1,3 +1,5 @@
+import { siteConfig } from "./site";
+
 export const routes = {
   home: "/",
   winningProducts: "/winning-products",
@@ -13,8 +15,12 @@ export const routes = {
   privacy: "/privacy",
   terms: "/terms",
   dataDeletion: "/data-deletion",
-  login: "https://app.ecommpilot.net/login",
-  join: "https://app.ecommpilot.net/register",
+  login: `${siteConfig.appUrl}/login`,
+  join: `${siteConfig.appUrl}/register`,
+  support: `${siteConfig.appUrl}/support`,
+  appPrivacy: `${siteConfig.appUrl}/privacy`,
+  appTerms: `${siteConfig.appUrl}/terms`,
+  appDataDeletion: `${siteConfig.appUrl}/data-deletion`,
 } as const;
 
 export function marketProductsPath(market: string) {
