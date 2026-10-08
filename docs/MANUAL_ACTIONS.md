@@ -31,13 +31,19 @@ to the public-site catalog integration.
 
 ## Required later — member signup launch
 
-Before the public **Get Started** CTA is considered live, confirm the production app has:
+The app's current safety rule is to keep self-registration closed until verified email/password recovery is ready.
+
+Before the public **Get Started** CTA is considered live:
+
+1. verify the production email/password recovery path is ready;
+2. then deliberately set:
 
 ```text
 MEMBER_SELF_REGISTRATION_ENABLED=true
 ```
 
-and verify a new registration creates a Free member account and redirects to sign-in.
+3. verify a new registration creates a Free member account and redirects to sign-in;
+4. verify password recovery for that account before launch approval.
 
 Do not enable self-registration merely for development validation against production.
 
