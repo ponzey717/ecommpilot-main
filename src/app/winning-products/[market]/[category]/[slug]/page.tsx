@@ -6,7 +6,10 @@ import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
 import { JsonLd } from "@/components/seo/json-ld";
-import { getPublicProduct } from "@/lib/api/public-catalog";
+import {
+  getPublicProductState,
+  type PublicProductDetail,
+} from "@/lib/api/public-catalog";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 
@@ -15,7 +18,7 @@ type PageProps = {
 };
 
 function matchesRoute(
-  product: NonNullable<Awaited<ReturnType<typeof getPublicProduct>>>,
+  product: PublicProductDetail,
   market: string,
   category: string,
 ) {
@@ -27,9 +30,10 @@ function matchesRoute(
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { market, category, slug } = await params;
-  const product = await getPublicProduct(slug);
+  const state = await getPublicProductState(slug);
+  const product = state.product;
 
-  if (!product || !matchesRoute(product, market, category)) {
+  if (state.unavailable || !product || !matchesRoute(product, market, category)) {
     return {
       title: "Winning Product",
       robots: { index: false, follow: true },
@@ -86,7 +90,26 @@ function approvedImage(url: string | null | undefined): string | null {
 
 export default async function ProductPage({ params }: PageProps) {
   const { market, category, slug } = await params;
-  const product = await getPublicProduct(slug);
+  const state = await getPublicProductState(slug);
+  const product = state.product;
+  if (state.unavailable) {
+    return (
+      <PageShell darkHeader>
+        <PageHero
+          eyebrow="Winning Product"
+          title="Product data is temporarily unavailable."
+          description="eCommPilot could not load the current public product projection, so this page is not substituting cached private data or a fabricated product result."
+        />
+        <section className="py-12 md:py-16">
+          <div className="site-container">
+            <div className="rounded-[22px] border border-amber-200 bg-amber-50 p-8 text-center text-sm leading-6 text-[var(--muted)]">
+              Please try this product again shortly.
+            </div>
+          </div>
+        </section>
+      </PageShell>
+    );
+  }
   if (!product || !matchesRoute(product, market, category)) notFound();
 
   const productPath =
