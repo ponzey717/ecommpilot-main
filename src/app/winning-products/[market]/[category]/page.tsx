@@ -10,11 +10,13 @@ import {
   getPublicCategories,
   getPublicMarketsWithFallback,
 } from "@/lib/api/public-catalog";
+import { parsePublicCatalogCursor } from "@/lib/catalog-filters";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 
 type PageProps = {
   params: Promise<{ market: string; category: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
 async function resolveCategory(marketSlug: string, categorySlug: string) {
@@ -60,8 +62,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   });
 }
 
-export default async function CategoryPage({ params }: PageProps) {
-  const { market: marketSlug, category: categorySlug } = await params;
+export default async function CategoryPage({ params, searchParams }: PageProps) {
+  const [{ market: marketSlug, category: categorySlug }, query] = await Promise.all([
+    params,
+    searchParams,
+  ]);
+  const cursor = parsePublicCatalogCursor(query.cursor);
   const resolved = await resolveCategory(marketSlug, categorySlug);
   if (resolved.kind === "not_found") notFound();
   if (resolved.kind === "unavailable") {
@@ -120,7 +126,12 @@ export default async function CategoryPage({ params }: PageProps) {
             ]}
           />
           <div className="mt-8">
-            <CatalogProductGrid market={market.code} category={category.slug} />
+            <CatalogProductGrid
+              market={market.code}
+              category={category.slug}
+              cursor={cursor}
+              path={path}
+            />
           </div>
         </div>
       </section>
