@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { siteConfig } from "@/config/site";
+import { publicIndexingEnabled } from "@/lib/public-indexing";
 
 type MetadataInput = {
   title?: string;
@@ -22,6 +23,7 @@ export function buildMetadata({
 }: MetadataInput = {}): Metadata {
   const canonical = absoluteUrl(path);
   const socialImages = image ? [absoluteUrl(image)] : undefined;
+  const canIndex = publicIndexingEnabled() && !noIndex;
 
   return {
     title: title ?? siteConfig.title,
@@ -29,15 +31,11 @@ export function buildMetadata({
     alternates: {
       canonical,
     },
-    robots: noIndex
-      ? {
-          index: false,
-          follow: true,
-        }
-      : {
-          index: true,
-          follow: true,
-        },
+    robots: {
+      index: canIndex,
+      follow: canIndex,
+      nocache: !canIndex,
+    },
     openGraph: {
       type: "website",
       siteName: siteConfig.name,
