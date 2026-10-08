@@ -105,7 +105,7 @@ export default function PricingPage() {
             <Link href={routes.winningProducts} className="button button-secondary">Browse Winning Products</Link>
           </div>
           <p className="mt-4 text-xs leading-5 text-[var(--muted)]">
-            Paid prices and exact plan limits will be displayed before paid memberships are enabled. No placeholder dollar prices are presented as final pricing.
+            Paid prices and exact plan limits will be displayed before paid memberships are enabled. No paid amount is presented as final pricing before it is actually offered.
           </p>
         </div>
       </section>
