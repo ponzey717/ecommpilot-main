@@ -24,7 +24,7 @@ export function CatalogQueryForm({
     category: undefined,
     search: undefined,
   });
-  const categoryDisabled = categoriesUnavailable;
+  const categoryDisabled = !market || categoriesUnavailable;
 
   return (
     <form
@@ -53,14 +53,18 @@ export function CatalogQueryForm({
           disabled={categoryDisabled}
         >
           <option value="">
-            {categoriesUnavailable ? "Categories temporarily unavailable" : "All categories"}
+            {!market
+              ? "Choose a market first"
+              : categoriesUnavailable
+                ? "Categories temporarily unavailable"
+                : "All categories"}
           </option>
           {categories.map((category) => (
             <option
               key={`${category.market}:${category.id}`}
               value={category.slug}
             >
-              {market ? category.name : `${category.market} · ${category.name}`}
+              {category.name}
             </option>
           ))}
         </select>
