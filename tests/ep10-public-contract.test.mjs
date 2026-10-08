@@ -582,3 +582,12 @@ test("product detail explains the public profit methodology without cost leakage
   assert.equal(detail.includes("itemCostMinor"), false);
   assert.equal(detail.includes("freightCostMinor"), false);
 });
+
+
+test("missing advertising methodology is not guessed", async () => {
+  const detail = await source("src/app/winning-products/[market]/[category]/[slug]/page.tsx");
+  assert.ok(detail.includes("product.methodology?.optionalAdvertisingExcluded === true"));
+  assert.ok(detail.includes("product.economics?.adCostIncluded === false"));
+  assert.ok(detail.includes("Advertising treatment is not available in this public view."));
+  assert.equal(detail.includes("optionalAdvertisingExcluded !== false"), false);
+});
