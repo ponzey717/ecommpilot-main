@@ -44,6 +44,20 @@ export async function CatalogProductGrid({
     );
   }
 
+  if (payload == null) {
+    return (
+      <div className="rounded-[22px] border border-amber-200 bg-amber-50 p-8 text-center">
+        <p className="eyebrow !text-amber-700">Catalog temporarily unavailable</p>
+        <h3 className="mt-3 text-2xl font-extrabold text-[var(--navy)]">
+          Published product data could not be loaded.
+        </h3>
+        <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-[var(--muted)]">
+          eCommPilot is not substituting demo products or stale local values. Please try this catalog view again shortly.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-[22px] border border-[var(--border)] bg-white p-8 text-center">
       <p className="eyebrow">Catalog</p>
