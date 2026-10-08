@@ -79,6 +79,16 @@ At the current audit, the live legacy URLs are:
 
 If WordPress gains any new page/post before cutover, add its preserve/redirect rule first.
 
+Keep `ECOMMPILOT_PUBLIC_INDEXING_ENABLED=false` throughout staging validation.
+
+Only after launch approval, set:
+
+```text
+ECOMMPILOT_PUBLIC_INDEXING_ENABLED=true
+```
+
+and run a fresh production build/deploy before Search Console sitemap submission.
+
 After staging deployment, verify:
 
 - `/wp-sitemap.xml` → permanent redirect to `/sitemap.xml`;
