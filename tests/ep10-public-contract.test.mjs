@@ -425,3 +425,10 @@ test("public catalog API base is normalized to an HTTP origin", async () => {
   assert.ok(api.includes("? parsed.origin"));
   assert.equal(api.includes("value.replace(/\\/$/, '')"), false);
 });
+
+
+test("mobile header exposes a named navigation landmark", async () => {
+  const header = await source("src/components/site/header.tsx");
+  assert.ok(header.includes('<nav className="mobile-menu" aria-label="Mobile navigation">'));
+  assert.ok(header.includes('aria-label="Navigation menu"'));
+});
