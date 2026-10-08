@@ -16,6 +16,11 @@ function moneyFromMinor(value: number | null | undefined, currency: string | nul
   }
 }
 
+function supplierLabel(value: string | null | undefined) {
+  if (!value) return null;
+  return value.toLowerCase() === "aliexpress" ? "AliExpress" : value;
+}
+
 function tierLabel(tier: string | null | undefined) {
   if (tier === "premium") return "Premium";
   if (tier === "pro") return "Pro";
@@ -91,7 +96,7 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
 
       <div className="mt-4 flex flex-wrap gap-2">
         {product.supplier?.provider ? (
-          <span className="badge badge-neutral">{product.supplier.provider}</span>
+          <span className="badge badge-neutral">{supplierLabel(product.supplier.provider)}</span>
         ) : null}
         {product.supplier?.choice ? (
           <span className="badge badge-choice">✓ AliExpress Choice</span>
