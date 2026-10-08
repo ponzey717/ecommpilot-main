@@ -84,18 +84,28 @@ Production categories come from market-specific eBay taxonomy snapshots.
 
 ## GET /api/public/products
 
-Filters:
+Query parameters:
 
-- market;
-- category;
-- minimum profit band;
-- supplier;
-- maximum delivery days;
-- minimum 30-day sales;
-- minimum supplier rating;
-- freshness;
-- sort;
-- cursor/limit.
+- `market`;
+- `category`;
+- `minimumProfitBand`;
+- `supplier`;
+- `maximumDeliveryDays`;
+- `minimumSales30d`;
+- `freshnessHours`;
+- `search` (public title/summary, maximum 120 characters);
+- `sort`;
+- `cursor` / `limit`.
+
+Allowlisted public sorts:
+
+- `published` — newest published first;
+- `most_sold` — per-product 30-day SOLD evidence descending;
+- `highest_profit` — current published profit basis points descending;
+- `freshest` — publication evidence freshness descending;
+- `fastest_delivery` — current confirmed supplier delivery max ascending.
+
+The timestamp/id cursor is only defined for `published` ordering. Non-published sorts return no continuation cursor in V1.
 
 Anonymous list item:
 
