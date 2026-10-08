@@ -77,6 +77,7 @@ Must prove:
 - deterministic tie-breakers remain;
 - title/summary search stays parameterized;
 - public search max length is 100 characters;
+- category/provider/cursor inputs are bounded and malformed values fail as 400-class requests;
 - non-published sort + cursor fails closed;
 - public route remains read-only;
 - public projection privacy tests still pass.
@@ -313,6 +314,7 @@ Confirm:
 - no hidden trend score;
 - no second database;
 - category changes remain marketplace-valid;
+- category API pagination can consume more than the first 100 categories;
 - category API outage is visually distinct from no matching products.
 
 ### 3.8 Outage / empty / 404 checks
@@ -333,7 +335,18 @@ Expected:
 
 No demo/fake product fallback may appear.
 
-### 3.9 Product privacy checks
+### 3.9 Evidence timestamps
+
+On a real public product page, verify visible UTC timestamps for:
+
+- marketplace evidence;
+- supplier evidence;
+- economics;
+- publication freshness.
+
+No internal evidence IDs, local paths or private provenance IDs may be exposed.
+
+### 3.10 Product privacy checks
 
 Inspect browser HTML/network payloads.
 
@@ -360,7 +373,7 @@ Safe public fields may include:
 - Choice/in-stock state;
 - freshness.
 
-### 3.10 Product image checks
+### 3.11 Product image checks
 
 Confirm a real published product with an approved `hosted_url`.
 
@@ -371,11 +384,13 @@ Verify its hostname is present in:
 Confirm:
 
 - approved image renders;
+- protocol-relative image URLs are rejected;
+- malformed configured hostnames are ignored;
 - unapproved arbitrary HTTPS host does not render as a public product image;
 - local fallback artwork/state remains clean;
 - no supplier source image is hotlinked merely because it is HTTPS.
 
-### 3.11 Free tool checks
+### 3.12 Free tool checks
 
 Profit calculator:
 
@@ -395,10 +410,11 @@ Fee estimator:
 Title checker:
 
 - 80-character count;
+- Unicode code-point counting;
 - over-limit state;
 - no ranking guarantee claim.
 
-### 3.12 Accessibility smoke
+### 3.13 Accessibility smoke
 
 Keyboard-only:
 
@@ -416,7 +432,7 @@ Also verify:
 - reduced-motion preference;
 - no obvious horizontal overflow at 390px.
 
-### 3.13 Legal continuity
+### 3.14 Legal continuity
 
 Confirm public pages contain the current full policy version:
 
@@ -430,7 +446,7 @@ Verify key policy sections on:
 
 Do not shorten these policies during validation fixes.
 
-### 3.14 SEO while local/staging
+### 3.15 SEO while local/staging
 
 With:
 
@@ -446,14 +462,19 @@ confirm:
 
 Inspect:
 
+- clean catalog/market/Trending URLs are indexable only when production indexing is enabled;
+- filter/search/sort/cursor variants are noindex;
+- production noindex facets remain followable;
 - canonical URLs;
 - Open Graph/Twitter;
 - Organization/WebSite schema;
 - breadcrumbs;
 - free-tool SoftwareApplication schema;
-- `/sitemap.xml`.
+- `/sitemap.xml`;
+- total sitemap URL count stays within 50,000;
+- product/category pagination does not silently truncate at the first API page.
 
-### 3.15 Legacy redirect checks
+### 3.16 Legacy redirect checks
 
 Verify permanent redirects:
 
@@ -464,7 +485,7 @@ Verify permanent redirects:
 
 Verify `/data-deletion/` resolves to the preserved policy route.
 
-### 3.16 Public repo exit gate
+### 3.17 Public repo exit gate
 
 Report:
 
