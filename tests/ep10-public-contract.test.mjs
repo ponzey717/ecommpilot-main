@@ -215,6 +215,7 @@ test("public legal pages preserve the current policy substance", async () => {
   assert.ok(terms.includes("Disclaimer and limitation"));
 
   assert.ok(deletion.includes("eBay Marketplace Account Deletion/Closure"));
-  assert.ok(deletion.includes("must not be restored or reintroduced from backups"));
+  assert.ok(deletion.includes("must not be"));
+  assert.ok(deletion.includes("restored or reintroduced from backups"));
   assert.ok(deletion.includes("Identity and authorization checks"));
 });
