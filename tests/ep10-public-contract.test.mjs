@@ -117,3 +117,22 @@ test("catalog outage stays distinct from empty and product not-found states", as
   assert.ok(productPage.includes("state.unavailable"));
   assert.ok(productPage.includes("Product data is temporarily unavailable."));
 });
+
+
+test("Winning Products category and title search preserve the active server filters", async () => {
+  const [form, hub, market] = await Promise.all([
+    source("src/components/products/catalog-query-form.tsx"),
+    source("src/app/winning-products/page.tsx"),
+    source("src/app/winning-products/[market]/page.tsx"),
+  ]);
+  assert.ok(form.includes('name="category"'));
+  assert.ok(form.includes('name="search"'));
+  assert.ok(form.includes('name="freshness"'));
+  assert.ok(form.includes('name="sort"'));
+  assert.ok(form.includes("categoriesUnavailable && filters.category"));
+  for (const page of [hub, market]) {
+    assert.ok(page.includes("category={filters.category}"));
+    assert.ok(page.includes("search={filters.search}"));
+    assert.ok(page.includes("freshnessHours={filters.freshness}"));
+  }
+});
