@@ -39,7 +39,10 @@ export function MarketFilter({
       <div className="grid w-full gap-4">
         <div className="flex flex-wrap items-center gap-2">
           <span className="filter-label">Market</span>
-          <Link href={href(undefined, filters, {})} className={chip(!market)}>
+          <Link
+            href={href(undefined, filters, { category: undefined })}
+            className={chip(!market)}
+          >
             All
           </Link>
           {markets.map((item) => (
