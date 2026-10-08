@@ -24,7 +24,7 @@ export function CatalogQueryForm({
     category: undefined,
     search: undefined,
   });
-  const categoryDisabled = !market || categoriesUnavailable;
+  const categoryDisabled = categoriesUnavailable;
 
   return (
     <form
@@ -36,10 +36,11 @@ export function CatalogQueryForm({
       {filters.sales != null ? <input type="hidden" name="sales" value={filters.sales} /> : null}
       {filters.delivery != null ? <input type="hidden" name="delivery" value={filters.delivery} /> : null}
       {filters.freshness != null ? <input type="hidden" name="freshness" value={filters.freshness} /> : null}
+      {filters.supplier ? <input type="hidden" name="supplier" value={filters.supplier} /> : null}
       {filters.sort && filters.sort !== "published" ? (
         <input type="hidden" name="sort" value={filters.sort} />
       ) : null}
-      {market && categoriesUnavailable && filters.category ? (
+      {categoriesUnavailable && filters.category ? (
         <input type="hidden" name="category" value={filters.category} />
       ) : null}
 
@@ -52,11 +53,7 @@ export function CatalogQueryForm({
           disabled={categoryDisabled}
         >
           <option value="">
-            {!market
-              ? "Choose a market first"
-              : categoriesUnavailable
-                ? "Categories temporarily unavailable"
-                : "All categories"}
+            {categoriesUnavailable ? "Categories temporarily unavailable" : "All categories"}
           </option>
           {categories.map((category) => (
             <option
