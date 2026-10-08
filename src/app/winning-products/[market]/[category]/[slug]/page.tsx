@@ -12,6 +12,7 @@ import {
   type PublicProductDetail,
 } from "@/lib/api/public-catalog";
 import { approvedPublicImageUrl } from "@/lib/public-image";
+import { publicIndexingEnabled } from "@/lib/public-indexing";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 
@@ -38,7 +39,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (state.unavailable || !product || !matchesRoute(product, market, category)) {
     return {
       title: "Winning Product",
-      robots: { index: false, follow: true },
+      robots: { index: false, follow: publicIndexingEnabled() },
     };
   }
 
