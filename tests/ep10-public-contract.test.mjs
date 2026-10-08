@@ -591,3 +591,11 @@ test("missing advertising methodology is not guessed", async () => {
   assert.ok(detail.includes("Advertising treatment is not available in this public view."));
   assert.equal(detail.includes("optionalAdvertisingExcluded !== false"), false);
 });
+
+
+test("public detail TypeScript contract does not advertise unsupported related products", async () => {
+  const api = await source("src/lib/api/public-catalog.ts");
+  assert.equal(api.includes("relatedProducts?:"), false);
+  assert.ok(api.includes("standbySupplier?:"));
+  assert.ok(api.includes("methodology?:"));
+});
