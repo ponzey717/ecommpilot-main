@@ -4,94 +4,96 @@ This file records actions that require the owner because they involve local-mach
 
 ## Required now
 
-### 1. Pull GitHub changes into the Mac workspace
+**None for continued GitHub implementation.**
 
-When this GitHub foundation commit is complete, the local VS Code folder will be behind the remote repository.
+EP-10 is being developed and reviewed on feature branches. Do not change DNS, Hostinger production deployment, Search Console verification or payment configuration during implementation validation.
 
-In the local folder:
+## Required for local EP-10 validation
 
-```bash
-cd /Users/macbookpro/Developer/ecommpilot-main
-git pull
+When the validation window is ready, use the existing local public-site checkout/worktree and validate the exact feature-branch head.
+
+Required environment for live local catalog integration:
+
+```text
+ECOMMPILOT_API_BASE_URL=http://127.0.0.1:<local-app-port>
 ```
 
-If the development server is running, restart it after the pull if Next.js does not reload cleanly.
+or an explicitly approved safe staging app URL.
 
-This is the only immediate manual action required for the foundation work.
+The public `public-v1` catalog API is deliberately anonymous/allowlisted. Do not add:
 
-### 2. Theme Studio review access
+- operator/member cookies;
+- bearer tokens;
+- database URLs;
+- Supabase service-role credentials
 
-The published Theme Studio link currently requires ChatGPT authentication for external inspection.
+to the public-site catalog integration.
 
-To let an external browser inspection review it, either:
-
-- change the Site access setting so the published preview is publicly viewable; or
-- approve/use a signed-in browser profile/session when requested.
-
-No password should ever be sent in chat.
-
-## Required later
-
-### Public deployment / Hostinger
+## Required later — staging / Hostinger
 
 Owner action may be required for:
 
-- creating/selecting the Hostinger Node.js Web App;
-- connecting GitHub repository;
-- assigning `ecommpilot.net`;
-- DNS changes;
-- production environment variables.
+- creating/selecting the Hostinger Node.js Web App for `ponzey717/ecommpilot-main`;
+- connecting the approved release branch;
+- assigning a staging hostname first;
+- adding production environment variables;
+- validating build/start settings;
+- later assigning `ecommpilot.net` only after launch approval.
 
-### Google Search Console
+Production public catalog setting:
+
+```text
+ECOMMPILOT_API_BASE_URL=https://app.ecommpilot.net
+```
+
+Do not switch the public domain until both the public site and app public API dependency are deployed and verified.
+
+## Required later — Google Search Console / analytics
 
 Owner action may be required for:
 
-- adding/confirming the domain property;
-- DNS verification token;
-- account access;
-- sitemap submission approval if not automated.
+- confirming the domain property;
+- DNS verification;
+- sitemap submission;
+- analytics-provider approval;
+- consent/cookie configuration where required.
 
-### Production app/data access
+Do not enable non-essential analytics merely to make the implementation appear complete.
 
-Before real product integration:
+## Required later — payments
 
-- make the actual eCommPilot production database/Supabase project available;
-- confirm the safe API base URL;
-- provide access through the supported connector/workflow, not secrets pasted into source code.
+Before paid memberships:
 
-### eBay
+- approve exact commercial prices and limits;
+- select/configure the payment provider;
+- complete business/account verification;
+- store payment keys only in the deployment secret manager.
 
-Only when needed for audited API work:
+Current public Pricing deliberately contains no invented paid prices.
 
-- confirm production/developer credentials are configured securely;
-- complete OAuth/consent screens manually where required.
+## Required later — public contact channel
 
-### Supplier sources
+The public Contact page currently routes account-specific support through the authenticated app.
 
-At the AliExpress supplier phase:
+Before displaying a public email address or contact form:
 
-- confirm API/integration account if a credentialed production source is needed.
+- approve the public contact address/provider;
+- configure delivery;
+- add anti-abuse controls where appropriate;
+- then update the page.
 
-At later phases:
+Do not publish an invented or unmonitored email address.
 
-- CJ/Amazon/other supplier credentials or approvals as required.
+## Production safety
 
-### Payments
+The owner must explicitly approve separately before:
 
-Before paid memberships/credit packs:
-
-- select the payment provider;
-- create/configure the business account;
-- complete identity/business verification manually;
-- place keys in the deployment secret manager, never Git.
-
-### Analytics
-
-Before production launch:
-
-- confirm analytics provider;
-- authorize Search Console/analytics accounts;
-- provide IDs through environment configuration.
+- production deployment;
+- DNS/domain switch;
+- app/database migrations;
+- public API release if it changes app behavior;
+- payments;
+- analytics/ads.
 
 ## Never send in chat or commit
 
@@ -101,6 +103,7 @@ Before production launch:
 - service-role keys;
 - payment secret keys;
 - private OAuth client secrets;
-- recovery codes.
+- recovery codes;
+- browser session cookies.
 
 When an authenticated approval screen is required, the owner completes that step directly.
