@@ -12,6 +12,15 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "media.ecommpilot.net",
+        pathname: "/**",
+      },
+    ],
+  },
   async headers() {
     return [
       {
