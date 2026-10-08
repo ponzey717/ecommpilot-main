@@ -75,6 +75,11 @@ export async function CatalogProductGrid({
               Next products →
             </Link>
           </div>
+        ) : sort && sort !== "published" && payload.products.length >= limit ? (
+          <p className="mx-auto mt-8 max-w-2xl text-center text-xs leading-5 text-[var(--muted)]">
+            Showing the top {limit} published products for this ordering. V1 continuation
+            pagination is available for Recently published ordering only.
+          </p>
         ) : null}
       </div>
     );
