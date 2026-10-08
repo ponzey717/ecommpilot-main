@@ -219,3 +219,19 @@ test("public legal pages preserve the current policy substance", async () => {
   assert.ok(deletion.includes("restored or reintroduced from backups"));
   assert.ok(deletion.includes("Identity and authorization checks"));
 });
+
+
+test("public indexing fails closed until production approval", async () => {
+  const [indexing, root, metadata, robots] = await Promise.all([
+    source("src/lib/public-indexing.ts"),
+    source("src/app/layout.tsx"),
+    source("src/lib/seo/metadata.ts"),
+    source("src/app/robots.ts"),
+  ]);
+  assert.ok(indexing.includes('ECOMMPILOT_PUBLIC_INDEXING_ENABLED === "true"'));
+  assert.ok(root.includes("publicIndexingEnabled"));
+  assert.ok(metadata.includes("publicIndexingEnabled"));
+  assert.ok(metadata.includes("const canIndex = publicIndexingEnabled() && !noIndex"));
+  assert.ok(robots.includes('disallow: "/"'));
+  assert.ok(robots.includes('allow: "/"'));
+});
