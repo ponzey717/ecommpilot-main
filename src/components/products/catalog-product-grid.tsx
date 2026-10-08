@@ -15,6 +15,7 @@ export async function CatalogProductGrid({
   maximumDeliveryDays,
   search,
   freshnessHours,
+  supplier,
   cursor,
   path,
 }: {
@@ -25,6 +26,7 @@ export async function CatalogProductGrid({
   maximumDeliveryDays?: number;
   search?: string;
   freshnessHours?: number;
+  supplier?: string;
   cursor?: string;
   path?: string;
   sort?: "published" | "most_sold" | "highest_profit" | "freshest" | "fastest_delivery";
@@ -38,6 +40,7 @@ export async function CatalogProductGrid({
     ...(maximumDeliveryDays != null ? { maximumDeliveryDays } : {}),
     ...(search ? { search } : {}),
     ...(freshnessHours != null ? { freshnessHours } : {}),
+    ...(supplier ? { supplier } : {}),
     ...(sort ? { sort } : {}),
     ...(cursor && (!sort || sort === "published") ? { cursor } : {}),
     limit,
@@ -51,6 +54,7 @@ export async function CatalogProductGrid({
     if (minimumSales30d != null) nextQuery.set("sales", String(minimumSales30d));
     if (maximumDeliveryDays != null) nextQuery.set("delivery", String(maximumDeliveryDays));
     if (freshnessHours != null) nextQuery.set("freshness", String(freshnessHours));
+    if (supplier) nextQuery.set("supplier", supplier);
     if (sort && sort !== "published") nextQuery.set("sort", sort);
     if (payload.nextCursor) nextQuery.set("cursor", payload.nextCursor);
     const basePath = path ?? (market ? `/winning-products/${market.toLowerCase()}` : "/winning-products");
