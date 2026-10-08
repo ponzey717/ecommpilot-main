@@ -4,11 +4,10 @@ import { routes } from "@/config/routes";
 
 const nav = [
   ["Winning Products", routes.winningProducts],
-  ["Markets", routes.markets],
-  ["Categories", routes.categories],
-  ["Free Tools", routes.freeTools],
-  ["Learn", routes.learn],
+  ["What's Trending", routes.trending],
+  ["How It Works", routes.howItWorks],
   ["Pricing", routes.pricing],
+  ["Learn", routes.learn],
 ] as const;
 
 export function SiteHeader({ dark = false }: { dark?: boolean }) {
