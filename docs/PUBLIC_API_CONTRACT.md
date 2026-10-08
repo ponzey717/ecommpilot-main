@@ -93,7 +93,7 @@ Query parameters:
 - `maximumDeliveryDays`;
 - `minimumSales30d`;
 - `freshnessHours`;
-- `search` (public title/summary, maximum 120 characters);
+- `search` (public title/summary, maximum 100 characters);
 - `sort`;
 - `cursor` / `limit`.
 
