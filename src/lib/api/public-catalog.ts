@@ -20,10 +20,8 @@ export type PublicCategory = {
   id: string;
   name: string;
   slug: string;
-  parentId?: string | null;
-  path?: string[];
-  publishedProductCount?: number;
-  taxonomyCheckedAt?: string | null;
+  publishedProductCount: number;
+  checkedAt: string;
 };
 
 export type PublicProductImage = {
@@ -54,6 +52,7 @@ export type PublicProductSummary = {
     provider?: string | null;
     choice?: boolean | null;
     rating?: number | null;
+    orderCount?: number | null;
     deliveryMinDays?: number | null;
     deliveryMaxDays?: number | null;
     inStock?: boolean | null;
@@ -62,7 +61,9 @@ export type PublicProductSummary = {
   economics?: {
     currency?: string | null;
     recommendedSellingPriceMinor?: number | null;
+    netProfitMinor?: number | null;
     profitPercent?: number | null;
+    roiPercent?: number | null;
     profitBand?: string | null;
     checkedAt?: string | null;
     adCostIncluded?: boolean;
@@ -79,6 +80,14 @@ export type PublicProductSummary = {
 
 export type PublicProductDetail = PublicProductSummary & {
   summary?: string | null;
+  standbySupplier?: {
+    available: boolean;
+    provider: string | null;
+  };
+  methodology?: {
+    profit: string;
+    optionalAdvertisingExcluded: boolean;
+  };
   relatedProducts?: PublicProductSummary[];
 };
 
@@ -158,22 +167,26 @@ export async function getPublicCategories(input?: {
 export async function getPublicProducts(input?: {
   market?: PublicMarket['code'];
   category?: string;
-  minProfitBand?: number;
-  maxDeliveryDays?: number;
-  minSales30d?: number;
+  minimumProfitBand?: number;
+  maximumDeliveryDays?: number;
+  minimumSales30d?: number;
   supplier?: string;
-  freshness?: string;
+  freshnessHours?: number;
+  sort?: 'published' | 'most_sold' | 'highest_profit' | 'freshest' | 'fastest_delivery';
+  search?: string;
   cursor?: string;
   limit?: number;
 }): Promise<ProductsResponse | null> {
   const query = new URLSearchParams();
   if (input?.market) query.set('market', input.market);
   if (input?.category) query.set('category', input.category);
-  if (input?.minProfitBand != null) query.set('minProfitBand', String(input.minProfitBand));
-  if (input?.maxDeliveryDays != null) query.set('maxDeliveryDays', String(input.maxDeliveryDays));
-  if (input?.minSales30d != null) query.set('minSales30d', String(input.minSales30d));
+  if (input?.minimumProfitBand != null) query.set('minimumProfitBand', String(input.minimumProfitBand));
+  if (input?.maximumDeliveryDays != null) query.set('maximumDeliveryDays', String(input.maximumDeliveryDays));
+  if (input?.minimumSales30d != null) query.set('minimumSales30d', String(input.minimumSales30d));
   if (input?.supplier) query.set('supplier', input.supplier);
-  if (input?.freshness) query.set('freshness', input.freshness);
+  if (input?.freshnessHours != null) query.set('freshnessHours', String(input.freshnessHours));
+  if (input?.sort) query.set('sort', input.sort);
+  if (input?.search) query.set('search', input.search);
   if (input?.cursor) query.set('cursor', input.cursor);
   if (input?.limit != null) query.set('limit', String(input.limit));
 
