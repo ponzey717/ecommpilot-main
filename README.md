@@ -125,4 +125,5 @@ See `docs/ENVIRONMENT.md` and `docs/MANUAL_ACTIONS.md` for the complete launch c
 - [Brand implementation](./docs/BRAND_IMPLEMENTATION.md)
 - [Manual actions](./docs/MANUAL_ACTIONS.md)
 - [Environment configuration](./docs/ENVIRONMENT.md)
+- [Hostinger deployment runbook](./docs/HOSTINGER_DEPLOYMENT.md)
 - [Legacy WordPress redirects](./docs/LEGACY_WORDPRESS_REDIRECTS_2026-10-09.md)
