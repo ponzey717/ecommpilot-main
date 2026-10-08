@@ -11,11 +11,13 @@ export async function CatalogProductGrid({
   limit = 12,
   sort,
   minimumSales30d,
+  maximumDeliveryDays,
 }: {
   market?: PublicMarket["code"];
   category?: string;
   minimumProfitBand?: number;
   minimumSales30d?: number;
+  maximumDeliveryDays?: number;
   sort?: "published" | "most_sold" | "highest_profit" | "freshest" | "fastest_delivery";
   limit?: number;
 }) {
@@ -24,6 +26,7 @@ export async function CatalogProductGrid({
     ...(category ? { category } : {}),
     ...(minimumProfitBand != null ? { minimumProfitBand } : {}),
     ...(minimumSales30d != null ? { minimumSales30d } : {}),
+    ...(maximumDeliveryDays != null ? { maximumDeliveryDays } : {}),
     ...(sort ? { sort } : {}),
     limit,
   });
