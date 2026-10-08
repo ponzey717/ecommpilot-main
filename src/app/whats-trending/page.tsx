@@ -151,7 +151,7 @@ export default async function WhatsTrendingPage({
                   name="search"
                   type="search"
                   defaultValue={search}
-                  maxLength={120}
+                  maxLength={100}
                   placeholder="e.g. magnetic phone holder"
                   className="catalog-input"
                 />
