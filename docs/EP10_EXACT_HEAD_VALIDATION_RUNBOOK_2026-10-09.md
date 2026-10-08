@@ -127,7 +127,7 @@ Use:
 
 ```bash
 npm --workspace apps/web run build
-npm run check:hostinger-runtime
+npm run check:hostinger-runtime -- --built
 ```
 
 If any required build-time environment is missing, report it. Do not point the build at production merely to make it pass.
