@@ -17,6 +17,7 @@ export function SiteFooter() {
           <p className="footer-heading">Platform</p>
           <div className="mt-4 grid gap-3 text-sm text-[var(--muted)]">
             <Link href={routes.winningProducts}>Winning Products</Link>
+            <Link href={routes.trending}>What's Trending</Link>
             <Link href={routes.markets}>Markets</Link>
             <Link href={routes.categories}>Categories</Link>
             <Link href={routes.pricing}>Pricing</Link>
