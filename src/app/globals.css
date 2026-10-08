@@ -41,7 +41,7 @@ a {
 
 button, a { -webkit-tap-highlight-color: transparent; }
 
-button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visible, textarea:focus-visible {
+button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
   outline: 3px solid color-mix(in srgb, var(--cyan) 70%, white);
   outline-offset: 3px;
 }
@@ -431,6 +431,22 @@ textarea.catalog-input {
 
 .skip-link:focus {
   transform: translateY(0);
-  outline: 3px solid var(--electric-cyan);
+  outline: 3px solid var(--cyan);
   outline-offset: 3px;
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }
