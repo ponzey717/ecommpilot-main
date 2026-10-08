@@ -35,7 +35,7 @@ function safeSlug(value: string): string | undefined {
 
 function safeSearch(value: string): string | undefined {
   const normalized = value.replace(/\s+/g, " ").trim();
-  return normalized && normalized.length <= 120 ? normalized : undefined;
+  return normalized && normalized.length <= 100 ? normalized : undefined;
 }
 
 function allowedNumber(
