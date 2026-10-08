@@ -3,7 +3,7 @@ function configuredBaseUrl(value: string | undefined, fallback: string) {
   try {
     const parsed = new URL(candidate);
     return parsed.protocol === "https:" || parsed.protocol === "http:"
-      ? parsed.toString().replace(/\/$/, "")
+      ? parsed.origin
       : fallback;
   } catch {
     return fallback;
