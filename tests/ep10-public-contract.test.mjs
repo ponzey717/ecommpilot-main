@@ -277,3 +277,20 @@ test("market-specific category state is validated before catalog queries", async
   assert.ok(trending.includes("const requestedCategory = catalogFilters.category ??"));
   assert.ok(trending.includes("categories.some((item) => item.slug === requestedCategory)"));
 });
+
+
+test("Winning Product cards expose useful safe economics without sourcing details", async () => {
+  const card = await source("src/components/products/public-product-card.tsx");
+  for (const label of [
+    "30-day SOLD",
+    "Active listings",
+    "Est. net profit",
+    "Est. net margin",
+    "Target price",
+    "ROI",
+  ]) assert.ok(card.includes(label), label);
+  assert.ok(card.includes("product.supplier.provider"));
+  assert.equal(card.includes("productUrl"), false);
+  assert.equal(card.includes("storeUrl"), false);
+  assert.equal(card.includes("variantId"), false);
+});
