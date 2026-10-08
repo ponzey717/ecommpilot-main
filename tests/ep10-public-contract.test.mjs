@@ -129,10 +129,12 @@ test("Winning Products category and title search preserve the active server filt
   assert.ok(form.includes('name="search"'));
   assert.ok(form.includes('name="freshness"'));
   assert.ok(form.includes('name="sort"'));
-  assert.ok(form.includes("categoriesUnavailable && filters.category"));
-  for (const page of [hub, market]) {
-    assert.ok(page.includes("category={filters.category}"));
-    assert.ok(page.includes("search={filters.search}"));
-    assert.ok(page.includes("freshnessHours={filters.freshness}"));
-  }
+  assert.ok(form.includes("market && categoriesUnavailable && filters.category"));
+  assert.ok(form.includes("Choose a market first"));
+  assert.equal(hub.includes("category={filters.category}"), false);
+  assert.ok(hub.includes("search={filters.search}"));
+  assert.ok(hub.includes("freshnessHours={filters.freshness}"));
+  assert.ok(market.includes("category={filters.category}"));
+  assert.ok(market.includes("search={filters.search}"));
+  assert.ok(market.includes("freshnessHours={filters.freshness}"));
 });
