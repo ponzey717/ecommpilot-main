@@ -3,6 +3,7 @@ import { Inter, Manrope } from "next/font/google";
 import { JsonLd } from "@/components/seo/json-ld";
 import { siteConfig } from "@/config/site";
 import { organizationSchema, websiteSchema } from "@/lib/seo/schema";
+import { publicIndexingEnabled } from "@/lib/public-indexing";
 import "./globals.css";
 
 const inter = Inter({
@@ -16,6 +17,8 @@ const manrope = Manrope({
   subsets: ["latin"],
   display: "swap",
 });
+
+const indexingEnabled = publicIndexingEnabled();
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -44,8 +47,9 @@ export const metadata: Metadata = {
     description: siteConfig.description,
   },
   robots: {
-    index: true,
-    follow: true,
+    index: indexingEnabled,
+    follow: indexingEnabled,
+    nocache: !indexingEnabled,
   },
   verification: process.env.GOOGLE_SITE_VERIFICATION
     ? {
