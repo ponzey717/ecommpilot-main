@@ -44,7 +44,7 @@ export function SiteFooter() {
       <div className="border-t border-[var(--border)]">
         <div className="site-container flex flex-col gap-2 py-5 text-xs text-[var(--muted)] sm:flex-row sm:items-center sm:justify-between">
           <p>© 2026 eCommPilot. All rights reserved.</p>
-          <p>Product metrics and supplier data are verified and time-stamped when live.</p>
+          <p>Published metrics are shown from current verified evidence where available.</p>
         </div>
       </div>
     </footer>
