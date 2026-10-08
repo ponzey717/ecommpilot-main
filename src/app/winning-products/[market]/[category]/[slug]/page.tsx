@@ -10,6 +10,7 @@ import {
   getPublicProductState,
   type PublicProductDetail,
 } from "@/lib/api/public-catalog";
+import { approvedPublicImageUrl } from "@/lib/public-image";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 
@@ -54,7 +55,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       category +
       "/" +
       product.slug,
-    image: product.image?.url?.startsWith("/") ? product.image.url : undefined,
+    image: approvedPublicImageUrl(product.image?.url) ?? undefined,
   });
 }
 
@@ -75,18 +76,6 @@ function money(value: number | null | undefined, currency: string | null | undef
   }
 }
 
-function approvedImage(url: string | null | undefined): string | null {
-  if (!url) return null;
-  if (url.startsWith("/")) return url;
-  try {
-    const parsed = new URL(url);
-    return parsed.protocol === "https:" && parsed.hostname === "media.ecommpilot.net"
-      ? url
-      : null;
-  } catch {
-    return null;
-  }
-}
 
 export default async function ProductPage({ params }: PageProps) {
   const { market, category, slug } = await params;
@@ -151,10 +140,10 @@ export default async function ProductPage({ params }: PageProps) {
             ]}
           />
 
-          {approvedImage(product.image?.url) ? (
+          {approvedPublicImageUrl(product.image?.url) ? (
             <div className="mt-8 overflow-hidden rounded-[24px] border border-[var(--border)] bg-white">
               <Image
-                src={approvedImage(product.image?.url)!}
+                src={approvedPublicImageUrl(product.image?.url)!}
                 alt={product.image?.alt ?? product.name}
                 width={product.image?.width ?? 1200}
                 height={product.image?.height ?? 800}
