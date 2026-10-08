@@ -409,3 +409,10 @@ test("public route error boundary does not expose error objects in browser logs"
   assert.ok(errorPage.includes("This page could not be completed."));
   assert.ok(errorPage.includes("reset()"));
 });
+
+
+test("market switching clears market-specific category state", async () => {
+  const marketFilter = await source("src/components/products/market-filter.tsx");
+  assert.ok(marketFilter.includes('href={href(undefined, filters, { category: undefined })}'));
+  assert.ok(marketFilter.includes('item === market ? {} : { category: undefined }'));
+});
