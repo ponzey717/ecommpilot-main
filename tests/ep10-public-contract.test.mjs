@@ -64,6 +64,10 @@ test("catalog filters are URL-driven and include market profit sold delivery and
   assert.ok(parser.includes("publicProfitBands"));
   assert.ok(parser.includes("publicSalesThresholds"));
   assert.ok(parser.includes("publicDeliveryThresholds"));
+  assert.ok(parser.includes("publicFreshnessThresholds"));
+  assert.ok(parser.includes("[30, 50, 100, 250, 500]"));
+  assert.equal(parser.includes("[20, 30, 50, 100, 250, 500]"), false);
+  assert.ok(filters.includes("Freshness"));
   assert.ok(parser.includes("most_sold"));
   assert.ok(parser.includes("highest_profit"));
 });
