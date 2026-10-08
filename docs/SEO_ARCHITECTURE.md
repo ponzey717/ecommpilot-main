@@ -6,16 +6,20 @@ Build `ecommpilot.net` as an SEO-first public acquisition surface without turnin
 
 ## 1. Indexable page families
 
-Planned page families:
+Current EP-10 V1 indexable page families:
 
 - homepage;
 - Winning Products hub;
-- market landing pages;
-- category landing pages;
-- qualified product opportunity pages;
+- US / UK / AU market landing pages;
+- published category landing pages;
+- qualified public product opportunity pages;
+- public What's Trending landing page;
 - free eBay tools;
-- evergreen learning/guides;
-- pricing/membership information.
+- Learn hub;
+- pricing/membership information;
+- About / Contact / legal-policy pages.
+
+Individual Learn article routes are not created until a full useful article exists.
 
 Only pages with meaningful unique value should be indexable.
 
@@ -31,14 +35,18 @@ Preferred:
  /winning-products/au
  /winning-products/us/{category-slug}
  /winning-products/us/{category-slug}/{product-slug}
+ /whats-trending
  /markets
- /markets/us
  /categories
  /free-tools
  /free-tools/{tool-slug}
  /learn
- /learn/{article-slug}
  /pricing
+ /about
+ /contact
+ /privacy
+ /terms
+ /data-deletion
 ```
 
 Rules:
@@ -47,7 +55,11 @@ Rules:
 - short human-readable slugs;
 - one canonical URL per item;
 - no query-string pages in sitemap;
-- filters are normally non-indexable unless intentionally promoted as curated landing pages.
+- clean `/winning-products`, market pages and `/whats-trending` may be indexable;
+- filter/search/sort/cursor query variants are **noindex**;
+- on approved production they remain **follow** so crawlers can discover canonical product/category links;
+- on local/staging, `ECOMMPILOT_PUBLIC_INDEXING_ENABLED=false` makes the whole site noindex/nofollow;
+- a future curated filter combination must receive its own clean route and unique content before it becomes indexable.
 
 ## 3. Metadata
 
@@ -68,22 +80,24 @@ Market/category/product titles must be generated from real page data, not keywor
 
 Use schema only when supported by the visible page.
 
-Initial schema types:
+Current V1 schema types:
 
 - Organization
 - WebSite
 - BreadcrumbList
-- ItemList
-- Article
-- SoftwareApplication for genuine public tools when applicable
+- SoftwareApplication for the genuine public tools
+
+Future ItemList or Article schema should be added only when the corresponding visible page/content semantics are implemented.
 
 Do not add physical Product/Offer/AggregateRating schema until the page data and semantics support it. eCommPilot is presenting product-opportunity intelligence, not necessarily acting as the merchant of record for the physical product.
 
 ## 5. Sitemaps
 
-V1 sitemap starts with shipped/indexable routes only.
+V1 sitemap is generated from shipped/indexable static routes plus the live public-v1 market/category/product projection.
 
-As data routes go live, split when volume justifies it:
+It never includes query-string filter variants.
+
+As volume approaches the single-sitemap XML limits, split into a sitemap index rather than silently truncating:
 
 - main/static sitemap;
 - products sitemap;
@@ -109,7 +123,7 @@ Before indexing, require enough unique useful content such as:
 - meaningful summary;
 - related category/market links.
 
-Paused or stale products may need noindex or removal from sitemap depending on lifecycle policy.
+The current app publication projection already removes non-publishable/stale publication records from public reads. If lifecycle rules change later, preserve the same principle: non-publishable products must not remain indexable merely because an old slug once existed.
 
 ## 7. Internal linking
 
@@ -136,7 +150,9 @@ Avoid orphan product pages.
 
 ## 8. Search Console
 
-Production setup should include:
+Keep staging fail-closed with `ECOMMPILOT_PUBLIC_INDEXING_ENABLED=false`.
+
+After the approved production deployment is rebuilt with indexing enabled, production setup should include:
 
 - domain property where possible;
 - sitemap submission;
