@@ -12,7 +12,13 @@ import { buildMetadata } from "@/lib/seo/metadata";
 
 type PageProps = {
   params: Promise<{ market: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
+
+function profitBand(value: string | string[] | undefined): number | undefined {
+  const raw = typeof value === "string" ? Number(value) : Number.NaN;
+  return [10, 15, 20, 25, 30, 35, 40, 50].includes(raw) ? raw : undefined;
+}
 
 export function generateStaticParams() {
   return fallbackPublicMarkets().map((market) => ({ market: market.slug }));
@@ -33,8 +39,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   });
 }
 
-export default async function MarketPage({ params }: PageProps) {
-  const { market: slug } = await params;
+export default async function MarketPage({ params, searchParams }: PageProps) {
+  const [{ market: slug }, query] = await Promise.all([params, searchParams]);
+  const minimumProfitBand = profitBand(query.profit);
   const markets = await getPublicMarketsWithFallback();
   const market = markets.find((item) => item.slug === slug && item.active);
 
@@ -54,9 +61,9 @@ export default async function MarketPage({ params }: PageProps) {
       />
       <section className="py-12 md:py-16">
         <div className="site-container">
-          <MarketFilter />
+          <MarketFilter market={market.code} minimumProfitBand={minimumProfitBand} />
           <div className="mt-6">
-            <CatalogProductGrid market={market.code} />
+            <CatalogProductGrid market={market.code} minimumProfitBand={minimumProfitBand} />
           </div>
         </div>
       </section>
