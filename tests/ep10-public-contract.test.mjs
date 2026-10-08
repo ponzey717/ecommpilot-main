@@ -53,12 +53,12 @@ test("final catalog has no demo fallback and Trending uses real sold-demand sort
   assert.ok(trending.includes("hidden trend score"));
 });
 
-test("catalog filters are URL-driven and include market profit sold delivery and sort", async () => {
+test("catalog filters are URL-driven and include market supplier profit sold delivery freshness and sort", async () => {
   const [filters, parser] = await Promise.all([
     source("src/components/products/market-filter.tsx"),
     source("src/lib/catalog-filters.ts"),
   ]);
-  for (const label of ["Market", "Minimum profit", "30-day SOLD", "Max delivery", "Sort"]) {
+  for (const label of ["Market", "Supplier", "Minimum profit", "30-day SOLD", "Max delivery", "Freshness", "Sort"]) {
     assert.ok(filters.includes(label), label);
   }
   assert.ok(parser.includes("publicProfitBands"));
@@ -67,7 +67,8 @@ test("catalog filters are URL-driven and include market profit sold delivery and
   assert.ok(parser.includes("publicFreshnessThresholds"));
   assert.ok(parser.includes("[30, 50, 100, 250, 500]"));
   assert.equal(parser.includes("[20, 30, 50, 100, 250, 500]"), false);
-  assert.ok(filters.includes("Freshness"));
+  assert.ok(parser.includes('"aliexpress" as const'));
+  assert.ok(parser.includes('query.set("supplier", value.supplier)'));
   assert.ok(parser.includes("most_sold"));
   assert.ok(parser.includes("highest_profit"));
 });
@@ -119,22 +120,30 @@ test("catalog outage stays distinct from empty and product not-found states", as
 });
 
 
-test("Winning Products category and title search preserve the active server filters", async () => {
-  const [form, hub, market] = await Promise.all([
+test("Winning Products category search and supplier preserve the active server filters", async () => {
+  const [form, grid, hub, market] = await Promise.all([
     source("src/components/products/catalog-query-form.tsx"),
+    source("src/components/products/catalog-product-grid.tsx"),
     source("src/app/winning-products/page.tsx"),
     source("src/app/winning-products/[market]/page.tsx"),
   ]);
   assert.ok(form.includes('name="category"'));
   assert.ok(form.includes('name="search"'));
+  assert.ok(form.includes('name="supplier"'));
   assert.ok(form.includes('name="freshness"'));
   assert.ok(form.includes('name="sort"'));
-  assert.ok(form.includes("market && categoriesUnavailable && filters.category"));
-  assert.ok(form.includes("Choose a market first"));
-  assert.equal(hub.includes("category={filters.category}"), false);
+  assert.ok(form.includes("categoriesUnavailable && filters.category"));
+  assert.equal(form.includes("Choose a market first"), false);
+  assert.ok(hub.includes("getPublicCategories()"));
+  assert.ok(hub.includes("category={filters.category}"));
   assert.ok(hub.includes("search={filters.search}"));
+  assert.ok(hub.includes("supplier={filters.supplier}"));
   assert.ok(hub.includes("freshnessHours={filters.freshness}"));
   assert.ok(market.includes("category={filters.category}"));
   assert.ok(market.includes("search={filters.search}"));
+  assert.ok(market.includes("supplier={filters.supplier}"));
   assert.ok(market.includes("freshnessHours={filters.freshness}"));
+  assert.ok(grid.includes('nextQuery.set("supplier", supplier)'));
+  assert.ok(grid.includes('nextQuery.set("category", category)'));
+  assert.ok(grid.includes('nextQuery.set("search", search)'));
 });
