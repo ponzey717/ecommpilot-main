@@ -39,7 +39,7 @@ export function CatalogQueryForm({
       {filters.sort && filters.sort !== "published" ? (
         <input type="hidden" name="sort" value={filters.sort} />
       ) : null}
-      {categoryDisabled && filters.category ? (
+      {market && categoriesUnavailable && filters.category ? (
         <input type="hidden" name="category" value={filters.category} />
       ) : null}
 
