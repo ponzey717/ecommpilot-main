@@ -345,3 +345,16 @@ test("public product detail formats API slugs for seller-facing display", async 
   assert.ok(detail.includes("profitBandLabel(product.economics?.profitBand)"));
   assert.equal(detail.includes("badge={product.economics?.profitBand"), false);
 });
+
+
+test("manual noindex metadata also respects staging nofollow", async () => {
+  const [category, product] = await Promise.all([
+    source("src/app/winning-products/[market]/[category]/page.tsx"),
+    source("src/app/winning-products/[market]/[category]/[slug]/page.tsx"),
+  ]);
+  for (const page of [category, product]) {
+    assert.ok(page.includes("publicIndexingEnabled"));
+    assert.ok(page.includes("robots: { index: false, follow: publicIndexingEnabled() }"));
+    assert.equal(page.includes("robots: { index: false, follow: true }"), false);
+  }
+});
