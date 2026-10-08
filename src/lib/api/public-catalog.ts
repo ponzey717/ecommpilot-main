@@ -129,12 +129,7 @@ async function fetchJson<T>(path: string, revalidate = 3600): Promise<T | null> 
   try {
     const response = await fetch(base + path, {
       next: { revalidate },
-      headers: {
-        Accept: 'application/json',
-        ...(process.env.ECOMMPILOT_API_TOKEN
-          ? { Authorization: `Bearer ${process.env.ECOMMPILOT_API_TOKEN}` }
-          : {}),
-      },
+      headers: { Accept: 'application/json' },
     });
 
     if (!response.ok) return null;
