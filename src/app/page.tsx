@@ -69,8 +69,8 @@ export default function Home() {
               <Link href={routes.winningProducts} className="button button-cyan">
                 Browse Winning Products
               </Link>
-              <Link href={routes.join} className="button button-dark-ghost">
-                Get Started Free
+              <Link href={routes.howItWorks} className="button button-dark-ghost">
+                See How It Works
               </Link>
             </div>
             <p className="mt-8 text-sm font-semibold text-white/60">
@@ -290,7 +290,7 @@ export default function Home() {
           </div>
           <div className="flex flex-wrap gap-3">
             <Link href={routes.join} className="button bg-white text-[var(--navy)]">
-              Get Started Free
+              Start Finding Winning Products
             </Link>
             <Link href={routes.winningProducts} className="button button-dark-ghost">
               Browse Products
