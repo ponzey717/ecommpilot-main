@@ -16,6 +16,11 @@ function moneyFromMinor(value: number | null | undefined, currency: string | nul
   }
 }
 
+function freshnessLabel(value: string | null | undefined) {
+  if (!value) return null;
+  return value.toLowerCase() === "fresh" ? "Fresh evidence" : "Evidence status";
+}
+
 function supplierLabel(value: string | null | undefined) {
   if (!value) return null;
   return value.toLowerCase() === "aliexpress" ? "AliExpress" : "Supplier";
@@ -109,7 +114,7 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
           </span>
         ) : null}
         {product.freshness?.status ? (
-          <span className="badge badge-neutral">{product.freshness.status}</span>
+          <span className="badge badge-neutral">{freshnessLabel(product.freshness.status)}</span>
         ) : null}
       </div>
 
