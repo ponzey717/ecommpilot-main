@@ -48,7 +48,12 @@ export default async function WhatsTrendingPage({
   const categoryPayload = market ? await getPublicCategories({ market: market.code }) : [];
   const categories = categoryPayload ?? [];
   const categoriesUnavailable = market != null && categoryPayload == null;
-  const category = catalogFilters.category ?? "";
+  const requestedCategory = catalogFilters.category ?? "";
+  const category = categoriesUnavailable
+    ? requestedCategory
+    : categories.some((item) => item.slug === requestedCategory)
+      ? requestedCategory
+      : "";
   const search = catalogFilters.search ?? "";
   const supplier = catalogFilters.supplier;
   const profit = allowedNumber(one(params.profit), publicProfitBands);
