@@ -5,7 +5,7 @@ import { PageShell } from "@/components/site/page-shell";
 import { buildMetadata } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Contact eCommPilot",
+  title: "Contact",
   description: "Get help with eCommPilot membership, Winning Products or the eCommPilot app.",
   path: "/contact",
 });
