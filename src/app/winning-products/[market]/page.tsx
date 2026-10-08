@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { CatalogQueryForm } from "@/components/products/catalog-query-form";
 import { MarketFilter } from "@/components/products/market-filter";
 import { CatalogProductGrid } from "@/components/products/catalog-product-grid";
 import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
 import {
   fallbackPublicMarkets,
+  getPublicCategories,
   getPublicMarketsWithFallback,
 } from "@/lib/api/public-catalog";
 import { parsePublicCatalogFilters } from "@/lib/catalog-filters";
@@ -42,6 +44,7 @@ export default async function MarketPage({ params, searchParams }: PageProps) {
   const market = markets.find((item) => item.slug === slug && item.active);
 
   if (!market) notFound();
+  const categories = await getPublicCategories({ market: market.code });
 
   return (
     <PageShell darkHeader>
@@ -58,9 +61,17 @@ export default async function MarketPage({ params, searchParams }: PageProps) {
       <section className="py-12 md:py-16">
         <div className="site-container">
           <MarketFilter market={market.code} filters={filters} />
+          <CatalogQueryForm
+            market={market.code}
+            categories={categories ?? []}
+            categoriesUnavailable={categories == null}
+            filters={filters}
+          />
           <div className="mt-6">
             <CatalogProductGrid
               market={market.code}
+              category={filters.category}
+              search={filters.search}
               minimumProfitBand={filters.profit}
               minimumSales30d={filters.sales}
               maximumDeliveryDays={filters.delivery}
