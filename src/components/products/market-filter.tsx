@@ -2,6 +2,7 @@ import Link from "next/link";
 import {
   catalogFilterQuery,
   publicDeliveryThresholds,
+  publicFreshnessThresholds,
   publicProfitBands,
   publicSalesThresholds,
   publicSorts,
@@ -105,6 +106,25 @@ export function MarketFilter({
               className={chip(filters.delivery === days)}
             >
               {days} days
+            </Link>
+          ))}
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="filter-label">Freshness</span>
+          <Link
+            href={href(market, filters, { freshness: undefined })}
+            className={chip(filters.freshness == null)}
+          >
+            Any
+          </Link>
+          {publicFreshnessThresholds.map((hours) => (
+            <Link
+              key={hours}
+              href={href(market, filters, { freshness: hours })}
+              className={chip(filters.freshness === hours)}
+            >
+              {hours === 24 ? "24h" : hours === 72 ? "3 days" : "7 days"}
             </Link>
           ))}
         </div>
