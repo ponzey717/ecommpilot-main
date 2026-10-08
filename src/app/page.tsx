@@ -227,7 +227,7 @@ export default function Home() {
             <p className="eyebrow">Free eBay Profit Calculator</p>
             <h2 className="section-title mt-3">Know the numbers before the listing goes live.</h2>
             <p className="mt-5 max-w-2xl text-base leading-8 text-[var(--muted)]">
-              Enter your own selling price, supplier cost, shipping, marketplace fees and other assumptions to calculate profit, margin and ROI. Nothing is guessed for you.
+              Enter your own selling price, supplier cost, shipping, purchase tax and marketplace-fee assumptions to calculate profit, margin and ROI. Optional advertising is excluded from the V1 calculation.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Link href="/free-tools/profit-margin-calculator" className="button button-primary">
@@ -241,7 +241,7 @@ export default function Home() {
           <div className="snapshot-card">
             <p className="eyebrow">Your inputs</p>
             <div className="mt-5 grid grid-cols-2 gap-3">
-              {["Selling price", "Supplier cost", "Shipping", "eBay fees", "Advertising", "Other costs"].map((label) => (
+              {["Selling price", "Product cost", "Supplier shipping", "Purchase tax", "eBay fee rate", "Fixed transaction fees"].map((label) => (
                 <div className="metric-box" key={label}>
                   <span className="metric-label">{label}</span>
                   <strong className="!text-base">Enter your value</strong>
