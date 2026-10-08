@@ -29,6 +29,18 @@ The public `public-v1` catalog API is deliberately anonymous/allowlisted. Do not
 
 to the public-site catalog integration.
 
+## Required later — member signup launch
+
+Before the public **Get Started** CTA is considered live, confirm the production app has:
+
+```text
+MEMBER_SELF_REGISTRATION_ENABLED=true
+```
+
+and verify a new registration creates a Free member account and redirects to sign-in.
+
+Do not enable self-registration merely for development validation against production.
+
 ## Required later — staging / Hostinger
 
 Owner action may be required for:
