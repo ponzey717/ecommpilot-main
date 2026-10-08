@@ -12,6 +12,7 @@ export const routes = {
   contact: "/contact",
   privacy: "/privacy",
   terms: "/terms",
+  dataDeletion: "/data-deletion",
   login: "https://app.ecommpilot.net/login",
   join: "https://app.ecommpilot.net/register",
 } as const;
