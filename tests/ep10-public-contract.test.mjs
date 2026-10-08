@@ -444,3 +444,18 @@ test("public supplier labels do not expose unknown provider keys", async () => {
     assert.ok(page.includes('value.toLowerCase() === "aliexpress" ? "AliExpress" : "Supplier"'));
   }
 });
+
+
+test("approved image host configuration rejects malformed entries", async () => {
+  const [helper, config] = await Promise.all([
+    source("src/lib/public-image.ts"),
+    source("next.config.ts"),
+  ]);
+  for (const file of [helper, config]) {
+    assert.ok(file.includes("normalized.length > 253"));
+    assert.ok(file.includes("/^[a-z0-9.-]+$/"));
+    assert.ok(file.includes('normalized.startsWith(".")'));
+    assert.ok(file.includes('normalized.includes("..")'));
+    assert.ok(file.includes("new Set"));
+  }
+});
