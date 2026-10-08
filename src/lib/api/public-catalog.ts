@@ -104,6 +104,7 @@ type ProfitBandsResponse = {
 type CategoriesResponse = {
   version: PublicCatalogVersion;
   categories: PublicCategory[];
+  nextCursor?: string | null;
 };
 
 type ProductsResponse = {
@@ -169,11 +170,26 @@ export async function getPublicProfitBands(): Promise<PublicProfitBand[] | null>
 export async function getPublicCategories(input?: {
   market?: PublicMarket['code'];
 }): Promise<PublicCategory[] | null> {
-  const query = new URLSearchParams();
-  if (input?.market) query.set('market', input.market);
-  const suffix = query.size ? '?' + query.toString() : '';
-  const payload = await fetchJson<CategoriesResponse>('/api/public/categories' + suffix);
-  return payload?.version === 'public-v1' ? payload.categories : null;
+  const categories: PublicCategory[] = [];
+  let cursor: string | undefined;
+
+  for (let page = 0; page < 20; page += 1) {
+    const query = new URLSearchParams();
+    if (input?.market) query.set('market', input.market);
+    query.set('limit', '100');
+    if (cursor) query.set('cursor', cursor);
+
+    const payload = await fetchJson<CategoriesResponse>(
+      '/api/public/categories?' + query.toString(),
+    );
+    if (!payload || payload.version !== 'public-v1') return null;
+
+    categories.push(...payload.categories);
+    if (!payload.nextCursor) return categories;
+    cursor = payload.nextCursor;
+  }
+
+  return null;
 }
 
 export async function getPublicProducts(input?: {
