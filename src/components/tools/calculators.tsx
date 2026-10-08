@@ -98,15 +98,17 @@ export function ProfitMarginCalculator() {
   const [feeRate, setFeeRate] = useState("");
   const [fixedFee, setFixedFee] = useState("0");
 
+  const feeReady = feeRate.trim() !== "";
   const result = useMemo(() => {
     const sale = amount(selling);
     const landed = amount(cost) + amount(shipping) + amount(tax);
+    if (!feeReady) return { landed, marketplaceFee: null, profit: null, margin: null, roi: null };
     const marketplaceFee = sale * (percentage(feeRate) / 100) + amount(fixedFee);
     const profit = sale - landed - marketplaceFee;
     const margin = sale > 0 ? (profit / sale) * 100 : 0;
     const roi = landed > 0 ? (profit / landed) * 100 : 0;
     return { landed, marketplaceFee, profit, margin, roi };
-  }, [selling, cost, shipping, tax, feeRate, fixedFee]);
+  }, [selling, cost, shipping, tax, feeRate, fixedFee, feeReady]);
 
   const symbol = currencySymbol(currency);
 
@@ -137,11 +139,18 @@ export function ProfitMarginCalculator() {
         <p className="eyebrow">Estimate</p>
         <div className="mt-5 grid grid-cols-2 gap-3">
           <div className="metric-box"><span className="metric-label">Landed cost</span><strong>{money(currency, result.landed)}</strong></div>
-          <div className="metric-box"><span className="metric-label">eBay cost</span><strong>{money(currency, result.marketplaceFee)}</strong></div>
-          <div className="metric-box"><span className="metric-label">Net profit</span><strong>{money(currency, result.profit)}</strong></div>
-          <div className="metric-box"><span className="metric-label">Profit margin</span><strong>{result.margin.toFixed(1)}%</strong></div>
+          <div className="metric-box"><span className="metric-label">eBay cost</span><strong>{result.marketplaceFee == null ? "—" : money(currency, result.marketplaceFee)}</strong></div>
+          <div className="metric-box"><span className="metric-label">Net profit</span><strong>{result.profit == null ? "—" : money(currency, result.profit)}</strong></div>
+          <div className="metric-box"><span className="metric-label">Profit margin</span><strong>{result.margin == null ? "—" : result.margin.toFixed(1) + "%"}</strong></div>
         </div>
-        <p className="mt-4 text-sm text-[var(--muted)]">ROI on landed cost: <strong>{result.roi.toFixed(1)}%</strong></p>
+        <p className="mt-4 text-sm text-[var(--muted)]">
+          ROI on landed cost: <strong>{result.roi == null ? "—" : result.roi.toFixed(1) + "%"}</strong>
+        </p>
+        {!feeReady ? (
+          <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs font-bold leading-5 text-amber-800">
+            Enter the eBay fee rate that applies to your marketplace/category before treating the profit estimate as complete.
+          </p>
+        ) : null}
         <p className="mt-4 text-xs leading-5 text-[var(--muted)]">
           Estimate only. Enter the fee, fixed transaction fee and tax assumptions that apply to your actual marketplace, category and account.
           Optional promoted-listing or ad spend is not included.
@@ -157,9 +166,10 @@ export function EbayFeeEstimator() {
   const [feeRate, setFeeRate] = useState("");
   const [fixedFee, setFixedFee] = useState("0");
 
+  const feeReady = feeRate.trim() !== "";
   const fee = useMemo(
-    () => amount(selling) * (percentage(feeRate) / 100) + amount(fixedFee),
-    [selling, feeRate, fixedFee],
+    () => feeReady ? amount(selling) * (percentage(feeRate) / 100) + amount(fixedFee) : null,
+    [selling, feeRate, fixedFee, feeReady],
   );
 
   const symbol = currencySymbol(currency);
@@ -181,7 +191,14 @@ export function EbayFeeEstimator() {
       </div>
       <div className="snapshot-card">
         <p className="eyebrow">Estimated marketplace fee</p>
-        <p className="mt-4 text-5xl font-extrabold tracking-[-.04em] text-[var(--navy)]">{money(currency, fee)}</p>
+        <p className="mt-4 text-5xl font-extrabold tracking-[-.04em] text-[var(--navy)]">
+          {fee == null ? "—" : money(currency, fee)}
+        </p>
+        {!feeReady ? (
+          <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs font-bold leading-5 text-amber-800">
+            Enter the marketplace fee rate that applies to your account/category to calculate an estimate.
+          </p>
+        ) : null}
         <p className="mt-5 text-xs leading-5 text-[var(--muted)]">
           eBay fees vary by marketplace, category, seller status and other account conditions.
           This tool intentionally starts with no percentage assumption and uses the rate you enter.
