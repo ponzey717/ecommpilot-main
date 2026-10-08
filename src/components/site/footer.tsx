@@ -5,7 +5,7 @@ import { routes } from "@/config/routes";
 export function SiteFooter() {
   return (
     <footer className="border-t border-[var(--border)] bg-white">
-      <div className="site-container grid gap-10 py-12 md:grid-cols-[1.35fr_1fr_1fr]">
+      <div className="site-container grid gap-10 py-12 md:grid-cols-[1.35fr_1fr_1fr_1fr]">
         <div>
           <Logo />
           <p className="mt-4 max-w-md text-sm leading-6 text-[var(--muted)]">
@@ -29,6 +29,15 @@ export function SiteFooter() {
             <Link href={routes.freeTools}>Free eBay Tools</Link>
             <Link href={routes.learn}>Learn</Link>
             <Link href={routes.login}>Member Login</Link>
+          </div>
+        </div>
+        <div>
+          <p className="footer-heading">Company</p>
+          <div className="mt-4 grid gap-3 text-sm text-[var(--muted)]">
+            <Link href={routes.about}>About</Link>
+            <Link href={routes.contact}>Contact</Link>
+            <Link href={routes.privacy}>Privacy</Link>
+            <Link href={routes.terms}>Terms</Link>
           </div>
         </div>
       </div>
