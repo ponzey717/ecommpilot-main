@@ -32,15 +32,15 @@ https://app.ecommpilot.net
 
 ### ECOMMPILOT_API_BASE_URL
 
-Future server-side base URL for the safe app/public API.
+Server-side base URL for the allowlisted public catalog API.
 
-Do not use a privileged database URL in browser code.
+Production:
 
-### ECOMMPILOT_API_TOKEN
+```text
+https://app.ecommpilot.net
+```
 
-Future server-side token for authenticated service-to-service API calls if required.
-
-This must never be prefixed with `NEXT_PUBLIC_`.
+The V1 public catalog endpoints are deliberately anonymous and field-allowlisted. Do not add app session cookies, bearer tokens or database credentials to these public reads.
 
 ### GOOGLE_SITE_VERIFICATION
 
