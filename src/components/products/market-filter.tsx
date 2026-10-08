@@ -111,6 +111,22 @@ export function MarketFilter({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          <span className="filter-label">Supplier</span>
+          <Link
+            href={href(market, filters, { supplier: undefined })}
+            className={chip(filters.supplier == null)}
+          >
+            All
+          </Link>
+          <Link
+            href={href(market, filters, { supplier: "aliexpress" })}
+            className={chip(filters.supplier === "aliexpress")}
+          >
+            AliExpress
+          </Link>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2">
           <span className="filter-label">Freshness</span>
           <Link
             href={href(market, filters, { freshness: undefined })}
