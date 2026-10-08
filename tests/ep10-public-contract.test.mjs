@@ -325,3 +325,14 @@ test("documented public and app URL environment variables drive runtime links", 
   assert.ok(deletion.includes("routes.support"));
   assert.ok(product.includes("routes.join"));
 });
+
+
+test("public catalog requests are bounded and fail safely", async () => {
+  const api = await source("src/lib/api/public-catalog.ts");
+  assert.ok(api.includes("const PUBLIC_API_TIMEOUT_MS = 6_000"));
+  assert.ok(api.includes("new AbortController()"));
+  assert.ok(api.includes("controller.abort()"));
+  assert.ok(api.includes("signal: controller.signal"));
+  assert.ok(api.includes("clearTimeout(timeout)"));
+  assert.ok(api.includes("return { payload: null, status: null }"));
+});
