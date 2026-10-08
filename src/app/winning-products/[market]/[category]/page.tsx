@@ -11,6 +11,7 @@ import {
   getPublicMarketsWithFallback,
 } from "@/lib/api/public-catalog";
 import { parsePublicCatalogCursor } from "@/lib/catalog-filters";
+import { publicIndexingEnabled } from "@/lib/public-indexing";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 
@@ -42,7 +43,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       : fallbackPublicMarkets().find((item) => item.slug === marketSlug);
     return {
       title: market ? "eBay " + market.code + " Products" : "Winning Products",
-      robots: { index: false, follow: true },
+      robots: { index: false, follow: publicIndexingEnabled() },
     };
   }
 
