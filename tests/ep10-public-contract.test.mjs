@@ -145,6 +145,7 @@ test("Winning Products category search and supplier preserve the active server f
   assert.ok(form.includes("categoriesUnavailable && filters.category"));
   assert.ok(form.includes("Choose a market first"));
   assert.equal(hub.includes("getPublicCategories()"), false);
+  assert.ok(hub.includes("const filters = { ...parsedFilters, category: undefined }"));
   assert.equal(hub.includes("category={filters.category}"), false);
   assert.ok(hub.includes("search={filters.search}"));
   assert.ok(hub.includes("supplier={filters.supplier}"));
@@ -234,4 +235,19 @@ test("public indexing fails closed until production approval", async () => {
   assert.ok(metadata.includes("const canIndex = publicIndexingEnabled() && !noIndex"));
   assert.ok(robots.includes('disallow: "/"'));
   assert.ok(robots.includes('allow: "/"'));
+});
+
+
+test("public catalog search length matches the app DB contract", async () => {
+  const [filters, form, trending, contract] = await Promise.all([
+    source("src/lib/catalog-filters.ts"),
+    source("src/components/products/catalog-query-form.tsx"),
+    source("src/app/whats-trending/page.tsx"),
+    source("docs/PUBLIC_API_CONTRACT.md"),
+  ]);
+  assert.ok(filters.includes("normalized.length <= 100"));
+  assert.ok(form.includes("maxLength={100}"));
+  assert.ok(trending.includes("maxLength={100}"));
+  assert.ok(contract.includes("maximum 100 characters"));
+  assert.equal(filters.includes("normalized.length <= 120"), false);
 });
