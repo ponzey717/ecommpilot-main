@@ -21,6 +21,20 @@ function tierLabel(tier: string | null | undefined) {
   return null;
 }
 
+function safeProductImage(product: PublicProductSummary) {
+  const image = product.image;
+  if (!image?.url) return null;
+  if (image.url.startsWith("/")) return image;
+  try {
+    const parsed = new URL(image.url);
+    return parsed.protocol === "https:" && parsed.hostname === "media.ecommpilot.net"
+      ? image
+      : null;
+  } catch {
+    return null;
+  }
+}
+
 export function PublicProductCard({ product }: { product: PublicProductSummary }) {
   const detailHref = product.category?.slug
     ? "/winning-products/" + product.market.toLowerCase() + "/" + product.category.slug + "/" + product.slug
@@ -30,17 +44,17 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
     product.economics?.currency,
   );
   const requiredTier = tierLabel(product.access?.requiredTier);
-  const localImage = product.image?.url?.startsWith("/") ? product.image : null;
+  const approvedImage = safeProductImage(product);
 
   return (
     <article className="product-card">
       <div className="relative overflow-hidden rounded-[18px] bg-[var(--surface-soft)]">
-        {localImage ? (
+        {approvedImage ? (
           <Image
-            src={localImage.url}
-            alt={localImage.alt}
-            width={localImage.width ?? 600}
-            height={localImage.height ?? 420}
+            src={approvedImage.url}
+            alt={approvedImage.alt}
+            width={approvedImage.width ?? 600}
+            height={approvedImage.height ?? 420}
             className="aspect-[10/7] w-full object-cover"
           />
         ) : (
