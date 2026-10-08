@@ -413,3 +413,24 @@ textarea.catalog-input {
   background: #f4f7fb;
   color: #94a3b8;
 }
+
+
+.skip-link {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 1000;
+  transform: translateY(-200%);
+  border-radius: 0.75rem;
+  background: white;
+  padding: 0.75rem 1rem;
+  font-weight: 800;
+  color: var(--navy);
+  box-shadow: 0 8px 24px rgba(7, 26, 61, 0.16);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+  outline: 3px solid var(--electric-cyan);
+  outline-offset: 3px;
+}
