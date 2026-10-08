@@ -572,3 +572,13 @@ test("public freshness machine values are formatted for sellers", async () => {
   assert.equal(card.includes(">{product.freshness.status}<"), false);
   assert.equal(detail.includes(">{product.freshness.status}<"), false);
 });
+
+
+test("product detail explains the public profit methodology without cost leakage", async () => {
+  const detail = await source("src/app/winning-products/[market]/[category]/[slug]/page.tsx");
+  assert.ok(detail.includes("product.methodology?.profit"));
+  assert.ok(detail.includes("product.methodology?.optionalAdvertisingExcluded"));
+  assert.ok(detail.includes("landed supplier cost and mandatory eBay costs"));
+  assert.equal(detail.includes("itemCostMinor"), false);
+  assert.equal(detail.includes("freightCostMinor"), false);
+});
