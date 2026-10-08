@@ -63,6 +63,30 @@ Rules:
 
 If the variable is blank, the safe default is only `media.ecommpilot.net`.
 
+### ECOMMPILOT_PUBLIC_INDEXING_ENABLED
+
+Fail-closed search-engine indexing switch.
+
+Local and staging:
+
+```text
+ECOMMPILOT_PUBLIC_INDEXING_ENABLED=false
+```
+
+Approved production launch only:
+
+```text
+ECOMMPILOT_PUBLIC_INDEXING_ENABLED=true
+```
+
+When it is not exactly `true`:
+
+- metadata emits noindex/nofollow;
+- `robots.txt` disallows the entire site;
+- the public website can still be tested normally by humans.
+
+Enable this only after the production domain, redirects, sitemap, public API connection and launch checklist are approved.
+
 ### GOOGLE_SITE_VERIFICATION
 
 Optional Google Search Console meta verification value.
