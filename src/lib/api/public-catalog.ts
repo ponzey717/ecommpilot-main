@@ -120,7 +120,16 @@ type ProductResponse = {
 
 function apiBase(): string | null {
   const value = process.env.ECOMMPILOT_API_BASE_URL?.trim();
-  return value ? value.replace(/\/$/, '') : null;
+  if (!value) return null;
+
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === 'https:' || parsed.protocol === 'http:'
+      ? parsed.origin
+      : null;
+  } catch {
+    return null;
+  }
 }
 
 type FetchJsonResult<T> = {
