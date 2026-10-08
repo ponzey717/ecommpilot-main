@@ -18,7 +18,7 @@ export function SiteHeader({ dark = false }: { dark?: boolean }) {
   return (
     <header className={dark ? "header-dark" : "header-light"}>
       <div className="site-container flex min-h-[72px] items-center justify-between gap-5">
-        <Logo light={dark} />
+        <Logo light={dark} priority />
         <nav className="hidden items-center gap-5 xl:flex" aria-label="Primary navigation">
           {nav.map(([label, href]) => (
             <Link key={href} href={href} className={"text-sm font-bold transition " + textClass}>
