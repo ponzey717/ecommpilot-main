@@ -249,9 +249,13 @@ export default async function ProductPage({ params }: PageProps) {
                 {product.methodology?.profit ??
                   "Selling price minus landed supplier cost and mandatory eBay costs."}
                 {" "}
-                {product.methodology?.optionalAdvertisingExcluded !== false
+                {product.methodology?.optionalAdvertisingExcluded === true ||
+                product.economics?.adCostIncluded === false
                   ? "Optional advertising is excluded from this V1 estimate."
-                  : "Advertising assumptions are included where explicitly stated."}
+                  : product.methodology?.optionalAdvertisingExcluded === false ||
+                      product.economics?.adCostIncluded === true
+                    ? "Advertising assumptions are included where explicitly stated."
+                    : "Advertising treatment is not available in this public view."}
               </p>
             </article>
 
