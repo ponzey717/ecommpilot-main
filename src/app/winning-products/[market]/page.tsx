@@ -10,7 +10,10 @@ import {
   getPublicCategories,
   getPublicMarketsWithFallback,
 } from "@/lib/api/public-catalog";
-import { parsePublicCatalogFilters } from "@/lib/catalog-filters";
+import {
+  parsePublicCatalogCursor,
+  parsePublicCatalogFilters,
+} from "@/lib/catalog-filters";
 import { buildMetadata } from "@/lib/seo/metadata";
 
 type PageProps = {
@@ -40,6 +43,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function MarketPage({ params, searchParams }: PageProps) {
   const [{ market: slug }, query] = await Promise.all([params, searchParams]);
   const filters = parsePublicCatalogFilters(query);
+  const cursor = parsePublicCatalogCursor(query.cursor);
   const markets = await getPublicMarketsWithFallback();
   const market = markets.find((item) => item.slug === slug && item.active);
 
@@ -77,6 +81,7 @@ export default async function MarketPage({ params, searchParams }: PageProps) {
               maximumDeliveryDays={filters.delivery}
               freshnessHours={filters.freshness}
               sort={filters.sort}
+              cursor={cursor}
             />
           </div>
         </div>
