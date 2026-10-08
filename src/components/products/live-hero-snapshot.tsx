@@ -53,7 +53,7 @@ export async function LiveHeroSnapshot() {
             ))}
           </div>
           <p className="mt-5 text-sm leading-6 text-[var(--muted)]">
-            No public product is available in this view yet. eCommPilot does not fill an empty catalog with demo sales, supplier or profit figures.
+            No public product is available in this view yet. eCommPilot does not fill an empty catalog with invented sales, supplier or profit figures.
           </p>
         </div>
       </div>
