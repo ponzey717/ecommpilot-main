@@ -10,6 +10,7 @@ import {
   publicFreshnessThresholds,
   publicProfitBands,
   publicSalesThresholds,
+  parsePublicCatalogFilters,
 } from "@/lib/catalog-filters";
 import {
   getPublicCategories,
@@ -43,9 +44,13 @@ export default async function WhatsTrendingPage({
   const markets = (await getPublicMarketsWithFallback()).filter((item) => item.active);
   const marketCode = one(params.market).toUpperCase();
   const market = markets.find((item) => item.code === marketCode) as PublicMarket | undefined;
-  const categories = market ? (await getPublicCategories({ market: market.code })) ?? [] : [];
-  const category = one(params.category);
-  const search = one(params.search).slice(0, 120);
+  const catalogFilters = parsePublicCatalogFilters(params);
+  const categoryPayload = market ? await getPublicCategories({ market: market.code }) : [];
+  const categories = categoryPayload ?? [];
+  const categoriesUnavailable = market != null && categoryPayload == null;
+  const category = catalogFilters.category ?? "";
+  const search = catalogFilters.search ?? "";
+  const supplier = catalogFilters.supplier;
   const profit = allowedNumber(one(params.profit), publicProfitBands);
   const sales = allowedNumber(one(params.sales), publicSalesThresholds);
   const delivery = allowedNumber(one(params.delivery), publicDeliveryThresholds);
@@ -73,6 +78,9 @@ export default async function WhatsTrendingPage({
           />
 
           <form method="get" action="/whats-trending" className="feature-card mt-8 grid gap-4">
+            {categoriesUnavailable && category ? (
+              <input type="hidden" name="category" value={category} />
+            ) : null}
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               <label className="grid gap-2 text-sm font-extrabold text-[var(--navy)]">
                 Market
@@ -90,9 +98,15 @@ export default async function WhatsTrendingPage({
                   name="category"
                   defaultValue={category}
                   className="catalog-input"
-                  disabled={!market}
+                  disabled={!market || categoriesUnavailable}
                 >
-                  <option value="">{market ? "All published categories" : "Choose a market first"}</option>
+                  <option value="">
+                    {!market
+                      ? "Choose a market first"
+                      : categoriesUnavailable
+                        ? "Categories temporarily unavailable"
+                        : "All published categories"}
+                  </option>
                   {categories.map((item) => (
                     <option value={item.slug} key={item.id}>
                       {item.name} · {item.publishedProductCount}
@@ -122,7 +136,15 @@ export default async function WhatsTrendingPage({
               </label>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-[1fr_200px_180px_auto] xl:items-end">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-[1fr_180px_200px_180px_auto] xl:items-end">
+              <label className="grid gap-2 text-sm font-extrabold text-[var(--navy)]">
+                Supplier
+                <select name="supplier" defaultValue={supplier ?? ""} className="catalog-input">
+                  <option value="">All suppliers</option>
+                  <option value="aliexpress">AliExpress</option>
+                </select>
+              </label>
+
               <label className="grid gap-2 text-sm font-extrabold text-[var(--navy)]">
                 Search product title
                 <input
@@ -170,6 +192,7 @@ export default async function WhatsTrendingPage({
               minimumSales30d={sales}
               maximumDeliveryDays={delivery}
               freshnessHours={freshness}
+              supplier={supplier}
               search={search || undefined}
               sort="most_sold"
               limit={24}
