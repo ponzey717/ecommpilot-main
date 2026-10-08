@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { CatalogQueryForm } from "@/components/products/catalog-query-form";
 import { MarketFilter } from "@/components/products/market-filter";
 import { CatalogProductGrid } from "@/components/products/catalog-product-grid";
 import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
+import { getPublicCategories } from "@/lib/api/public-catalog";
 import { parsePublicCatalogFilters } from "@/lib/catalog-filters";
 import { buildMetadata } from "@/lib/seo/metadata";
 
@@ -19,6 +21,7 @@ export default async function WinningProductsPage({
 }) {
   const params = await searchParams;
   const filters = parsePublicCatalogFilters(params);
+  const categories = await getPublicCategories();
   return (
     <PageShell darkHeader>
       <PageHero
@@ -30,7 +33,14 @@ export default async function WinningProductsPage({
       <section className="py-12 md:py-16">
         <div className="site-container">
           <MarketFilter filters={filters} />
+          <CatalogQueryForm
+            categories={categories ?? []}
+            categoriesUnavailable={categories == null}
+            filters={filters}
+          />
           <div className="mt-6"><CatalogProductGrid
+            category={filters.category}
+            search={filters.search}
             minimumProfitBand={filters.profit}
             minimumSales30d={filters.sales}
             maximumDeliveryDays={filters.delivery}
