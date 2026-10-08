@@ -10,13 +10,21 @@ const securityHeaders = [
   },
 ];
 
+function validImageHostname(value: string) {
+  const normalized = value.trim().toLowerCase();
+  if (!normalized || normalized.length > 253) return null;
+  if (!/^[a-z0-9.-]+$/.test(normalized)) return null;
+  if (normalized.startsWith(".") || normalized.endsWith(".") || normalized.includes("..")) return null;
+  return normalized;
+}
+
 const configuredImageHosts = process.env.ECOMMPILOT_PUBLIC_IMAGE_HOSTS
   ?.split(",")
-  .map((value) => value.trim().toLowerCase())
-  .filter(Boolean);
+  .map(validImageHostname)
+  .filter((value): value is string => value != null);
 
 const publicImageHosts = configuredImageHosts?.length
-  ? configuredImageHosts
+  ? [...new Set(configuredImageHosts)]
   : ["media.ecommpilot.net"];
 
 const nextConfig: NextConfig = {
