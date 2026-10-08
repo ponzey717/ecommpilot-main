@@ -400,3 +400,12 @@ test("public URL configuration is origin-only and sitemap scales to the XML ceil
   assert.ok(sitemap.includes("page < 500"));
   assert.ok(sitemap.includes("50,000 URLs"));
 });
+
+
+test("public route error boundary does not expose error objects in browser logs", async () => {
+  const errorPage = await source("src/app/error.tsx");
+  assert.equal(errorPage.includes("console.error"), false);
+  assert.equal(errorPage.includes("useEffect"), false);
+  assert.ok(errorPage.includes("This page could not be completed."));
+  assert.ok(errorPage.includes("reset()"));
+});
