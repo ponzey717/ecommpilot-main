@@ -265,3 +265,15 @@ test("public signup launch preserves the app recovery prerequisite", async () =>
   assert.ok(manual.includes("MEMBER_SELF_REGISTRATION_ENABLED=true"));
   assert.ok(manual.includes("verify password recovery"));
 });
+
+
+test("market-specific category state is validated before catalog queries", async () => {
+  const [market, trending] = await Promise.all([
+    source("src/app/winning-products/[market]/page.tsx"),
+    source("src/app/whats-trending/page.tsx"),
+  ]);
+  assert.ok(market.includes("categories.some((item) => item.slug === parsedFilters.category)"));
+  assert.ok(market.includes("const filters = { ...parsedFilters, category }"));
+  assert.ok(trending.includes("const requestedCategory = catalogFilters.category ??"));
+  assert.ok(trending.includes("categories.some((item) => item.slug === requestedCategory)"));
+});
