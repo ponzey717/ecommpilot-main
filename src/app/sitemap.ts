@@ -32,20 +32,19 @@ function dateOrUndefined(value: string | null | undefined): Date | undefined {
   return Number.isFinite(date.getTime()) ? date : undefined;
 }
 
-async function publishedProductsForSitemap(): Promise<PublicProductSummary[]> {
+async function publishedProductsForSitemap(maxProducts: number): Promise<PublicProductSummary[]> {
   const products: PublicProductSummary[] = [];
   let cursor: string | undefined;
 
-  // A single XML sitemap supports up to 50,000 URLs. At 100 products per API
-  // page, 500 pages reaches that ceiling without silently truncating at 2,000.
-  for (let page = 0; page < 500; page += 1) {
+  while (products.length < maxProducts) {
+    const remaining = maxProducts - products.length;
     const payload = await getPublicProducts({
-      limit: 100,
+      limit: Math.min(100, remaining),
       ...(cursor ? { cursor } : {}),
     });
-    if (!payload) return products;
-    products.push(...payload.products);
-    if (!payload.nextCursor) break;
+    if (!payload) return [];
+    products.push(...payload.products.slice(0, remaining));
+    if (!payload.nextCursor || products.length >= maxProducts) break;
     cursor = payload.nextCursor;
   }
 
@@ -93,7 +92,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       })),
   );
 
-  const products = await publishedProductsForSitemap();
+  const maximumSitemapUrls = 50_000;
+  const reservedUrls =
+    staticEntries.length + marketEntries.length + categoryEntries.length;
+  const maximumProductUrls = Math.max(0, maximumSitemapUrls - reservedUrls);
+  const products = await publishedProductsForSitemap(maximumProductUrls);
   const productEntries: MetadataRoute.Sitemap = products.flatMap((product) => {
     if (!product.category?.slug) return [];
     return [{
