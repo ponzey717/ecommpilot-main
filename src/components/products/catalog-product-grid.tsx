@@ -88,7 +88,7 @@ export async function CatalogProductGrid({
           Published product data could not be loaded.
         </h3>
         <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-[var(--muted)]">
-          eCommPilot is not substituting demo products or stale local values. Please try this catalog view again shortly.
+          eCommPilot is not substituting invented products or stale values. Please try this catalog view again shortly.
         </p>
       </div>
     );
