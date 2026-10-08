@@ -1,3 +1,13 @@
+> **CURRENT EP-10 NOTICE — 09 OCTOBER 2026**
+>
+> The phase descriptions below are the long-range platform plan. For the exact current public-site implementation state, use `docs/IMPLEMENTATION_STATUS.md`.
+>
+> On Draft PR #6, the public shell, real `public-v1` catalog adapter, Winning Products pages, product detail, What's Trending, free tools, legal pages, dynamic sitemap/robots controls and Hostinger staging runbook are implemented. Demo catalog fallback has been removed.
+>
+> Draft PR #93 in `ponzey717/ecommpilot` is the isolated app dependency that exposes the existing safe public sort/search behavior.
+>
+> Do not restart Phase 1/2 as though the repository were still a prototype. Do not deploy, switch DNS or enable indexing until exact-head validation and separate owner approval.
+
 # eCommPilot Complete Platform Build Plan
 
 ## Product direction
