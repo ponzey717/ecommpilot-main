@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/site/breadcrumbs";
+import { routes } from "@/config/routes";
 import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -266,7 +267,7 @@ export default async function ProductPage({ params }: PageProps) {
                   Member access is filtered server-side. Private supplier URLs, protected costs, competitor links and internal evidence are never exposed by the public page.
                 </p>
                 <Link
-                  href="https://app.ecommpilot.net/register"
+                  href={routes.join}
                   className="button button-primary mt-4"
                 >
                   Get Started Free
