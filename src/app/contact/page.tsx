@@ -16,25 +16,25 @@ export default function ContactPage() {
       <PageHero
         eyebrow="Contact"
         title="Need help with eCommPilot?"
-        description="Use the authenticated support area for account-specific questions so private membership or product information stays inside the app."
+        description="Review the app support guidance for account or integration issues. A public support inbox/form will be published only after its delivery and anti-abuse setup is approved."
       />
       <section className="py-14 md:py-18">
         <div className="site-container grid gap-5 md:grid-cols-2">
           <article className="feature-card">
-            <p className="eyebrow">Existing member</p>
-            <h2 className="mt-3 text-2xl font-extrabold text-[var(--navy)]">Open Support in the app</h2>
+            <p className="eyebrow">Support guidance</p>
+            <h2 className="mt-3 text-2xl font-extrabold text-[var(--navy)]">Account and integration help</h2>
             <p className="mt-4 text-sm leading-7 text-[var(--muted)]">
-              Sign in before discussing account, membership or protected product details.
+              The app support page explains account access, sign-in, integration, privacy and platform-compliance support paths. It is guidance, not a public message inbox.
             </p>
             <Link href="https://app.ecommpilot.net/support" className="button button-primary mt-6">
-              Open App Support
+              Read App Support Guidance
             </Link>
           </article>
           <article className="feature-card">
             <p className="eyebrow">New to eCommPilot</p>
             <h2 className="mt-3 text-2xl font-extrabold text-[var(--navy)]">Start with a free account</h2>
             <p className="mt-4 text-sm leading-7 text-[var(--muted)]">
-              Public contact email/form delivery is not configured yet, so the site does not display a made-up address. Create a free account to access the supported contact path.
+              Public contact email/form delivery is not configured yet, so the site does not display a made-up address. You can create a free account to explore the member experience while the public support channel is finalized.
             </p>
             <Link href="https://app.ecommpilot.net/register" className="button button-secondary mt-6">
               Get Started Free
