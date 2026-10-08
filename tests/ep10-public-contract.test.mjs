@@ -108,6 +108,7 @@ test("sitemap derives category and product routes from the public catalog", asyn
   assert.ok(sitemap.includes("whats-trending"));
   assert.ok(sitemap.includes("privacy"));
   assert.ok(sitemap.includes("terms"));
+  assert.ok(sitemap.includes("data-deletion"));
 });
 
 
@@ -169,4 +170,24 @@ test("public calculators are US UK AU aware and do not hardcode a universal fee 
   assert.equal(calculators.includes('useState("13.25")'), false);
   assert.ok(calculators.includes("Optional promoted-listing or ad spend is not included."));
   assert.ok(calculators.includes('max={100}'));
+});
+
+
+test("legacy WordPress URLs are preserved or permanently redirected", async () => {
+  const [config, footer, deletion] = await Promise.all([
+    source("next.config.ts"),
+    source("src/components/site/footer.tsx"),
+    source("src/app/data-deletion/page.tsx"),
+  ]);
+  for (const legacy of [
+    "/wp-sitemap.xml",
+    "/wp-sitemap-posts-page-1.xml",
+    "/wp-sitemap-users-1.xml",
+    "/author/amzee459/:path*",
+  ]) assert.ok(config.includes(legacy), legacy);
+  assert.ok(config.includes('destination: "/sitemap.xml"'));
+  assert.ok(config.includes('destination: "/about"'));
+  assert.ok(config.includes("permanent: true"));
+  assert.ok(footer.includes("Data Deletion"));
+  assert.ok(deletion.includes("app.ecommpilot.net/data-deletion"));
 });
