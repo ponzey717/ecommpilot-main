@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { PublicProductCard } from "@/components/products/public-product-card";
 import {
   getPublicProducts,
@@ -14,6 +15,7 @@ export async function CatalogProductGrid({
   maximumDeliveryDays,
   search,
   freshnessHours,
+  cursor,
 }: {
   market?: PublicMarket["code"];
   category?: string;
@@ -22,6 +24,7 @@ export async function CatalogProductGrid({
   maximumDeliveryDays?: number;
   search?: string;
   freshnessHours?: number;
+  cursor?: string;
   sort?: "published" | "most_sold" | "highest_profit" | "freshest" | "fastest_delivery";
   limit?: number;
 }) {
@@ -34,15 +37,39 @@ export async function CatalogProductGrid({
     ...(search ? { search } : {}),
     ...(freshnessHours != null ? { freshnessHours } : {}),
     ...(sort ? { sort } : {}),
+    ...(cursor && (!sort || sort === "published") ? { cursor } : {}),
     limit,
   });
 
   if (payload?.products?.length) {
+    const nextQuery = new URLSearchParams();
+    if (category) nextQuery.set("category", category);
+    if (search) nextQuery.set("search", search);
+    if (minimumProfitBand != null) nextQuery.set("profit", String(minimumProfitBand));
+    if (minimumSales30d != null) nextQuery.set("sales", String(minimumSales30d));
+    if (maximumDeliveryDays != null) nextQuery.set("delivery", String(maximumDeliveryDays));
+    if (freshnessHours != null) nextQuery.set("freshness", String(freshnessHours));
+    if (sort && sort !== "published") nextQuery.set("sort", sort);
+    if (payload.nextCursor) nextQuery.set("cursor", payload.nextCursor);
+    const basePath = market ? `/winning-products/${market.toLowerCase()}` : "/winning-products";
+
     return (
-      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-        {payload.products.map((product) => (
-          <PublicProductCard key={product.id} product={product} />
-        ))}
+      <div>
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {payload.products.map((product) => (
+            <PublicProductCard key={product.id} product={product} />
+          ))}
+        </div>
+        {payload.nextCursor ? (
+          <div className="mt-8 flex justify-center">
+            <Link
+              className="button button-secondary"
+              href={basePath + "?" + nextQuery.toString()}
+            >
+              Next products →
+            </Link>
+          </div>
+        ) : null}
       </div>
     );
   }
