@@ -25,10 +25,11 @@ export default async function CategoriesPage() {
   const groups = await Promise.all(
     markets.map(async (market) => ({
       market,
-      categories: (await getPublicCategories({ market: market.code })) ?? [],
+      categories: await getPublicCategories({ market: market.code }),
     })),
   );
-  const total = groups.reduce((sum, group) => sum + group.categories.length, 0);
+  const unavailable = groups.every((group) => group.categories == null);
+  const total = groups.reduce((sum, group) => sum + (group.categories?.length ?? 0), 0);
 
   return (
     <PageShell darkHeader>
@@ -40,7 +41,17 @@ export default async function CategoriesPage() {
       />
       <section className="py-14 md:py-18">
         <div className="site-container">
-          {total === 0 ? (
+          {unavailable ? (
+            <div className="rounded-[22px] border border-amber-200 bg-amber-50 p-8 text-center">
+              <p className="eyebrow !text-amber-700">Categories temporarily unavailable</p>
+              <h2 className="mt-3 text-2xl font-extrabold text-[var(--navy)]">
+                Published category data could not be loaded.
+              </h2>
+              <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-[var(--muted)]">
+                eCommPilot is not substituting a development category list while the live catalog is unavailable.
+              </p>
+            </div>
+          ) : total === 0 ? (
             <div className="rounded-[22px] border border-[var(--border)] bg-white p-8 text-center">
               <p className="eyebrow">Categories</p>
               <h2 className="mt-3 text-2xl font-extrabold text-[var(--navy)]">
@@ -68,7 +79,11 @@ export default async function CategoriesPage() {
                       Browse all {market.code} products →
                     </Link>
                   </div>
-                  {categories.length ? (
+                  {categories == null ? (
+                    <p className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm text-[var(--muted)]">
+                      {market.code} category data is temporarily unavailable.
+                    </p>
+                  ) : categories.length ? (
                     <div className="mt-5 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
                       {categories.map((category) => (
                         <Link
