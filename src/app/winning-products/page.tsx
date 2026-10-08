@@ -34,6 +34,7 @@ export default async function WinningProductsPage({
             minimumProfitBand={filters.profit}
             minimumSales30d={filters.sales}
             maximumDeliveryDays={filters.delivery}
+            freshnessHours={filters.freshness}
             sort={filters.sort}
           /></div>
         </div>
