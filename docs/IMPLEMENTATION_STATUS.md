@@ -1,6 +1,6 @@
 # eCommPilot Public Website Implementation Status
 
-**Updated:** 08 October 2026
+**Updated:** 09 October 2026
 
 ## Status language
 
@@ -104,9 +104,13 @@ Implemented:
 - product detail route;
 - functional server-driven filters:
   - market;
+  - category;
+  - public title/summary search;
+  - supplier provider (AliExpress in V1);
   - minimum profit;
   - minimum 30-day SOLD;
   - maximum delivery;
+  - freshness;
   - sort;
 - supported public sorts:
   - recently published;
@@ -128,7 +132,7 @@ Implemented:
   - freshness;
 - member conversion CTA without exposing protected sourcing fields.
 
-Remote product images are restricted to `media.ecommpilot.net`; arbitrary supplier/CDN URLs are not hotlinked.
+Remote product images require an approved `listing_builder_images.hosted_url` and an explicit HTTPS hostname allowlist configured with `ECOMMPILOT_PUBLIC_IMAGE_HOSTS`. The safe default is `media.ecommpilot.net`; arbitrary supplier/source URLs are not automatically trusted.
 
 ### What's Trending
 
@@ -201,7 +205,8 @@ Implemented public routes:
 - About;
 - Contact;
 - Privacy;
-- Terms.
+- Terms;
+- Data Deletion.
 
 Contact does not invent a public support email. Account-specific support links to the authenticated app support route.
 
@@ -216,7 +221,10 @@ Implemented:
 - live market/category/product sitemap entries sourced only from the public API;
 - no draft/private operational records in sitemap;
 - safe product page metadata and breadcrumbs;
-- no physical Product/Offer schema until semantics/data support it.
+- no physical Product/Offer schema until semantics/data support it;
+- preserved legacy WordPress `/data-deletion/` route;
+- permanent redirects for the observed legacy WordPress author/sitemap URLs;
+- live legacy URL audit recorded in `docs/LEGACY_WORDPRESS_REDIRECTS_2026-10-09.md`.
 
 ### Contract tests
 
@@ -229,8 +237,11 @@ Public repository now includes an EP-10 source-contract suite covering:
 - demand-first Trending;
 - functional filter dimensions;
 - protected sourcing boundary;
-- approved media host;
-- dynamic sitemap integration.
+- configurable HTTPS media-host allowlist;
+- dynamic sitemap integration;
+- legacy WordPress URL preservation;
+- honest outage vs empty/not-found states;
+- market-neutral calculator assumptions.
 
 ## Not yet validated on exact EP-10 head
 
@@ -245,7 +256,10 @@ Still required before merge/release:
 7. public sort/search app dependency validation;
 8. metadata/robots/sitemap inspection from built output;
 9. no broken internal links;
-10. no accidental third-party image hotlinks.
+10. no accidental third-party image hotlinks;
+11. production `ECOMMPILOT_PUBLIC_IMAGE_HOSTS` matches the actual approved media/storage host;
+12. legacy WordPress redirects return permanent redirects as intended;
+13. live WordPress sitemap is re-fetched immediately before cutover and the redirect map is updated if needed.
 
 ## Not deployed / not production-approved
 
