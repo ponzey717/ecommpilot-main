@@ -48,7 +48,7 @@ export default async function CategoriesPage() {
                 Published category data could not be loaded.
               </h2>
               <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-[var(--muted)]">
-                eCommPilot is not substituting a development category list while the live catalog is unavailable.
+                eCommPilot is not substituting an invented category list while the live catalog is unavailable.
               </p>
             </div>
           ) : total === 0 ? (
