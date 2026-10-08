@@ -36,7 +36,9 @@ async function publishedProductsForSitemap(): Promise<PublicProductSummary[]> {
   const products: PublicProductSummary[] = [];
   let cursor: string | undefined;
 
-  for (let page = 0; page < 20; page += 1) {
+  // A single XML sitemap supports up to 50,000 URLs. At 100 products per API
+  // page, 500 pages reaches that ceiling without silently truncating at 2,000.
+  for (let page = 0; page < 500; page += 1) {
     const payload = await getPublicProducts({
       limit: 100,
       ...(cursor ? { cursor } : {}),
