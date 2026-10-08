@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
+import { routes } from "@/config/routes";
 import { buildMetadata } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = buildMetadata({
@@ -138,7 +139,7 @@ export default function TermsPage() {
                 through the owner of the workspace that controls your account.
               </p>
               <Link
-                href="https://app.ecommpilot.net/support"
+                href={routes.support}
                 className="text-sm font-extrabold text-[var(--blue)]"
               >
                 Support Guidance →
