@@ -37,6 +37,10 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
     product.economics?.recommendedSellingPriceMinor,
     product.economics?.currency,
   );
+  const netProfit = moneyFromMinor(
+    product.economics?.netProfitMinor,
+    product.economics?.currency,
+  );
   const requiredTier = tierLabel(product.access?.requiredTier);
   const approvedImage = safeProductImage(product);
 
@@ -86,6 +90,9 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
       </div>
 
       <div className="mt-4 flex flex-wrap gap-2">
+        {product.supplier?.provider ? (
+          <span className="badge badge-neutral">{product.supplier.provider}</span>
+        ) : null}
         {product.supplier?.choice ? (
           <span className="badge badge-choice">✓ AliExpress Choice</span>
         ) : null}
@@ -106,6 +113,14 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
           <strong>{product.ebay?.sales30d ?? "—"}</strong>
         </div>
         <div className="metric-box">
+          <span className="metric-label">Active listings</span>
+          <strong>{product.ebay?.activeListings ?? "—"}</strong>
+        </div>
+        <div className="metric-box">
+          <span className="metric-label">Est. net profit</span>
+          <strong className="!text-emerald-700">{netProfit ?? "—"}</strong>
+        </div>
+        <div className="metric-box">
           <span className="metric-label">Est. net margin</span>
           <strong className="!text-emerald-700">
             {product.economics?.profitPercent != null
@@ -115,12 +130,22 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
         </div>
       </div>
 
-      <div className="mt-5 flex items-center justify-between border-t border-[var(--border)] pt-4">
-        <div>
-          <span className="metric-label">Target price</span>
-          <p className="font-extrabold text-[var(--navy)]">{price ?? "—"}</p>
+      <div className="mt-5 flex items-end justify-between gap-4 border-t border-[var(--border)] pt-4">
+        <div className="flex flex-wrap gap-6">
+          <div>
+            <span className="metric-label">Target price</span>
+            <p className="font-extrabold text-[var(--navy)]">{price ?? "—"}</p>
+          </div>
+          <div>
+            <span className="metric-label">ROI</span>
+            <p className="font-extrabold text-[var(--navy)]">
+              {product.economics?.roiPercent != null
+                ? product.economics.roiPercent.toFixed(1) + "%"
+                : "—"}
+            </p>
+          </div>
         </div>
-        <Link href={detailHref} className="text-sm font-extrabold text-[var(--blue)]">
+        <Link href={detailHref} className="whitespace-nowrap text-sm font-extrabold text-[var(--blue)]">
           View product →
         </Link>
       </div>
