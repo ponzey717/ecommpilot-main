@@ -23,6 +23,7 @@ const staticPaths = [
   "/contact",
   "/privacy",
   "/terms",
+  "/data-deletion",
 ] as const;
 
 function dateOrUndefined(value: string | null | undefined): Date | undefined {
