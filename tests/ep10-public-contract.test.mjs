@@ -82,13 +82,18 @@ test("public product page keeps protected sourcing data behind the app boundary"
   assert.equal(detail.includes("supplier.variantId"), false);
 });
 
-test("remote product imagery is restricted to eCommPilot media", async () => {
-  const [config, card] = await Promise.all([
+test("remote product imagery uses an explicit HTTPS host allowlist", async () => {
+  const [config, helper, card] = await Promise.all([
     source("next.config.ts"),
+    source("src/lib/public-image.ts"),
     source("src/components/products/public-product-card.tsx"),
   ]);
+  assert.ok(config.includes("ECOMMPILOT_PUBLIC_IMAGE_HOSTS"));
   assert.ok(config.includes("media.ecommpilot.net"));
-  assert.ok(card.includes('parsed.hostname === "media.ecommpilot.net"'));
+  assert.ok(helper.includes('parsed.protocol !== "https:"'));
+  assert.ok(helper.includes("configuredHosts().includes"));
+  assert.ok(card.includes("approvedPublicImageUrl"));
+  assert.equal(card.includes('parsed.hostname === "media.ecommpilot.net"'), false);
 });
 
 test("sitemap derives category and product routes from the public catalog", async () => {
