@@ -4,7 +4,10 @@ import { MarketFilter } from "@/components/products/market-filter";
 import { CatalogProductGrid } from "@/components/products/catalog-product-grid";
 import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
-import { parsePublicCatalogFilters } from "@/lib/catalog-filters";
+import {
+  parsePublicCatalogCursor,
+  parsePublicCatalogFilters,
+} from "@/lib/catalog-filters";
 import { buildMetadata } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = buildMetadata({
@@ -20,6 +23,7 @@ export default async function WinningProductsPage({
 }) {
   const params = await searchParams;
   const filters = parsePublicCatalogFilters(params);
+  const cursor = parsePublicCatalogCursor(params.cursor);
   return (
     <PageShell darkHeader>
       <PageHero
@@ -42,6 +46,7 @@ export default async function WinningProductsPage({
             maximumDeliveryDays={filters.delivery}
             freshnessHours={filters.freshness}
             sort={filters.sort}
+            cursor={cursor}
           /></div>
         </div>
       </section>
