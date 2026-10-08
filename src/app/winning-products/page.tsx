@@ -8,7 +8,6 @@ import {
   parsePublicCatalogCursor,
   parsePublicCatalogFilters,
 } from "@/lib/catalog-filters";
-import { getPublicCategories } from "@/lib/api/public-catalog";
 import { buildMetadata } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = buildMetadata({
@@ -25,7 +24,6 @@ export default async function WinningProductsPage({
   const params = await searchParams;
   const filters = parsePublicCatalogFilters(params);
   const cursor = parsePublicCatalogCursor(params.cursor);
-  const categories = await getPublicCategories();
   return (
     <PageShell darkHeader>
       <PageHero
@@ -38,12 +36,10 @@ export default async function WinningProductsPage({
         <div className="site-container">
           <MarketFilter filters={filters} />
           <CatalogQueryForm
-            categories={categories ?? []}
-            categoriesUnavailable={categories == null}
-            filters={filters}
+            categories={[]}
+            filters={{ ...filters, category: undefined }}
           />
           <div className="mt-6"><CatalogProductGrid
-            category={filters.category}
             search={filters.search}
             minimumProfitBand={filters.profit}
             minimumSales30d={filters.sales}
