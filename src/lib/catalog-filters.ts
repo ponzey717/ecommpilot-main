@@ -15,6 +15,7 @@ export type PublicCatalogSort = (typeof publicSorts)[number][0];
 export interface PublicCatalogFilterState {
   readonly category?: string;
   readonly search?: string;
+  readonly supplier?: "aliexpress";
   readonly profit?: number;
   readonly sales?: number;
   readonly delivery?: number;
@@ -54,9 +55,13 @@ export function parsePublicCatalogFilters(
     : undefined;
   const category = safeSlug(one(params.category));
   const search = safeSearch(one(params.search));
+  const supplier = one(params.supplier).toLowerCase() === "aliexpress"
+    ? "aliexpress" as const
+    : undefined;
   return {
     ...(category ? { category } : {}),
     ...(search ? { search } : {}),
+    ...(supplier ? { supplier } : {}),
     ...(allowedNumber(params.profit, publicProfitBands) != null
       ? { profit: allowedNumber(params.profit, publicProfitBands)! }
       : {}),
@@ -81,6 +86,7 @@ export function catalogFilterQuery(
   const query = new URLSearchParams();
   if (value.category) query.set("category", value.category);
   if (value.search) query.set("search", value.search);
+  if (value.supplier) query.set("supplier", value.supplier);
   if (value.profit != null) query.set("profit", String(value.profit));
   if (value.sales != null) query.set("sales", String(value.sales));
   if (value.delivery != null) query.set("delivery", String(value.delivery));
