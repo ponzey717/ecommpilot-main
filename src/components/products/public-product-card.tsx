@@ -18,7 +18,7 @@ function moneyFromMinor(value: number | null | undefined, currency: string | nul
 
 function supplierLabel(value: string | null | undefined) {
   if (!value) return null;
-  return value.toLowerCase() === "aliexpress" ? "AliExpress" : value;
+  return value.toLowerCase() === "aliexpress" ? "AliExpress" : "Supplier";
 }
 
 function tierLabel(tier: string | null | undefined) {
