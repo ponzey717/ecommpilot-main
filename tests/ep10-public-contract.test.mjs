@@ -416,3 +416,12 @@ test("market switching clears market-specific category state", async () => {
   assert.ok(marketFilter.includes('href={href(undefined, filters, { category: undefined })}'));
   assert.ok(marketFilter.includes('item === market ? {} : { category: undefined }'));
 });
+
+
+test("public catalog API base is normalized to an HTTP origin", async () => {
+  const api = await source("src/lib/api/public-catalog.ts");
+  assert.ok(api.includes("new URL(value)"));
+  assert.ok(api.includes("parsed.protocol === 'https:' || parsed.protocol === 'http:'"));
+  assert.ok(api.includes("? parsed.origin"));
+  assert.equal(api.includes("value.replace(/\\/$/, '')"), false);
+});
