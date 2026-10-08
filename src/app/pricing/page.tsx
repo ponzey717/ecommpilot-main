@@ -40,7 +40,7 @@ const plans = [
       "Highest configured Winning Product access",
       "Advanced research and supplier evidence where available",
       "Highest configured workflow and monitoring allowances",
-      "Future Premium-only exploration/AI features when released",
+      "Advanced exploration features where included in the active Premium plan",
     ],
   },
 ] as const;
@@ -61,7 +61,7 @@ export default function PricingPage() {
       <PageHero
         eyebrow="Membership"
         title="Start free. Upgrade when you need deeper product access."
-        description="Free, Pro and Premium are the membership structure. Exact commercial prices, product limits and recurring allowances remain configurable until the launch package is approved."
+        description="Free, Pro and Premium are the eCommPilot membership structure. Paid plan prices and exact allowances will be shown before paid subscriptions are offered."
       />
       <section className="py-14 md:py-18">
         <div className="site-container">
@@ -72,7 +72,7 @@ export default function PricingPage() {
                   <p className={plan.name === "Premium" ? "eyebrow !text-[var(--premium)]" : "eyebrow"}>
                     {plan.name}
                   </p>
-                  {plan.name === "Pro" ? <span className="badge badge-market">Middle tier</span> : null}
+                  {plan.name === "Free" ? <span className="badge badge-neutral">Start here</span> : null}
                 </div>
                 <h2 className="mt-4 text-xl font-extrabold text-[var(--navy)]">{plan.headline}</h2>
                 <ul className="mt-6 grid gap-3 text-sm leading-6 text-[var(--muted)]">
