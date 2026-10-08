@@ -45,7 +45,7 @@ export function MarketFilter({
           {markets.map((item) => (
             <Link
               key={item}
-              href={href(item, filters, {})}
+              href={href(item, filters, item === market ? {} : { category: undefined })}
               className={chip(market === item)}
             >
               {item}
