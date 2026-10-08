@@ -13,6 +13,7 @@ export async function CatalogProductGrid({
   minimumSales30d,
   maximumDeliveryDays,
   search,
+  freshnessHours,
 }: {
   market?: PublicMarket["code"];
   category?: string;
@@ -20,6 +21,7 @@ export async function CatalogProductGrid({
   minimumSales30d?: number;
   maximumDeliveryDays?: number;
   search?: string;
+  freshnessHours?: number;
   sort?: "published" | "most_sold" | "highest_profit" | "freshest" | "fastest_delivery";
   limit?: number;
 }) {
@@ -30,6 +32,7 @@ export async function CatalogProductGrid({
     ...(minimumSales30d != null ? { minimumSales30d } : {}),
     ...(maximumDeliveryDays != null ? { maximumDeliveryDays } : {}),
     ...(search ? { search } : {}),
+    ...(freshnessHours != null ? { freshnessHours } : {}),
     ...(sort ? { sort } : {}),
     limit,
   });
