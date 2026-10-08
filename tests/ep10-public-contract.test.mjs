@@ -294,3 +294,34 @@ test("Winning Product cards expose useful safe economics without sourcing detail
   assert.equal(card.includes("storeUrl"), false);
   assert.equal(card.includes("variantId"), false);
 });
+
+
+test("documented public and app URL environment variables drive runtime links", async () => {
+  const [site, routes, contact, privacy, terms, deletion, product] = await Promise.all([
+    source("src/config/site.ts"),
+    source("src/config/routes.ts"),
+    source("src/app/contact/page.tsx"),
+    source("src/app/privacy/page.tsx"),
+    source("src/app/terms/page.tsx"),
+    source("src/app/data-deletion/page.tsx"),
+    source("src/app/winning-products/[market]/[category]/[slug]/page.tsx"),
+  ]);
+
+  assert.ok(site.includes("process.env.NEXT_PUBLIC_SITE_URL"));
+  assert.ok(site.includes("process.env.NEXT_PUBLIC_APP_URL"));
+  assert.ok(routes.includes("${siteConfig.appUrl}/login"));
+  assert.ok(routes.includes("${siteConfig.appUrl}/register"));
+  assert.ok(routes.includes("${siteConfig.appUrl}/support"));
+  assert.ok(routes.includes("${siteConfig.appUrl}/data-deletion"));
+
+  for (const page of [contact, privacy, terms, deletion, product]) {
+    assert.equal(page.includes("https://app.ecommpilot.net/"), false);
+  }
+
+  assert.ok(contact.includes("routes.support"));
+  assert.ok(contact.includes("routes.join"));
+  assert.ok(privacy.includes("routes.support"));
+  assert.ok(terms.includes("routes.support"));
+  assert.ok(deletion.includes("routes.support"));
+  assert.ok(product.includes("routes.join"));
+});
