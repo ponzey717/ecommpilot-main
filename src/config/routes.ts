@@ -8,6 +8,10 @@ export const routes = {
   freeTools: "/free-tools",
   learn: "/learn",
   pricing: "/pricing",
+  about: "/about",
+  contact: "/contact",
+  privacy: "/privacy",
+  terms: "/terms",
   login: "https://app.ecommpilot.net/login",
   join: "https://app.ecommpilot.net/register",
 } as const;
