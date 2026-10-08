@@ -85,7 +85,7 @@ When it is not exactly `true`:
 - `robots.txt` disallows the entire site;
 - the public website can still be tested normally by humans.
 
-Enable this only after the production domain, redirects, sitemap, public API connection and launch checklist are approved.
+Enable this only after the production domain, redirects, sitemap, public API connection and launch checklist are approved. Then rebuild/redeploy the public site so the production metadata and robots output are generated with indexing enabled.
 
 ### GOOGLE_SITE_VERIFICATION
 
