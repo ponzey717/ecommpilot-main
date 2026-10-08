@@ -103,3 +103,23 @@ export function parsePublicCatalogCursor(value: string | string[] | undefined): 
     ? raw
     : undefined;
 }
+
+
+const publicCatalogQueryKeys = [
+  "category",
+  "search",
+  "supplier",
+  "profit",
+  "sales",
+  "delivery",
+  "freshness",
+  "sort",
+  "cursor",
+] as const;
+
+export function hasPublicCatalogQuery(
+  params: Record<string, string | string[] | undefined>,
+  extraKeys: readonly string[] = [],
+): boolean {
+  return [...publicCatalogQueryKeys, ...extraKeys].some((key) => one(params[key]) !== "");
+}
