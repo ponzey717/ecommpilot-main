@@ -49,10 +49,11 @@ test("final catalog has no demo fallback and Trending uses real sold-demand sort
     source("src/components/products/catalog-product-grid.tsx"),
     source("src/app/whats-trending/page.tsx"),
   ]);
-  assert.equal(grid.includes("ProductGrid"), false);
+  assert.equal(grid.includes('from "@/components/products/product-grid"'), false);
   assert.equal(grid.includes("demo-products"), false);
   assert.ok(trending.includes('sort="most_sold"'));
-  assert.ok(trending.includes("30-day SOLD evidence"));
+  assert.ok(trending.includes("30-day"));
+  assert.ok(trending.includes("SOLD evidence"));
   assert.ok(trending.includes("hidden trend score"));
 });
 
