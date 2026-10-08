@@ -18,6 +18,23 @@ export async function LiveHeroSnapshot() {
   const payload = await getPublicProducts({ sort: "most_sold", limit: 1 });
   const product = payload?.products?.[0];
 
+  if (payload == null) {
+    return (
+      <div className="snapshot-card">
+        <div className="hero-glow" />
+        <div className="relative z-10">
+          <p className="eyebrow">Live catalog connection</p>
+          <h2 className="mt-2 text-2xl font-extrabold text-[var(--navy)]">
+            Product data is temporarily unavailable.
+          </h2>
+          <p className="mt-5 text-sm leading-6 text-[var(--muted)]">
+            eCommPilot will not replace an unavailable live catalog with invented sales, supplier or profit figures.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   if (!product) {
     return (
       <div className="snapshot-card">
