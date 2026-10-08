@@ -194,7 +194,7 @@ test("legacy WordPress URLs are preserved or permanently redirected", async () =
   assert.ok(config.includes('destination: "/about"'));
   assert.ok(config.includes("permanent: true"));
   assert.ok(footer.includes("Data Deletion"));
-  assert.ok(deletion.includes("app.ecommpilot.net/data-deletion"));
+  assert.ok(deletion.includes("routes.appDataDeletion"));
 });
 
 
