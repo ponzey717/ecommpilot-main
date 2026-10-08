@@ -1,18 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
-
 export default function ErrorPage({
-  error,
   reset,
 }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  useEffect(() => {
-    console.error("eCommPilot public route error", error);
-  }, [error]);
-
   return (
     <main className="flex min-h-screen items-center bg-[var(--surface-soft)] py-20">
       <div className="site-container">
