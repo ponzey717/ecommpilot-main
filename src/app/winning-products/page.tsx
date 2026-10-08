@@ -22,7 +22,8 @@ export default async function WinningProductsPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const params = await searchParams;
-  const filters = parsePublicCatalogFilters(params);
+  const parsedFilters = parsePublicCatalogFilters(params);
+  const filters = { ...parsedFilters, category: undefined };
   const cursor = parsePublicCatalogCursor(params.cursor);
   return (
     <PageShell darkHeader>
