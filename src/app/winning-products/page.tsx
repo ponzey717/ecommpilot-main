@@ -43,6 +43,7 @@ export default async function WinningProductsPage({
             filters={filters}
           />
           <div className="mt-6"><CatalogProductGrid
+            category={filters.category}
             search={filters.search}
             minimumProfitBand={filters.profit}
             minimumSales30d={filters.sales}
