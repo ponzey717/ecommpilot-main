@@ -20,16 +20,6 @@ Do **not**:
 - expose browser sessions/cookies;
 - dispatch GitHub Actions unless separately approved.
 
-## Current reviewed heads
-
-As of the latest parent-chat static review:
-
-- App PR #93: `ec4a857c5aac80eccb0aba9d08cdb1c5c326668e`
-- Public PR #6: `02e3584ae608a4d7025c198fa2e9190bffa03392`
-- App integration base: `e7d010ed2802c07abb5c8633864699ba34a5af0c`
-
-These are a review snapshot, not a substitute for re-reading the exact remote heads immediately before validation. If either branch has advanced, validate the newer exact head and report it.
-
 ## 1. Record exact heads first
 
 Before any validation, record:
