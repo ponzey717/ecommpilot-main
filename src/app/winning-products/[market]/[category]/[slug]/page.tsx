@@ -61,6 +61,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   });
 }
 
+function freshnessLabel(value: string | null | undefined) {
+  if (!value) return null;
+  return value.toLowerCase() === "fresh" ? "Fresh evidence" : "Evidence status";
+}
+
 function profitBandLabel(value: string | null | undefined) {
   const match = value?.match(/^(\d+)-plus$/);
   return match ? `${match[1]}%+ profit` : undefined;
@@ -297,7 +302,7 @@ export default async function ProductPage({ params }: PageProps) {
                     <span className="badge badge-neutral">Standby supplier available</span>
                   ) : null}
                   {product.freshness?.status ? (
-                    <span className="badge badge-neutral">{product.freshness.status}</span>
+                    <span className="badge badge-neutral">{freshnessLabel(product.freshness.status)}</span>
                   ) : null}
                 </div>
               </div>
