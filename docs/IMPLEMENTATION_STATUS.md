@@ -208,7 +208,15 @@ Implemented public routes:
 - Terms;
 - Data Deletion.
 
-Contact does not invent a public support email. Account-specific support links to the authenticated app support route.
+Legal continuity was verified against the live WordPress pages and the current app policies on 09 October 2026.
+
+The replacement public site preserves the full current policy substance and the existing policy version date (**14 September 2026**) for:
+
+- Privacy Policy;
+- Terms of Use;
+- Data Deletion, including eBay Marketplace Account Deletion/Closure handling.
+
+These pages are not shortened marketing summaries. Contact does not invent a public support email or inbox; it accurately links to the current app support guidance.
 
 ### SEO
 
