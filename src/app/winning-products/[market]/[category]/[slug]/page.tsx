@@ -246,7 +246,12 @@ export default async function ProductPage({ params }: PageProps) {
                 </div>
               </div>
               <p className="mt-5 text-xs leading-5 text-[var(--muted)]">
-                Public values are shown only when the allowlisted publication API supplies current evidence. Optional advertising is excluded from the V1 profit model unless explicitly stated.
+                {product.methodology?.profit ??
+                  "Selling price minus landed supplier cost and mandatory eBay costs."}
+                {" "}
+                {product.methodology?.optionalAdvertisingExcluded !== false
+                  ? "Optional advertising is excluded from this V1 estimate."
+                  : "Advertising assumptions are included where explicitly stated."}
               </p>
             </article>
 
