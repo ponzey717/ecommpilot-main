@@ -7,6 +7,7 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { routes } from "@/config/routes";
 import {
   publicDeliveryThresholds,
+  publicFreshnessThresholds,
   publicProfitBands,
   publicSalesThresholds,
 } from "@/lib/catalog-filters";
@@ -48,6 +49,7 @@ export default async function WhatsTrendingPage({
   const profit = allowedNumber(one(params.profit), publicProfitBands);
   const sales = allowedNumber(one(params.sales), publicSalesThresholds);
   const delivery = allowedNumber(one(params.delivery), publicDeliveryThresholds);
+  const freshness = allowedNumber(one(params.freshness), publicFreshnessThresholds);
 
   return (
     <PageShell darkHeader>
@@ -120,7 +122,7 @@ export default async function WhatsTrendingPage({
               </label>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-[1fr_220px_auto] md:items-end">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-[1fr_200px_180px_auto] xl:items-end">
               <label className="grid gap-2 text-sm font-extrabold text-[var(--navy)]">
                 Search product title
                 <input
@@ -143,6 +145,16 @@ export default async function WhatsTrendingPage({
                 </select>
               </label>
 
+              <label className="grid gap-2 text-sm font-extrabold text-[var(--navy)]">
+                Freshness
+                <select name="freshness" defaultValue={freshness ?? ""} className="catalog-input">
+                  <option value="">Any</option>
+                  <option value="24">24h</option>
+                  <option value="72">3 days</option>
+                  <option value="168">7 days</option>
+                </select>
+              </label>
+
               <div className="flex flex-wrap gap-2">
                 <button type="submit" className="button button-primary">Search</button>
                 <Link href={routes.trending} className="button button-secondary">Reset</Link>
@@ -157,6 +169,7 @@ export default async function WhatsTrendingPage({
               minimumProfitBand={profit}
               minimumSales30d={sales}
               maximumDeliveryDays={delivery}
+              freshnessHours={freshness}
               search={search || undefined}
               sort="most_sold"
               limit={24}
