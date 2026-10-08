@@ -497,3 +497,11 @@ test("faceted catalog and Trending URLs are noindex while clean routes stay cano
   assert.ok(hub.includes('path: "/winning-products"'));
   assert.ok(trending.includes('path: "/whats-trending"'));
 });
+
+
+test("title checker counts Unicode code points rather than UTF-16 code units", async () => {
+  const calculators = await source("src/components/tools/calculators.tsx");
+  assert.ok(calculators.includes("const titleLength = Array.from(title).length"));
+  assert.ok(calculators.includes("{titleLength}/80"));
+  assert.equal(calculators.includes("{title.length}/80"), false);
+});
