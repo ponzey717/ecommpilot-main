@@ -76,7 +76,7 @@ export function CatalogQueryForm({
           className="catalog-input"
           type="search"
           name="search"
-          maxLength={120}
+          maxLength={100}
           defaultValue={filters.search ?? ""}
           placeholder="e.g. magnetic phone holder"
         />
