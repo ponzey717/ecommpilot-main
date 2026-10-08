@@ -143,9 +143,9 @@ test("Winning Products category search and supplier preserve the active server f
   assert.ok(form.includes('name="freshness"'));
   assert.ok(form.includes('name="sort"'));
   assert.ok(form.includes("categoriesUnavailable && filters.category"));
-  assert.equal(form.includes("Choose a market first"), false);
-  assert.ok(hub.includes("getPublicCategories()"));
-  assert.ok(hub.includes("category={filters.category}"));
+  assert.ok(form.includes("Choose a market first"));
+  assert.equal(hub.includes("getPublicCategories()"), false);
+  assert.equal(hub.includes("category={filters.category}"), false);
   assert.ok(hub.includes("search={filters.search}"));
   assert.ok(hub.includes("supplier={filters.supplier}"));
   assert.ok(hub.includes("freshnessHours={filters.freshness}"));
