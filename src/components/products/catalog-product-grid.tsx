@@ -1,4 +1,3 @@
-import { ProductGrid } from "@/components/products/product-grid";
 import { PublicProductCard } from "@/components/products/public-product-card";
 import {
   getPublicProducts,
@@ -35,18 +34,6 @@ export async function CatalogProductGrid({
         {payload.products.map((product) => (
           <PublicProductCard key={product.id} product={product} />
         ))}
-      </div>
-    );
-  }
-
-  if (process.env.NODE_ENV !== "production") {
-    return (
-      <div>
-        <ProductGrid />
-        <p className="mt-5 text-xs leading-5 text-[var(--muted)]">
-          Development fallback only. These sample cards are automatically replaced by
-          verified API products when the public catalog endpoint is available.
-        </p>
       </div>
     );
   }
