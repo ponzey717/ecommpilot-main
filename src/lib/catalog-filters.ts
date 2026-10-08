@@ -89,3 +89,11 @@ export function catalogFilterQuery(
   const text = query.toString();
   return text ? "?" + text : "";
 }
+
+
+export function parsePublicCatalogCursor(value: string | string[] | undefined): string | undefined {
+  const raw = one(value);
+  return raw && raw.length <= 512 && /^[A-Za-z0-9_-]+$/.test(raw)
+    ? raw
+    : undefined;
+}
