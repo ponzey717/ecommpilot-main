@@ -39,7 +39,7 @@ export function SiteHeader({ dark = false }: { dark?: boolean }) {
           <details className="relative xl:hidden">
             <summary
               className={dark ? "menu-button menu-button-dark" : "menu-button"}
-              aria-label="Open navigation"
+              aria-label="Navigation menu"
             >
               <span></span><span></span><span></span>
             </summary>
