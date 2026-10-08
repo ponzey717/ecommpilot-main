@@ -23,7 +23,8 @@ export function buildMetadata({
 }: MetadataInput = {}): Metadata {
   const canonical = absoluteUrl(path);
   const socialImages = image ? [absoluteUrl(image)] : undefined;
-  const canIndex = publicIndexingEnabled() && !noIndex;
+  const indexingEnabled = publicIndexingEnabled();
+  const canIndex = indexingEnabled && !noIndex;
 
   return {
     title: title ?? siteConfig.title,
@@ -33,7 +34,7 @@ export function buildMetadata({
     },
     robots: {
       index: canIndex,
-      follow: canIndex,
+      follow: indexingEnabled,
       nocache: !canIndex,
     },
     openGraph: {
