@@ -3,6 +3,7 @@ import { MarketFilter } from "@/components/products/market-filter";
 import { CatalogProductGrid } from "@/components/products/catalog-product-grid";
 import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
+import { parsePublicCatalogFilters } from "@/lib/catalog-filters";
 import { buildMetadata } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = buildMetadata({
@@ -11,18 +12,13 @@ export const metadata: Metadata = buildMetadata({
   path: "/winning-products",
 });
 
-function profitBand(value: string | string[] | undefined): number | undefined {
-  const raw = typeof value === "string" ? Number(value) : Number.NaN;
-  return [10, 15, 20, 25, 30, 35, 40, 50].includes(raw) ? raw : undefined;
-}
-
 export default async function WinningProductsPage({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const params = await searchParams;
-  const minimumProfitBand = profitBand(params.profit);
+  const filters = parsePublicCatalogFilters(params);
   return (
     <PageShell darkHeader>
       <PageHero
@@ -33,8 +29,13 @@ export default async function WinningProductsPage({
       />
       <section className="py-12 md:py-16">
         <div className="site-container">
-          <MarketFilter minimumProfitBand={minimumProfitBand} />
-          <div className="mt-6"><CatalogProductGrid minimumProfitBand={minimumProfitBand} /></div>
+          <MarketFilter filters={filters} />
+          <div className="mt-6"><CatalogProductGrid
+            minimumProfitBand={filters.profit}
+            minimumSales30d={filters.sales}
+            maximumDeliveryDays={filters.delivery}
+            sort={filters.sort}
+          /></div>
         </div>
       </section>
     </PageShell>
