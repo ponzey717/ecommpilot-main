@@ -530,3 +530,10 @@ test("public product detail exposes safe evidence timestamps without internal ID
   assert.ok(detail.includes("product.supplier?.checkedAt"));
   assert.equal(detail.includes("evidenceId"), false);
 });
+
+
+test("public image helper rejects protocol-relative URLs", async () => {
+  const helper = await source("src/lib/public-image.ts");
+  assert.ok(helper.includes('value.startsWith("/") && !value.startsWith("//")'));
+  assert.ok(helper.includes('if (value.startsWith("//")) return null'));
+});
