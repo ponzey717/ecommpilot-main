@@ -6,7 +6,7 @@ import { routes } from "@/config/routes";
 import { buildMetadata } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = buildMetadata({
-  title: "About eCommPilot",
+  title: "About",
   description:
     "Learn how eCommPilot helps eBay dropshippers evaluate products, suppliers, economics and listing readiness with evidence-first workflows.",
   path: "/about",
