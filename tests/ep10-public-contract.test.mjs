@@ -432,3 +432,14 @@ test("mobile header exposes a named navigation landmark", async () => {
   assert.ok(header.includes('<nav className="mobile-menu" aria-label="Mobile navigation">'));
   assert.ok(header.includes('aria-label="Navigation menu"'));
 });
+
+
+test("public supplier labels do not expose unknown provider keys", async () => {
+  const [card, detail] = await Promise.all([
+    source("src/components/products/public-product-card.tsx"),
+    source("src/app/winning-products/[market]/[category]/[slug]/page.tsx"),
+  ]);
+  for (const page of [card, detail]) {
+    assert.ok(page.includes('value.toLowerCase() === "aliexpress" ? "AliExpress" : "Supplier"'));
+  }
+});
