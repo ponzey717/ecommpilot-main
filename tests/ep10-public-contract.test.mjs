@@ -557,3 +557,18 @@ test("homepage live snapshot labels evidence consistently", async () => {
   assert.ok(snapshot.includes("function freshnessLabel"));
   assert.equal(snapshot.includes("Sales / 30 days"), false);
 });
+
+
+test("public freshness machine values are formatted for sellers", async () => {
+  const [snapshot, card, detail] = await Promise.all([
+    source("src/components/products/live-hero-snapshot.tsx"),
+    source("src/components/products/public-product-card.tsx"),
+    source("src/app/winning-products/[market]/[category]/[slug]/page.tsx"),
+  ]);
+  for (const page of [snapshot, card, detail]) {
+    assert.ok(page.includes("Fresh evidence"));
+    assert.ok(page.includes("function freshnessLabel"));
+  }
+  assert.equal(card.includes(">{product.freshness.status}<"), false);
+  assert.equal(detail.includes(">{product.freshness.status}<"), false);
+});
