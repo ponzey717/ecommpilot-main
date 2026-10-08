@@ -400,8 +400,10 @@ test("public URL configuration is origin-only and sitemap scales to the XML ceil
   ]);
   assert.ok(site.includes("? parsed.origin"));
   assert.equal(site.includes("parsed.toString().replace"), false);
-  assert.ok(sitemap.includes("page < 500"));
-  assert.ok(sitemap.includes("50,000 URLs"));
+  assert.ok(sitemap.includes("const maximumSitemapUrls = 50_000"));
+  assert.ok(sitemap.includes("const reservedUrls"));
+  assert.ok(sitemap.includes("const maximumProductUrls"));
+  assert.ok(sitemap.includes("Math.min(100, remaining)"));
 });
 
 
@@ -536,4 +538,13 @@ test("public image helper rejects protocol-relative URLs", async () => {
   const helper = await source("src/lib/public-image.ts");
   assert.ok(helper.includes('value.startsWith("/") && !value.startsWith("//")'));
   assert.ok(helper.includes('if (value.startsWith("//")) return null'));
+});
+
+
+test("single public sitemap never exceeds the total URL ceiling", async () => {
+  const sitemap = await source("src/app/sitemap.ts");
+  assert.ok(sitemap.includes("const maximumSitemapUrls = 50_000"));
+  assert.ok(sitemap.includes("staticEntries.length + marketEntries.length + categoryEntries.length"));
+  assert.ok(sitemap.includes("Math.max(0, maximumSitemapUrls - reservedUrls)"));
+  assert.ok(sitemap.includes("publishedProductsForSitemap(maximumProductUrls)"));
 });
