@@ -1,0 +1,97 @@
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import test from "node:test";
+
+async function source(path) {
+  return readFile(new URL("../" + path, import.meta.url), "utf8");
+}
+
+test("locked primary navigation and homepage positioning remain present", async () => {
+  const [header, home] = await Promise.all([
+    source("src/components/site/header.tsx"),
+    source("src/app/page.tsx"),
+  ]);
+  for (const label of [
+    "Winning Products",
+    "What's Trending",
+    "How It Works",
+    "Pricing",
+    "Learn",
+  ]) assert.ok(header.includes(label), label);
+  assert.ok(header.includes(">Login<"));
+  assert.ok(header.includes(">Get Started<"));
+  assert.ok(home.includes("Stop Searching. Start Listing Winning eBay Products."));
+  assert.ok(home.includes("You only need your eBay account. We handle the product work."));
+  assert.ok(home.includes("Your eBay account is ready. Your products should be too."));
+  assert.ok(home.includes("See How It Works"));
+});
+
+test("public catalog adapter matches app query names and never sends bearer credentials", async () => {
+  const api = await source("src/lib/api/public-catalog.ts");
+  for (const name of [
+    "minimumProfitBand",
+    "maximumDeliveryDays",
+    "minimumSales30d",
+    "freshnessHours",
+    "sort",
+    "search",
+  ]) assert.ok(api.includes(name), name);
+  assert.equal(api.includes("Authorization"), false);
+  assert.equal(api.includes("ECOMMPILOT_API_TOKEN"), false);
+  assert.ok(api.includes("public-v1"));
+});
+
+test("final catalog has no demo fallback and Trending uses real sold-demand sort", async () => {
+  const [grid, trending] = await Promise.all([
+    source("src/components/products/catalog-product-grid.tsx"),
+    source("src/app/whats-trending/page.tsx"),
+  ]);
+  assert.equal(grid.includes("ProductGrid"), false);
+  assert.equal(grid.includes("demo-products"), false);
+  assert.ok(trending.includes('sort="most_sold"'));
+  assert.ok(trending.includes("30-day SOLD evidence"));
+  assert.ok(trending.includes("hidden trend score"));
+});
+
+test("catalog filters are URL-driven and include market profit sold delivery and sort", async () => {
+  const [filters, parser] = await Promise.all([
+    source("src/components/products/market-filter.tsx"),
+    source("src/lib/catalog-filters.ts"),
+  ]);
+  for (const label of ["Market", "Minimum profit", "30-day SOLD", "Max delivery", "Sort"]) {
+    assert.ok(filters.includes(label), label);
+  }
+  assert.ok(parser.includes("publicProfitBands"));
+  assert.ok(parser.includes("publicSalesThresholds"));
+  assert.ok(parser.includes("publicDeliveryThresholds"));
+  assert.ok(parser.includes("most_sold"));
+  assert.ok(parser.includes("highest_profit"));
+});
+
+test("public product page keeps protected sourcing data behind the app boundary", async () => {
+  const detail = await source("src/app/winning-products/[market]/[category]/[slug]/page.tsx");
+  assert.ok(detail.includes("Private supplier URLs"));
+  assert.ok(detail.includes("protected costs"));
+  assert.equal(detail.includes("supplier.productUrl"), false);
+  assert.equal(detail.includes("supplier.storeUrl"), false);
+  assert.equal(detail.includes("supplier.variantId"), false);
+});
+
+test("remote product imagery is restricted to eCommPilot media", async () => {
+  const [config, card] = await Promise.all([
+    source("next.config.ts"),
+    source("src/components/products/public-product-card.tsx"),
+  ]);
+  assert.ok(config.includes("media.ecommpilot.net"));
+  assert.ok(card.includes('parsed.hostname === "media.ecommpilot.net"'));
+});
+
+test("sitemap derives category and product routes from the public catalog", async () => {
+  const sitemap = await source("src/app/sitemap.ts");
+  assert.ok(sitemap.includes("getPublicCategories"));
+  assert.ok(sitemap.includes("getPublicProducts"));
+  assert.ok(sitemap.includes("nextCursor"));
+  assert.ok(sitemap.includes("whats-trending"));
+  assert.ok(sitemap.includes("privacy"));
+  assert.ok(sitemap.includes("terms"));
+});
