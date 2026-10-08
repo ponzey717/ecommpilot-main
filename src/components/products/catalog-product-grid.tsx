@@ -9,13 +9,14 @@ export async function CatalogProductGrid({
   market,
   category,
   minimumProfitBand,
-  limit = 12,
+  limit = 24,
   sort,
   minimumSales30d,
   maximumDeliveryDays,
   search,
   freshnessHours,
   cursor,
+  path,
 }: {
   market?: PublicMarket["code"];
   category?: string;
@@ -25,6 +26,7 @@ export async function CatalogProductGrid({
   search?: string;
   freshnessHours?: number;
   cursor?: string;
+  path?: string;
   sort?: "published" | "most_sold" | "highest_profit" | "freshest" | "fastest_delivery";
   limit?: number;
 }) {
@@ -51,7 +53,7 @@ export async function CatalogProductGrid({
     if (freshnessHours != null) nextQuery.set("freshness", String(freshnessHours));
     if (sort && sort !== "published") nextQuery.set("sort", sort);
     if (payload.nextCursor) nextQuery.set("cursor", payload.nextCursor);
-    const basePath = market ? `/winning-products/${market.toLowerCase()}` : "/winning-products";
+    const basePath = path ?? (market ? `/winning-products/${market.toLowerCase()}` : "/winning-products");
 
     return (
       <div>
