@@ -88,7 +88,6 @@ export type PublicProductDetail = PublicProductSummary & {
     profit: string;
     optionalAdvertisingExcluded: boolean;
   };
-  relatedProducts?: PublicProductSummary[];
 };
 
 type MarketsResponse = {
