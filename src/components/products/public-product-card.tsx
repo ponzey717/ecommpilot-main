@@ -52,7 +52,7 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
         {approvedImage ? (
           <Image
             src={approvedImage.url}
-            alt={approvedImage.alt}
+            alt={approvedImage.alt || product.name}
             width={approvedImage.width ?? 600}
             height={approvedImage.height ?? 420}
             className="aspect-[10/7] w-full object-cover"
@@ -108,7 +108,7 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
 
       <div className="mt-5 grid grid-cols-2 gap-3">
         <div className="metric-box">
-          <span className="metric-label">30-day sales</span>
+          <span className="metric-label">30-day SOLD</span>
           <strong>{product.ebay?.sales30d ?? "—"}</strong>
         </div>
         <div className="metric-box">
