@@ -43,7 +43,7 @@ export function SiteHeader({ dark = false }: { dark?: boolean }) {
             >
               <span></span><span></span><span></span>
             </summary>
-            <div className="mobile-menu">
+            <nav className="mobile-menu" aria-label="Mobile navigation">
               {nav.map(([label, href]) => (
                 <Link key={href} href={href} className="mobile-menu-link">
                   {label}
@@ -52,7 +52,7 @@ export function SiteHeader({ dark = false }: { dark?: boolean }) {
               <Link href={routes.login} className="mobile-menu-link">
                 Login
               </Link>
-            </div>
+            </nav>
           </details>
         </div>
       </div>
