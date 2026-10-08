@@ -147,3 +147,17 @@ test("Winning Products category search and supplier preserve the active server f
   assert.ok(grid.includes('nextQuery.set("category", category)'));
   assert.ok(grid.includes('nextQuery.set("search", search)'));
 });
+
+
+test("public calculators are US UK AU aware and do not hardcode a universal fee rate", async () => {
+  const calculators = await source("src/components/tools/calculators.tsx");
+  for (const currency of ["USD", "GBP", "AUD"]) {
+    assert.ok(calculators.includes(currency), currency);
+  }
+  assert.ok(calculators.includes("Mandatory fixed transaction fees"));
+  assert.ok(calculators.includes("Fixed transaction fee (if any)"));
+  assert.ok(calculators.includes('useState("")'));
+  assert.equal(calculators.includes('useState("13.25")'), false);
+  assert.ok(calculators.includes("Optional promoted-listing or ad spend is not included."));
+  assert.ok(calculators.includes('max={100}'));
+});
