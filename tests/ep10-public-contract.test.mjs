@@ -171,6 +171,10 @@ test("public calculators are US UK AU aware and do not hardcode a universal fee 
   assert.equal(calculators.includes('useState("13.25")'), false);
   assert.ok(calculators.includes("Optional promoted-listing or ad spend is not included."));
   assert.ok(calculators.includes('max={100}'));
+  assert.ok(calculators.includes('const feeReady = feeRate.trim() !== ""'));
+  assert.ok(calculators.includes('marketplaceFee: null'));
+  assert.ok(calculators.includes("before treating the profit estimate as complete"));
+  assert.ok(calculators.includes("to calculate an estimate"));
 });
 
 
