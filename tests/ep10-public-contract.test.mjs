@@ -513,3 +513,20 @@ test("non-published sorts disclose the V1 top-page limit", async () => {
   assert.ok(grid.includes("Showing the top {limit} published products for this ordering."));
   assert.ok(grid.includes("continuation pagination is available for Recently published ordering only"));
 });
+
+
+test("public product detail exposes safe evidence timestamps without internal IDs", async () => {
+  const detail = await source("src/app/winning-products/[market]/[category]/[slug]/page.tsx");
+  for (const label of [
+    "Marketplace evidence checked",
+    "Economics checked",
+    "Publication freshness",
+    "Supplier checked",
+  ]) assert.ok(detail.includes(label), label);
+  assert.ok(detail.includes('timeZone: "UTC"'));
+  assert.ok(detail.includes("product.ebay?.checkedAt"));
+  assert.ok(detail.includes("product.economics?.checkedAt"));
+  assert.ok(detail.includes("product.freshness?.checkedAt"));
+  assert.ok(detail.includes("product.supplier?.checkedAt"));
+  assert.equal(detail.includes("evidenceId"), false);
+});
