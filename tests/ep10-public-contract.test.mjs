@@ -211,6 +211,8 @@ test("public legal pages preserve the current policy substance", async () => {
   assert.ok(privacy.includes("We do not sell personal information"));
   assert.ok(privacy.includes("Cookies and browser storage"));
 
+  assert.ok(terms.includes("By using the service"));
+  assert.ok(terms.includes("lawful business purposes"));
   assert.ok(terms.includes("Acceptable use"));
   assert.ok(terms.includes("AI-assisted features"));
   assert.ok(terms.includes("Disclaimer and limitation"));
@@ -250,4 +252,12 @@ test("public catalog search length matches the app DB contract", async () => {
   assert.ok(trending.includes("maxLength={100}"));
   assert.ok(contract.includes("maximum 100 characters"));
   assert.equal(filters.includes("normalized.length <= 120"), false);
+});
+
+
+test("public signup launch preserves the app recovery prerequisite", async () => {
+  const manual = await source("docs/MANUAL_ACTIONS.md");
+  assert.ok(manual.includes("verified email/password recovery is ready"));
+  assert.ok(manual.includes("MEMBER_SELF_REGISTRATION_ENABLED=true"));
+  assert.ok(manual.includes("verify password recovery"));
 });
