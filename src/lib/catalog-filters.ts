@@ -1,5 +1,6 @@
 export const publicProfitBands = [10, 15, 20, 25, 30, 35, 40, 50] as const;
-export const publicSalesThresholds = [20, 30, 50, 100, 250, 500] as const;
+export const publicSalesThresholds = [30, 50, 100, 250, 500] as const;
+export const publicFreshnessThresholds = [24, 72, 168] as const;
 export const publicDeliveryThresholds = [7, 10, 15, 20] as const;
 export const publicSorts = [
   ["published", "Recently published"],
@@ -15,6 +16,7 @@ export interface PublicCatalogFilterState {
   readonly profit?: number;
   readonly sales?: number;
   readonly delivery?: number;
+  readonly freshness?: number;
   readonly sort?: PublicCatalogSort;
 }
 
@@ -47,6 +49,9 @@ export function parsePublicCatalogFilters(
     ...(allowedNumber(params.delivery, publicDeliveryThresholds) != null
       ? { delivery: allowedNumber(params.delivery, publicDeliveryThresholds)! }
       : {}),
+    ...(allowedNumber(params.freshness, publicFreshnessThresholds) != null
+      ? { freshness: allowedNumber(params.freshness, publicFreshnessThresholds)! }
+      : {}),
     ...(sort ? { sort } : {}),
   };
 }
@@ -60,6 +65,7 @@ export function catalogFilterQuery(
   if (value.profit != null) query.set("profit", String(value.profit));
   if (value.sales != null) query.set("sales", String(value.sales));
   if (value.delivery != null) query.set("delivery", String(value.delivery));
+  if (value.freshness != null) query.set("freshness", String(value.freshness));
   if (value.sort && value.sort !== "published") query.set("sort", value.sort);
   const text = query.toString();
   return text ? "?" + text : "";
