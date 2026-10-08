@@ -80,6 +80,7 @@ export default async function MarketPage({ params, searchParams }: PageProps) {
               minimumSales30d={filters.sales}
               maximumDeliveryDays={filters.delivery}
               freshnessHours={filters.freshness}
+              supplier={filters.supplier}
               sort={filters.sort}
               cursor={cursor}
             />
