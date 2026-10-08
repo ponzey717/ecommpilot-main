@@ -548,3 +548,12 @@ test("single public sitemap never exceeds the total URL ceiling", async () => {
   assert.ok(sitemap.includes("Math.max(0, maximumSitemapUrls - reservedUrls)"));
   assert.ok(sitemap.includes("publishedProductsForSitemap(maximumProductUrls)"));
 });
+
+
+test("homepage live snapshot labels evidence consistently", async () => {
+  const snapshot = await source("src/components/products/live-hero-snapshot.tsx");
+  assert.ok(snapshot.includes("30-day SOLD"));
+  assert.ok(snapshot.includes("Fresh evidence"));
+  assert.ok(snapshot.includes("function freshnessLabel"));
+  assert.equal(snapshot.includes("Sales / 30 days"), false);
+});
