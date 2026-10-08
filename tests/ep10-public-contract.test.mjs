@@ -251,7 +251,7 @@ test("public catalog search length matches the app DB contract", async () => {
     source("src/app/whats-trending/page.tsx"),
     source("docs/PUBLIC_API_CONTRACT.md"),
   ]);
-  assert.ok(filters.includes("normalized.length <= 100"));
+  assert.ok(filters.includes("normalized.slice(0, 100)"));
   assert.ok(form.includes("maxLength={100}"));
   assert.ok(trending.includes("maxLength={100}"));
   assert.ok(contract.includes("maximum 100 characters"));
@@ -458,4 +458,11 @@ test("approved image host configuration rejects malformed entries", async () => 
     assert.ok(file.includes('normalized.includes("..")'));
     assert.ok(file.includes("new Set"));
   }
+});
+
+
+test("overlong website search is clamped instead of becoming unfiltered", async () => {
+  const filters = await source("src/lib/catalog-filters.ts");
+  assert.ok(filters.includes("normalized.slice(0, 100)"));
+  assert.equal(filters.includes("normalized.length <= 100 ? normalized : undefined"), false);
 });
