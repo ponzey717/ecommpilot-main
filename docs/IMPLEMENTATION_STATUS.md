@@ -230,9 +230,27 @@ Implemented:
 - no draft/private operational records in sitemap;
 - safe product page metadata and breadcrumbs;
 - no physical Product/Offer schema until semantics/data support it;
+- faceted/search/sort/cursor catalog URLs are noindex while clean canonical entry URLs remain indexable;
+- production noindex facets remain followable, while staging remains noindex/nofollow;
+- single sitemap is capped at 50,000 **total** URLs across static/market/category/product entries;
+- product sitemap pagination fails closed rather than returning a silently partial continuation set;
 - preserved legacy WordPress `/data-deletion/` route;
 - permanent redirects for the observed legacy WordPress author/sitemap URLs;
 - live legacy URL audit recorded in `docs/LEGACY_WORDPRESS_REDIRECTS_2026-10-09.md`.
+
+### Runtime / resilience
+
+Implemented:
+
+- `ECOMMPILOT_API_BASE_URL` normalized to HTTP(S) origin only;
+- 6-second public API timeout with truthful unavailable state;
+- public category pagination consumes up to 10,000 published categories per marketplace and fails closed rather than returning a partial taxonomy;
+- public search input is normalized and clamped to the app's 100-character DB contract;
+- approved product images reject protocol-relative URLs and malformed configured hostnames;
+- central `NEXT_PUBLIC_SITE_URL` / `NEXT_PUBLIC_APP_URL` configuration drives canonical and app links;
+- public evidence timestamps are shown in UTC on product detail;
+- non-published sorts disclose that V1 shows the top page only;
+- Title Length Checker counts Unicode code points instead of UTF-16 code units.
 
 ### Contract tests
 
