@@ -336,3 +336,12 @@ test("public catalog requests are bounded and fail safely", async () => {
   assert.ok(api.includes("clearTimeout(timeout)"));
   assert.ok(api.includes("return { payload: null, status: null }"));
 });
+
+
+test("public product detail formats API slugs for seller-facing display", async () => {
+  const detail = await source("src/app/winning-products/[market]/[category]/[slug]/page.tsx");
+  assert.ok(detail.includes("function profitBandLabel"));
+  assert.ok(detail.includes('%+ profit'));
+  assert.ok(detail.includes("profitBandLabel(product.economics?.profitBand)"));
+  assert.equal(detail.includes("badge={product.economics?.profitBand"), false);
+});
