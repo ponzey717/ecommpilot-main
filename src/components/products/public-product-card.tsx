@@ -58,6 +58,7 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
             alt={approvedImage.alt || product.name}
             width={approvedImage.width ?? 600}
             height={approvedImage.height ?? 420}
+            sizes="(min-width: 1280px) 31vw, (min-width: 768px) 48vw, 100vw"
             className="aspect-[10/7] w-full object-cover"
           />
         ) : (
