@@ -30,7 +30,12 @@ export default function TermsPage() {
       />
       <section className="py-14 md:py-18">
         <div className="site-container max-w-4xl">
-          <p className="mb-6 text-sm font-bold text-[var(--muted)]">Last updated: 14 September 2026</p>
+          <p className="text-sm font-bold text-[var(--muted)]">Last updated: 14 September 2026</p>
+          <p className="mt-4 mb-6 text-sm leading-7 text-[var(--muted)]">
+            These Terms of Use govern access to and use of eCommPilot. By using the service,
+            you agree to use it only for lawful business purposes and in accordance with the
+            permissions granted by connected third-party services.
+          </p>
           <div className="grid gap-5">
             <Section title="1. Service purpose">
               <p>
