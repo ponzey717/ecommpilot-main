@@ -505,3 +505,11 @@ test("title checker counts Unicode code points rather than UTF-16 code units", a
   assert.ok(calculators.includes("{titleLength}/80"));
   assert.equal(calculators.includes("{title.length}/80"), false);
 });
+
+
+test("non-published sorts disclose the V1 top-page limit", async () => {
+  const grid = await source("src/components/products/catalog-product-grid.tsx");
+  assert.ok(grid.includes('sort && sort !== "published" && payload.products.length >= limit'));
+  assert.ok(grid.includes("Showing the top {limit} published products for this ordering."));
+  assert.ok(grid.includes("continuation pagination is available for Recently published ordering only"));
+});
