@@ -52,13 +52,40 @@ Owner action may be required for:
 - validating build/start settings;
 - later assigning `ecommpilot.net` only after launch approval.
 
-Production public catalog setting:
+Production public catalog settings:
 
 ```text
 ECOMMPILOT_API_BASE_URL=https://app.ecommpilot.net
+ECOMMPILOT_PUBLIC_IMAGE_HOSTS=<comma-separated approved media/storage hostnames>
 ```
 
+Use hostnames only for `ECOMMPILOT_PUBLIC_IMAGE_HOSTS`. Confirm at least one actually matches the approved `hosted_url` values used by published products, then rebuild the public site.
+
 Do not switch the public domain until both the public site and app public API dependency are deployed and verified.
+
+## Required immediately before production domain cutover
+
+Re-fetch the live WordPress sitemap and compare it with:
+
+`docs/LEGACY_WORDPRESS_REDIRECTS_2026-10-09.md`
+
+At the current audit, the live legacy URLs are:
+
+- `/`
+- `/privacy/`
+- `/terms/`
+- `/data-deletion/`
+- `/author/amzee459/`
+
+If WordPress gains any new page/post before cutover, add its preserve/redirect rule first.
+
+After staging deployment, verify:
+
+- `/wp-sitemap.xml` → permanent redirect to `/sitemap.xml`;
+- `/wp-sitemap-posts-page-1.xml` → permanent redirect to `/sitemap.xml`;
+- `/wp-sitemap-users-1.xml` → permanent redirect to `/sitemap.xml`;
+- `/author/amzee459/` → permanent redirect to `/about`;
+- `/data-deletion/` resolves as the preserved public policy route.
 
 ## Required later — Google Search Console / analytics
 
