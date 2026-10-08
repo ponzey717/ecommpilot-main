@@ -8,18 +8,24 @@ import {
 export async function CatalogProductGrid({
   market,
   category,
-  minProfitBand,
+  minimumProfitBand,
   limit = 12,
+  sort,
+  minimumSales30d,
 }: {
   market?: PublicMarket["code"];
   category?: string;
-  minProfitBand?: number;
+  minimumProfitBand?: number;
+  minimumSales30d?: number;
+  sort?: "published" | "most_sold" | "highest_profit" | "freshest" | "fastest_delivery";
   limit?: number;
 }) {
   const payload = await getPublicProducts({
     ...(market ? { market } : {}),
     ...(category ? { category } : {}),
-    ...(minProfitBand != null ? { minProfitBand } : {}),
+    ...(minimumProfitBand != null ? { minimumProfitBand } : {}),
+    ...(minimumSales30d != null ? { minimumSales30d } : {}),
+    ...(sort ? { sort } : {}),
     limit,
   });
 
