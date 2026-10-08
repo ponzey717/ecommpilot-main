@@ -6,7 +6,7 @@ import { routes } from "@/config/routes";
 import { buildMetadata } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = buildMetadata({
-  title: "eCommPilot Memberships",
+  title: "Memberships & Pricing",
   description:
     "Compare how Free, Pro and Premium eCommPilot memberships can control Winning Product, supplier, monitoring and advanced-tool access.",
   path: "/pricing",
