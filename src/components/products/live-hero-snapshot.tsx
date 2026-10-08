@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { getPublicProducts } from "@/lib/api/public-catalog";
 
+function freshnessLabel(value: string | null | undefined) {
+  if (!value) return null;
+  return value.toLowerCase() === "fresh" ? "Fresh evidence" : "Evidence status";
+}
+
 function money(value: number | null | undefined, currency: string | null | undefined) {
   if (value == null || !currency) return "—";
   try {
@@ -79,7 +84,7 @@ export async function LiveHeroSnapshot() {
         </div>
         <div className="mt-6 grid grid-cols-2 gap-3">
           <div className="metric-box">
-            <span className="metric-label">Sales / 30 days</span>
+            <span className="metric-label">30-day SOLD</span>
             <strong>{product.ebay?.sales30d ?? "—"}</strong>
           </div>
           <div className="metric-box">
@@ -113,7 +118,7 @@ export async function LiveHeroSnapshot() {
             <span className="badge badge-choice">✓ AliExpress Choice</span>
           ) : null}
           {product.freshness?.status ? (
-            <span className="badge badge-neutral">{product.freshness.status}</span>
+            <span className="badge badge-neutral">{freshnessLabel(product.freshness.status)}</span>
           ) : null}
           <Link href={href} className="ml-auto text-sm font-extrabold text-[var(--blue)]">
             View product →
