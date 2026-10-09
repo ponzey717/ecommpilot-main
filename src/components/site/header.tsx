@@ -4,11 +4,10 @@ import { routes } from "@/config/routes";
 
 const nav = [
   ["Winning Products", routes.winningProducts],
-  ["Markets", routes.markets],
-  ["Categories", routes.categories],
-  ["Free Tools", routes.freeTools],
-  ["Learn", routes.learn],
+  ["What's Trending", routes.trending],
+  ["How It Works", routes.howItWorks],
   ["Pricing", routes.pricing],
+  ["Learn", routes.learn],
 ] as const;
 
 export function SiteHeader({ dark = false }: { dark?: boolean }) {
@@ -19,7 +18,7 @@ export function SiteHeader({ dark = false }: { dark?: boolean }) {
   return (
     <header className={dark ? "header-dark" : "header-light"}>
       <div className="site-container flex min-h-[72px] items-center justify-between gap-5">
-        <Logo light={dark} />
+        <Logo light={dark} priority />
         <nav className="hidden items-center gap-5 xl:flex" aria-label="Primary navigation">
           {nav.map(([label, href]) => (
             <Link key={href} href={href} className={"text-sm font-bold transition " + textClass}>
@@ -35,22 +34,25 @@ export function SiteHeader({ dark = false }: { dark?: boolean }) {
             Login
           </Link>
           <Link href={routes.join} className="button button-cyan">
-            Join Free
+            Get Started
           </Link>
           <details className="relative xl:hidden">
             <summary
               className={dark ? "menu-button menu-button-dark" : "menu-button"}
-              aria-label="Open navigation"
+              aria-label="Navigation menu"
             >
               <span></span><span></span><span></span>
             </summary>
-            <div className="mobile-menu">
+            <nav className="mobile-menu" aria-label="Mobile navigation">
               {nav.map(([label, href]) => (
                 <Link key={href} href={href} className="mobile-menu-link">
                   {label}
                 </Link>
               ))}
-            </div>
+              <Link href={routes.login} className="mobile-menu-link">
+                Login
+              </Link>
+            </nav>
           </details>
         </div>
       </div>

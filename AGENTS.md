@@ -11,7 +11,9 @@ eCommPilot has two surfaces:
 
 Do not merge these responsibilities without an explicit architecture decision.
 
-The public website must consume safe public/member APIs. It must not directly expose private operational tables, credentials, supplier secrets, admin data or raw internal research records.
+The public website must consume the anonymous allowlisted `public-v1` API. It must not directly expose private operational tables, credentials, supplier secrets, admin data or raw internal research records.
+
+Do not add a public-site bearer token to the V1 catalog reads. Public/member/admin field boundaries must remain enforced in the app projection, not only hidden by CSS or frontend code.
 
 ## Product positioning
 
@@ -50,6 +52,10 @@ Current working baseline includes:
 - current market activity.
 
 These are configuration rules, not permanent constants.
+
+**Evidence lock:** active eBay listings are not SOLD history. Public 30-day SOLD values and What's Trending demand ranking must use legitimate stored SOLD evidence. Missing facts stay missing; never fill them with AI estimates or demo values.
+
+**Category lock:** eBay taxonomy is marketplace-specific. Require/resolve the market before applying a category unless a separately approved cross-market taxonomy-normalization layer exists.
 
 ## Economics
 
@@ -132,7 +138,13 @@ Every public implementation must consider:
 - accessible navigation;
 - server-rendered/indexable core content.
 
-Never create fake reviews, fake aggregate ratings, fake prices, fake availability or unsupported Product schema.
+Never create fake reviews, fake aggregate ratings, fake prices, fake availability, demo catalog metrics or unsupported Product schema.
+
+Staging/local deployments must remain fail-closed for search indexing with `ECOMMPILOT_PUBLIC_INDEXING_ENABLED=false`. Enable indexing only for the approved production build.
+
+Public product images may render only from approved `listing_builder_images.hosted_url` values whose HTTPS hostname is in `ECOMMPILOT_PUBLIC_IMAGE_HOSTS`. Do not hotlink arbitrary supplier/source images.
+
+The live Privacy, Terms and Data Deletion policy substance and legacy URLs must not be weakened or removed during visual refactors.
 
 ## Route principles
 
@@ -173,6 +185,7 @@ Do not add unfinished routes to the sitemap.
 Run, when applicable:
 
 ```bash
+npm test
 npm run lint
 npm run build
 ```
@@ -181,10 +194,15 @@ Confirm:
 
 - no TypeScript errors;
 - no broken routes;
-- canonical/metadata behavior is correct;
+- public API outage remains distinct from empty/not-found;
+- canonical/metadata/robots behavior is correct;
+- staging stays noindex unless explicitly approved;
 - no secrets in committed code;
 - mobile layout is not broken;
-- new indexable pages are considered for sitemap and schema.
+- new indexable pages are considered for sitemap and schema;
+- legacy WordPress redirects remain preserved;
+- no sample/demo catalog fallback was introduced;
+- exact public search/filter parameters still match the app API contract.
 
 ## Working style
 

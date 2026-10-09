@@ -22,7 +22,7 @@ export default function FreeToolsPage() {
       <PageHero
         eyebrow="Free eBay tools"
         title="Useful tools for everyday eBay decisions."
-        description="Public tools are part of eCommPilot’s SEO and seller-acquisition strategy, but every tool should also be useful on its own."
+        description="Use simple eBay tools built around your own inputs, with clear assumptions instead of one-size-fits-all marketplace numbers."
       />
       <section className="py-14 md:py-18">
         <div className="site-container">

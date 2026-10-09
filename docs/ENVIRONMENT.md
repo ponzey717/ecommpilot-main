@@ -32,15 +32,60 @@ https://app.ecommpilot.net
 
 ### ECOMMPILOT_API_BASE_URL
 
-Future server-side base URL for the safe app/public API.
+Server-side base URL for the allowlisted public catalog API.
 
-Do not use a privileged database URL in browser code.
+Production:
 
-### ECOMMPILOT_API_TOKEN
+```text
+https://app.ecommpilot.net
+```
 
-Future server-side token for authenticated service-to-service API calls if required.
+The V1 public catalog endpoints are deliberately anonymous and field-allowlisted. Do not add app session cookies, bearer tokens or database credentials to these public reads.
 
-This must never be prefixed with `NEXT_PUBLIC_`.
+### ECOMMPILOT_PUBLIC_IMAGE_HOSTS
+
+Comma-separated hostnames that are allowed to render approved public product images.
+
+Example:
+
+```text
+media.ecommpilot.net,project-storage.example.com
+```
+
+Rules:
+
+- hostnames only; do not include `https://` or a path;
+- images still require an approved `listing_builder_images.hosted_url` from the app publication pipeline;
+- source/supplier image URLs are not automatically trusted;
+- the public site accepts HTTPS only;
+- configure the actual production storage/CDN host before launch;
+- rebuild the public site after changing this variable because Next.js remote-image configuration is created at build time.
+
+If the variable is blank, the safe default is only `media.ecommpilot.net`.
+
+### ECOMMPILOT_PUBLIC_INDEXING_ENABLED
+
+Fail-closed search-engine indexing switch.
+
+Local and staging:
+
+```text
+ECOMMPILOT_PUBLIC_INDEXING_ENABLED=false
+```
+
+Approved production launch only:
+
+```text
+ECOMMPILOT_PUBLIC_INDEXING_ENABLED=true
+```
+
+When it is not exactly `true`:
+
+- metadata emits noindex/nofollow;
+- `robots.txt` disallows the entire site;
+- the public website can still be tested normally by humans.
+
+Enable this only after the production domain, redirects, sitemap, public API connection and launch checklist are approved. Then rebuild/redeploy the public site so the production metadata and robots output are generated with indexing enabled.
 
 ### GOOGLE_SITE_VERIFICATION
 

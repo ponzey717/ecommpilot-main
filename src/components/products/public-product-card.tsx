@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { PublicProductSummary } from "@/lib/api/public-catalog";
+import { approvedPublicImageUrl } from "@/lib/public-image";
 
 function moneyFromMinor(value: number | null | undefined, currency: string | null | undefined) {
   if (value == null || !currency) return null;
@@ -15,10 +16,27 @@ function moneyFromMinor(value: number | null | undefined, currency: string | nul
   }
 }
 
+function freshnessLabel(value: string | null | undefined) {
+  if (!value) return null;
+  return value.toLowerCase() === "fresh" ? "Fresh evidence" : "Evidence status";
+}
+
+function supplierLabel(value: string | null | undefined) {
+  if (!value) return null;
+  return value.toLowerCase() === "aliexpress" ? "AliExpress" : "Supplier";
+}
+
 function tierLabel(tier: string | null | undefined) {
   if (tier === "premium") return "Premium";
   if (tier === "pro") return "Pro";
   return null;
+}
+
+function safeProductImage(product: PublicProductSummary) {
+  const image = product.image;
+  if (!image?.url) return null;
+  const url = approvedPublicImageUrl(image.url);
+  return url ? { ...image, url } : null;
 }
 
 export function PublicProductCard({ product }: { product: PublicProductSummary }) {
@@ -29,18 +47,23 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
     product.economics?.recommendedSellingPriceMinor,
     product.economics?.currency,
   );
+  const netProfit = moneyFromMinor(
+    product.economics?.netProfitMinor,
+    product.economics?.currency,
+  );
   const requiredTier = tierLabel(product.access?.requiredTier);
-  const localImage = product.image?.url?.startsWith("/") ? product.image : null;
+  const approvedImage = safeProductImage(product);
 
   return (
     <article className="product-card">
       <div className="relative overflow-hidden rounded-[18px] bg-[var(--surface-soft)]">
-        {localImage ? (
+        {approvedImage ? (
           <Image
-            src={localImage.url}
-            alt={localImage.alt}
-            width={localImage.width ?? 600}
-            height={localImage.height ?? 420}
+            src={approvedImage.url}
+            alt={approvedImage.alt || product.name}
+            width={approvedImage.width ?? 600}
+            height={approvedImage.height ?? 420}
+            sizes="(min-width: 1280px) 31vw, (min-width: 768px) 48vw, 100vw"
             className="aspect-[10/7] w-full object-cover"
           />
         ) : (
@@ -78,6 +101,9 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
       </div>
 
       <div className="mt-4 flex flex-wrap gap-2">
+        {product.supplier?.provider ? (
+          <span className="badge badge-neutral">{supplierLabel(product.supplier.provider)}</span>
+        ) : null}
         {product.supplier?.choice ? (
           <span className="badge badge-choice">✓ AliExpress Choice</span>
         ) : null}
@@ -88,14 +114,22 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
           </span>
         ) : null}
         {product.freshness?.status ? (
-          <span className="badge badge-neutral">{product.freshness.status}</span>
+          <span className="badge badge-neutral">{freshnessLabel(product.freshness.status)}</span>
         ) : null}
       </div>
 
       <div className="mt-5 grid grid-cols-2 gap-3">
         <div className="metric-box">
-          <span className="metric-label">30-day sales</span>
+          <span className="metric-label">30-day SOLD</span>
           <strong>{product.ebay?.sales30d ?? "—"}</strong>
+        </div>
+        <div className="metric-box">
+          <span className="metric-label">Active listings</span>
+          <strong>{product.ebay?.activeListings ?? "—"}</strong>
+        </div>
+        <div className="metric-box">
+          <span className="metric-label">Est. net profit</span>
+          <strong className="!text-emerald-700">{netProfit ?? "—"}</strong>
         </div>
         <div className="metric-box">
           <span className="metric-label">Est. net margin</span>
@@ -107,12 +141,22 @@ export function PublicProductCard({ product }: { product: PublicProductSummary }
         </div>
       </div>
 
-      <div className="mt-5 flex items-center justify-between border-t border-[var(--border)] pt-4">
-        <div>
-          <span className="metric-label">Target price</span>
-          <p className="font-extrabold text-[var(--navy)]">{price ?? "—"}</p>
+      <div className="mt-5 flex items-end justify-between gap-4 border-t border-[var(--border)] pt-4">
+        <div className="flex flex-wrap gap-6">
+          <div>
+            <span className="metric-label">Target price</span>
+            <p className="font-extrabold text-[var(--navy)]">{price ?? "—"}</p>
+          </div>
+          <div>
+            <span className="metric-label">ROI</span>
+            <p className="font-extrabold text-[var(--navy)]">
+              {product.economics?.roiPercent != null
+                ? product.economics.roiPercent.toFixed(1) + "%"
+                : "—"}
+            </p>
+          </div>
         </div>
-        <Link href={detailHref} className="text-sm font-extrabold text-[var(--blue)]">
+        <Link href={detailHref} className="whitespace-nowrap text-sm font-extrabold text-[var(--blue)]">
           View product →
         </Link>
       </div>

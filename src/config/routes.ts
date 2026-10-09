@@ -1,13 +1,26 @@
+import { siteConfig } from "./site";
+
 export const routes = {
   home: "/",
   winningProducts: "/winning-products",
+  trending: "/whats-trending",
+  howItWorks: "/#how-it-works",
   markets: "/markets",
   categories: "/categories",
   freeTools: "/free-tools",
   learn: "/learn",
   pricing: "/pricing",
-  login: "https://app.ecommpilot.net/login",
-  join: "https://app.ecommpilot.net/register",
+  about: "/about",
+  contact: "/contact",
+  privacy: "/privacy",
+  terms: "/terms",
+  dataDeletion: "/data-deletion",
+  login: `${siteConfig.appUrl}/login`,
+  join: `${siteConfig.appUrl}/register`,
+  support: `${siteConfig.appUrl}/support`,
+  appPrivacy: `${siteConfig.appUrl}/privacy`,
+  appTerms: `${siteConfig.appUrl}/terms`,
+  appDataDeletion: `${siteConfig.appUrl}/data-deletion`,
 } as const;
 
 export function marketProductsPath(market: string) {

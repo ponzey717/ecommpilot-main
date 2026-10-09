@@ -1,25 +1,33 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { CatalogQueryForm } from "@/components/products/catalog-query-form";
 import { MarketFilter } from "@/components/products/market-filter";
 import { CatalogProductGrid } from "@/components/products/catalog-product-grid";
 import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
 import {
   fallbackPublicMarkets,
+  getPublicCategories,
   getPublicMarketsWithFallback,
 } from "@/lib/api/public-catalog";
+import {
+  hasPublicCatalogQuery,
+  parsePublicCatalogCursor,
+  parsePublicCatalogFilters,
+} from "@/lib/catalog-filters";
 import { buildMetadata } from "@/lib/seo/metadata";
 
 type PageProps = {
   params: Promise<{ market: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
 export function generateStaticParams() {
   return fallbackPublicMarkets().map((market) => ({ market: market.slug }));
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { market: slug } = await params;
+export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
+  const [{ market: slug }, query] = await Promise.all([params, searchParams]);
   const market = fallbackPublicMarkets().find((item) => item.slug === slug);
   if (!market) return {};
 
@@ -30,15 +38,26 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       market.name +
       " with supplier, delivery and profit context.",
     path: "/winning-products/" + market.slug,
+    noIndex: hasPublicCatalogQuery(query),
   });
 }
 
-export default async function MarketPage({ params }: PageProps) {
-  const { market: slug } = await params;
+export default async function MarketPage({ params, searchParams }: PageProps) {
+  const [{ market: slug }, query] = await Promise.all([params, searchParams]);
+  const parsedFilters = parsePublicCatalogFilters(query);
+  const cursor = parsePublicCatalogCursor(query.cursor);
   const markets = await getPublicMarketsWithFallback();
   const market = markets.find((item) => item.slug === slug && item.active);
 
   if (!market) notFound();
+
+  const categories = await getPublicCategories({ market: market.code });
+  const category = categories == null
+    ? parsedFilters.category
+    : categories.some((item) => item.slug === parsedFilters.category)
+      ? parsedFilters.category
+      : undefined;
+  const filters = { ...parsedFilters, category };
 
   return (
     <PageShell darkHeader>
@@ -54,9 +73,26 @@ export default async function MarketPage({ params }: PageProps) {
       />
       <section className="py-12 md:py-16">
         <div className="site-container">
-          <MarketFilter />
+          <MarketFilter market={market.code} filters={filters} />
+          <CatalogQueryForm
+            market={market.code}
+            categories={categories ?? []}
+            categoriesUnavailable={categories == null}
+            filters={filters}
+          />
           <div className="mt-6">
-            <CatalogProductGrid market={market.code} />
+            <CatalogProductGrid
+              market={market.code}
+              category={filters.category}
+              search={filters.search}
+              minimumProfitBand={filters.profit}
+              minimumSales30d={filters.sales}
+              maximumDeliveryDays={filters.delivery}
+              freshnessHours={filters.freshness}
+              supplier={filters.supplier}
+              sort={filters.sort}
+              cursor={cursor}
+            />
           </div>
         </div>
       </section>

@@ -41,7 +41,7 @@ a {
 
 button, a { -webkit-tap-highlight-color: transparent; }
 
-button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visible, textarea:focus-visible {
+button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
   outline: 3px solid color-mix(in srgb, var(--cyan) 70%, white);
   outline-offset: 3px;
 }
@@ -384,4 +384,69 @@ h1, h2, h3, h4 {
     radial-gradient(circle at 10% 10%, rgba(22,217,227,.08), transparent 25%),
     radial-gradient(circle at 90% 80%, rgba(20,108,255,.07), transparent 28%),
     #f1f6fc;
+}
+
+
+.catalog-input {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: white;
+  padding: 0 12px;
+  color: var(--navy);
+  font: inherit;
+  font-weight: 650;
+}
+
+textarea.catalog-input {
+  min-height: 120px;
+  padding-block: 10px;
+}
+
+.catalog-input::placeholder {
+  color: #94a3b8;
+}
+
+.catalog-input:disabled {
+  cursor: not-allowed;
+  background: #f4f7fb;
+  color: #94a3b8;
+}
+
+
+.skip-link {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 1000;
+  transform: translateY(-200%);
+  border-radius: 0.75rem;
+  background: white;
+  padding: 0.75rem 1rem;
+  font-weight: 800;
+  color: var(--navy);
+  box-shadow: 0 8px 24px rgba(7, 26, 61, 0.16);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+  outline: 3px solid var(--cyan);
+  outline-offset: 3px;
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }

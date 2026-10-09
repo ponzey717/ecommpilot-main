@@ -20,10 +20,8 @@ export type PublicCategory = {
   id: string;
   name: string;
   slug: string;
-  parentId?: string | null;
-  path?: string[];
-  publishedProductCount?: number;
-  taxonomyCheckedAt?: string | null;
+  publishedProductCount: number;
+  checkedAt: string;
 };
 
 export type PublicProductImage = {
@@ -54,6 +52,7 @@ export type PublicProductSummary = {
     provider?: string | null;
     choice?: boolean | null;
     rating?: number | null;
+    orderCount?: number | null;
     deliveryMinDays?: number | null;
     deliveryMaxDays?: number | null;
     inStock?: boolean | null;
@@ -62,7 +61,9 @@ export type PublicProductSummary = {
   economics?: {
     currency?: string | null;
     recommendedSellingPriceMinor?: number | null;
+    netProfitMinor?: number | null;
     profitPercent?: number | null;
+    roiPercent?: number | null;
     profitBand?: string | null;
     checkedAt?: string | null;
     adCostIncluded?: boolean;
@@ -79,7 +80,14 @@ export type PublicProductSummary = {
 
 export type PublicProductDetail = PublicProductSummary & {
   summary?: string | null;
-  relatedProducts?: PublicProductSummary[];
+  standbySupplier?: {
+    available: boolean;
+    provider: string | null;
+  };
+  methodology?: {
+    profit: string;
+    optionalAdvertisingExcluded: boolean;
+  };
 };
 
 type MarketsResponse = {
@@ -95,6 +103,7 @@ type ProfitBandsResponse = {
 type CategoriesResponse = {
   version: PublicCatalogVersion;
   categories: PublicCategory[];
+  nextCursor?: string | null;
 };
 
 type ProductsResponse = {
@@ -110,29 +119,50 @@ type ProductResponse = {
 
 function apiBase(): string | null {
   const value = process.env.ECOMMPILOT_API_BASE_URL?.trim();
-  return value ? value.replace(/\/$/, '') : null;
+  if (!value) return null;
+
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === 'https:' || parsed.protocol === 'http:'
+      ? parsed.origin
+      : null;
+  } catch {
+    return null;
+  }
 }
 
-async function fetchJson<T>(path: string, revalidate = 3600): Promise<T | null> {
+type FetchJsonResult<T> = {
+  readonly payload: T | null;
+  readonly status: number | null;
+};
+
+const PUBLIC_API_TIMEOUT_MS = 6_000;
+
+async function fetchJsonResult<T>(path: string, revalidate = 3600): Promise<FetchJsonResult<T>> {
   const base = apiBase();
-  if (!base) return null;
+  if (!base) return { payload: null, status: null };
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), PUBLIC_API_TIMEOUT_MS);
 
   try {
     const response = await fetch(base + path, {
       next: { revalidate },
-      headers: {
-        Accept: 'application/json',
-        ...(process.env.ECOMMPILOT_API_TOKEN
-          ? { Authorization: `Bearer ${process.env.ECOMMPILOT_API_TOKEN}` }
-          : {}),
-      },
+      headers: { Accept: 'application/json' },
+      signal: controller.signal,
     });
 
-    if (!response.ok) return null;
-    return (await response.json()) as T;
+    if (!response.ok) return { payload: null, status: response.status };
+    return { payload: (await response.json()) as T, status: response.status };
   } catch {
-    return null;
+    return { payload: null, status: null };
+  } finally {
+    clearTimeout(timeout);
   }
+}
+
+async function fetchJson<T>(path: string, revalidate = 3600): Promise<T | null> {
+  return (await fetchJsonResult<T>(path, revalidate)).payload;
 }
 
 export async function getPublicMarkets(): Promise<PublicMarket[] | null> {
@@ -148,32 +178,53 @@ export async function getPublicProfitBands(): Promise<PublicProfitBand[] | null>
 export async function getPublicCategories(input?: {
   market?: PublicMarket['code'];
 }): Promise<PublicCategory[] | null> {
-  const query = new URLSearchParams();
-  if (input?.market) query.set('market', input.market);
-  const suffix = query.size ? '?' + query.toString() : '';
-  const payload = await fetchJson<CategoriesResponse>('/api/public/categories' + suffix);
-  return payload?.version === 'public-v1' ? payload.categories : null;
+  const categories: PublicCategory[] = [];
+  let cursor: string | undefined;
+
+  // Up to 10,000 published categories per marketplace. If that ceiling is
+  // ever reached, fail closed instead of returning a silently partial taxonomy.
+  for (let page = 0; page < 100; page += 1) {
+    const query = new URLSearchParams();
+    if (input?.market) query.set('market', input.market);
+    query.set('limit', '100');
+    if (cursor) query.set('cursor', cursor);
+
+    const payload = await fetchJson<CategoriesResponse>(
+      '/api/public/categories?' + query.toString(),
+    );
+    if (!payload || payload.version !== 'public-v1') return null;
+
+    categories.push(...payload.categories);
+    if (!payload.nextCursor) return categories;
+    cursor = payload.nextCursor;
+  }
+
+  return null;
 }
 
 export async function getPublicProducts(input?: {
   market?: PublicMarket['code'];
   category?: string;
-  minProfitBand?: number;
-  maxDeliveryDays?: number;
-  minSales30d?: number;
+  minimumProfitBand?: number;
+  maximumDeliveryDays?: number;
+  minimumSales30d?: number;
   supplier?: string;
-  freshness?: string;
+  freshnessHours?: number;
+  sort?: 'published' | 'most_sold' | 'highest_profit' | 'freshest' | 'fastest_delivery';
+  search?: string;
   cursor?: string;
   limit?: number;
 }): Promise<ProductsResponse | null> {
   const query = new URLSearchParams();
   if (input?.market) query.set('market', input.market);
   if (input?.category) query.set('category', input.category);
-  if (input?.minProfitBand != null) query.set('minProfitBand', String(input.minProfitBand));
-  if (input?.maxDeliveryDays != null) query.set('maxDeliveryDays', String(input.maxDeliveryDays));
-  if (input?.minSales30d != null) query.set('minSales30d', String(input.minSales30d));
+  if (input?.minimumProfitBand != null) query.set('minimumProfitBand', String(input.minimumProfitBand));
+  if (input?.maximumDeliveryDays != null) query.set('maximumDeliveryDays', String(input.maximumDeliveryDays));
+  if (input?.minimumSales30d != null) query.set('minimumSales30d', String(input.minimumSales30d));
   if (input?.supplier) query.set('supplier', input.supplier);
-  if (input?.freshness) query.set('freshness', input.freshness);
+  if (input?.freshnessHours != null) query.set('freshnessHours', String(input.freshnessHours));
+  if (input?.sort) query.set('sort', input.sort);
+  if (input?.search) query.set('search', input.search);
   if (input?.cursor) query.set('cursor', input.cursor);
   if (input?.limit != null) query.set('limit', String(input.limit));
 
@@ -182,14 +233,27 @@ export async function getPublicProducts(input?: {
   return payload?.version === 'public-v1' ? payload : null;
 }
 
-export async function getPublicProduct(slug: string): Promise<PublicProductDetail | null> {
+export async function getPublicProductState(slug: string): Promise<{
+  readonly product: PublicProductDetail | null;
+  readonly unavailable: boolean;
+}> {
   const normalized = slug.trim();
-  if (!normalized) return null;
-  const payload = await fetchJson<ProductResponse>(
+  if (!normalized) return { product: null, unavailable: false };
+  const result = await fetchJsonResult<ProductResponse>(
     '/api/public/products/' + encodeURIComponent(normalized),
     900,
   );
-  return payload?.version === 'public-v1' ? payload.product : null;
+  if (result.payload?.version === 'public-v1') {
+    return { product: result.payload.product, unavailable: false };
+  }
+  return {
+    product: null,
+    unavailable: result.status !== 404,
+  };
+}
+
+export async function getPublicProduct(slug: string): Promise<PublicProductDetail | null> {
+  return (await getPublicProductState(slug)).product;
 }
 
 export function fallbackPublicMarkets(): PublicMarket[] {

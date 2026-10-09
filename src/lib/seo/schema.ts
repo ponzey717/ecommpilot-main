@@ -13,6 +13,7 @@ export function organizationSchema() {
     "@id": `${siteConfig.url}/#organization`,
     name: siteConfig.name,
     url: siteConfig.url,
+    logo: toAbsoluteUrl("/icon.svg"),
   };
 }
 
@@ -24,6 +25,7 @@ export function websiteSchema() {
     url: siteConfig.url,
     name: siteConfig.name,
     description: siteConfig.description,
+    inLanguage: siteConfig.locale,
     publisher: {
       "@id": `${siteConfig.url}/#organization`,
     },

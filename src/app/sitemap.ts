@@ -1,9 +1,16 @@
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/config/site";
+import {
+  getPublicCategories,
+  getPublicMarketsWithFallback,
+  getPublicProducts,
+  type PublicProductSummary,
+} from "@/lib/api/public-catalog";
 
 const staticPaths = [
   "/",
   "/winning-products",
+  "/whats-trending",
   "/markets",
   "/categories",
   "/free-tools",
@@ -12,20 +19,96 @@ const staticPaths = [
   "/free-tools/title-length-checker",
   "/learn",
   "/pricing",
+  "/about",
+  "/contact",
+  "/privacy",
+  "/terms",
+  "/data-deletion",
 ] as const;
 
-export default function sitemap(): MetadataRoute.Sitemap {
+function dateOrUndefined(value: string | null | undefined): Date | undefined {
+  if (!value) return undefined;
+  const date = new Date(value);
+  return Number.isFinite(date.getTime()) ? date : undefined;
+}
+
+async function publishedProductsForSitemap(maxProducts: number): Promise<PublicProductSummary[]> {
+  const products: PublicProductSummary[] = [];
+  let cursor: string | undefined;
+
+  while (products.length < maxProducts) {
+    const remaining = maxProducts - products.length;
+    const payload = await getPublicProducts({
+      limit: Math.min(100, remaining),
+      ...(cursor ? { cursor } : {}),
+    });
+    if (!payload) return [];
+    products.push(...payload.products.slice(0, remaining));
+    if (!payload.nextCursor || products.length >= maxProducts) break;
+    cursor = payload.nextCursor;
+  }
+
+  return products;
+}
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticEntries: MetadataRoute.Sitemap = staticPaths.map((path) => ({
     url: new URL(path, siteConfig.url).toString(),
-    changeFrequency: path === "/" ? "weekly" : "monthly",
-    priority: path === "/" ? 1 : path === "/winning-products" ? 0.9 : 0.7,
+    changeFrequency:
+      path === "/" || path === "/winning-products" || path === "/whats-trending"
+        ? "daily"
+        : "monthly",
+    priority:
+      path === "/"
+        ? 1
+        : path === "/winning-products" || path === "/whats-trending"
+          ? 0.9
+          : 0.7,
   }));
 
-  const marketEntries: MetadataRoute.Sitemap = siteConfig.markets.map((market) => ({
+  const markets = (await getPublicMarketsWithFallback()).filter((market) => market.active);
+  const marketEntries: MetadataRoute.Sitemap = markets.map((market) => ({
     url: new URL("/winning-products/" + market.slug, siteConfig.url).toString(),
-    changeFrequency: "weekly",
-    priority: 0.8,
+    changeFrequency: "daily",
+    priority: 0.85,
   }));
 
-  return [...staticEntries, ...marketEntries];
+  const categoryGroups = await Promise.all(
+    markets.map(async (market) => ({
+      market,
+      categories: (await getPublicCategories({ market: market.code })) ?? [],
+    })),
+  );
+  const categoryEntries: MetadataRoute.Sitemap = categoryGroups.flatMap(
+    ({ market, categories }) =>
+      categories.map((category) => ({
+        url: new URL(
+          `/winning-products/${market.slug}/${category.slug}`,
+          siteConfig.url,
+        ).toString(),
+        lastModified: dateOrUndefined(category.checkedAt),
+        changeFrequency: "daily" as const,
+        priority: 0.8,
+      })),
+  );
+
+  const maximumSitemapUrls = 50_000;
+  const reservedUrls =
+    staticEntries.length + marketEntries.length + categoryEntries.length;
+  const maximumProductUrls = Math.max(0, maximumSitemapUrls - reservedUrls);
+  const products = await publishedProductsForSitemap(maximumProductUrls);
+  const productEntries: MetadataRoute.Sitemap = products.flatMap((product) => {
+    if (!product.category?.slug) return [];
+    return [{
+      url: new URL(
+        `/winning-products/${product.market.toLowerCase()}/${product.category.slug}/${product.slug}`,
+        siteConfig.url,
+      ).toString(),
+      lastModified: dateOrUndefined(product.freshness?.checkedAt),
+      changeFrequency: "daily" as const,
+      priority: 0.75,
+    }];
+  });
+
+  return [...staticEntries, ...marketEntries, ...categoryEntries, ...productEntries];
 }

@@ -1,11 +1,18 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/site/breadcrumbs";
+import { routes } from "@/config/routes";
 import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
 import { JsonLd } from "@/components/seo/json-ld";
-import { getPublicProduct } from "@/lib/api/public-catalog";
+import {
+  getPublicProductState,
+  type PublicProductDetail,
+} from "@/lib/api/public-catalog";
+import { approvedPublicImageUrl } from "@/lib/public-image";
+import { publicIndexingEnabled } from "@/lib/public-indexing";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema } from "@/lib/seo/schema";
 
@@ -14,7 +21,7 @@ type PageProps = {
 };
 
 function matchesRoute(
-  product: NonNullable<Awaited<ReturnType<typeof getPublicProduct>>>,
+  product: PublicProductDetail,
   market: string,
   category: string,
 ) {
@@ -26,12 +33,13 @@ function matchesRoute(
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { market, category, slug } = await params;
-  const product = await getPublicProduct(slug);
+  const state = await getPublicProductState(slug);
+  const product = state.product;
 
-  if (!product || !matchesRoute(product, market, category)) {
+  if (state.unavailable || !product || !matchesRoute(product, market, category)) {
     return {
       title: "Winning Product",
-      robots: { index: false, follow: true },
+      robots: { index: false, follow: publicIndexingEnabled() },
     };
   }
 
@@ -49,17 +57,76 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       category +
       "/" +
       product.slug,
-    image: product.image?.url?.startsWith("/") ? product.image.url : undefined,
+    image: approvedPublicImageUrl(product.image?.url) ?? undefined,
   });
+}
+
+function freshnessLabel(value: string | null | undefined) {
+  if (!value) return null;
+  return value.toLowerCase() === "fresh" ? "Fresh evidence" : "Evidence status";
+}
+
+function profitBandLabel(value: string | null | undefined) {
+  const match = value?.match(/^(\d+)-plus$/);
+  return match ? `${match[1]}%+ profit` : undefined;
+}
+
+function supplierLabel(value: string | null | undefined) {
+  if (!value) return "Not available";
+  return value.toLowerCase() === "aliexpress" ? "AliExpress" : "Supplier";
 }
 
 function value(value: string | number | null | undefined, fallback = "Not available") {
   return value == null || value === "" ? fallback : String(value);
 }
 
+function money(value: number | null | undefined, currency: string | null | undefined) {
+  if (value == null || !currency) return "Not available";
+  try {
+    return new Intl.NumberFormat("en", {
+      style: "currency",
+      currency,
+      maximumFractionDigits: 2,
+    }).format(value / 100);
+  } catch {
+    return "Not available";
+  }
+}
+
+function checkedAtLabel(value: string | null | undefined) {
+  if (!value) return "Not available";
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return "Not available";
+  return new Intl.DateTimeFormat("en", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "UTC",
+  }).format(date) + " UTC";
+}
+
+
 export default async function ProductPage({ params }: PageProps) {
   const { market, category, slug } = await params;
-  const product = await getPublicProduct(slug);
+  const state = await getPublicProductState(slug);
+  const product = state.product;
+  if (state.unavailable) {
+    return (
+      <PageShell darkHeader>
+        <PageHero
+          eyebrow="Winning Product"
+          title="Product data is temporarily unavailable."
+          description="eCommPilot could not load the current public product projection, so this page is not substituting cached private data or a fabricated product result."
+        />
+        <section className="py-12 md:py-16">
+          <div className="site-container">
+            <div className="rounded-[22px] border border-amber-200 bg-amber-50 p-8 text-center text-sm leading-6 text-[var(--muted)]">
+              Please try this product again shortly.
+            </div>
+          </div>
+        </section>
+      </PageShell>
+    );
+  }
   if (!product || !matchesRoute(product, market, category)) notFound();
 
   const productPath =
@@ -79,7 +146,7 @@ export default async function ProductPage({ params }: PageProps) {
       />
       <PageHero
         eyebrow={"eBay " + product.market + " product research"}
-        badge={product.economics?.profitBand ?? undefined}
+        badge={profitBandLabel(product.economics?.profitBand)}
         title={product.name}
         description={
           product.summary ??
@@ -101,12 +168,25 @@ export default async function ProductPage({ params }: PageProps) {
             ]}
           />
 
+          {approvedPublicImageUrl(product.image?.url) ? (
+            <div className="mt-8 overflow-hidden rounded-[24px] border border-[var(--border)] bg-white">
+              <Image
+                src={approvedPublicImageUrl(product.image?.url)!}
+                alt={product.image?.alt ?? product.name}
+                width={product.image?.width ?? 1200}
+                height={product.image?.height ?? 800}
+                className="max-h-[520px] w-full object-contain bg-[var(--surface-soft)]"
+                priority
+              />
+            </div>
+          ) : null}
+
           <div className="mt-8 grid gap-6 lg:grid-cols-[1.1fr_.9fr]">
             <article className="feature-card">
-              <p className="eyebrow">Market evidence</p>
-              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              <p className="eyebrow">Demand & economics</p>
+              <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                 <div className="metric-box">
-                  <span className="metric-label">30-day sales</span>
+                  <span className="metric-label">30-day SOLD</span>
                   <strong>{value(product.ebay?.sales30d, "—")}</strong>
                 </div>
                 <div className="metric-box">
@@ -114,21 +194,68 @@ export default async function ProductPage({ params }: PageProps) {
                   <strong>{value(product.ebay?.activeListings, "—")}</strong>
                 </div>
                 <div className="metric-box">
-                  <span className="metric-label">Supplier rating</span>
-                  <strong>{value(product.supplier?.rating, "—")}</strong>
+                  <span className="metric-label">Target price</span>
+                  <strong className="!text-lg">
+                    {money(
+                      product.economics?.recommendedSellingPriceMinor,
+                      product.economics?.currency,
+                    )}
+                  </strong>
                 </div>
                 <div className="metric-box">
-                  <span className="metric-label">Est. net margin</span>
+                  <span className="metric-label">Est. net profit</span>
+                  <strong className="!text-lg !text-emerald-700">
+                    {money(product.economics?.netProfitMinor, product.economics?.currency)}
+                  </strong>
+                </div>
+                <div className="metric-box">
+                  <span className="metric-label">Est. margin</span>
                   <strong className="!text-emerald-700">
                     {product.economics?.profitPercent != null
                       ? product.economics.profitPercent.toFixed(1) + "%"
                       : "—"}
                   </strong>
                 </div>
+                <div className="metric-box">
+                  <span className="metric-label">ROI</span>
+                  <strong>
+                    {product.economics?.roiPercent != null
+                      ? product.economics.roiPercent.toFixed(1) + "%"
+                      : "—"}
+                  </strong>
+                </div>
+              </div>
+              <div className="mt-5 grid gap-3 border-t border-[var(--border)] pt-5 sm:grid-cols-3">
+                <div>
+                  <span className="metric-label">Marketplace evidence checked</span>
+                  <p className="mt-1 text-xs font-bold leading-5 text-[var(--navy)]">
+                    {checkedAtLabel(product.ebay?.checkedAt)}
+                  </p>
+                </div>
+                <div>
+                  <span className="metric-label">Economics checked</span>
+                  <p className="mt-1 text-xs font-bold leading-5 text-[var(--navy)]">
+                    {checkedAtLabel(product.economics?.checkedAt)}
+                  </p>
+                </div>
+                <div>
+                  <span className="metric-label">Publication freshness</span>
+                  <p className="mt-1 text-xs font-bold leading-5 text-[var(--navy)]">
+                    {checkedAtLabel(product.freshness?.checkedAt)}
+                  </p>
+                </div>
               </div>
               <p className="mt-5 text-xs leading-5 text-[var(--muted)]">
-                Market and economics values are shown only when the public API supplies
-                verified evidence. Missing evidence is not estimated or fabricated.
+                {product.methodology?.profit ??
+                  "Selling price minus landed supplier cost and mandatory eBay costs."}
+                {" "}
+                {product.methodology?.optionalAdvertisingExcluded === true ||
+                product.economics?.adCostIncluded === false
+                  ? "Optional advertising is excluded from this V1 estimate."
+                  : product.methodology?.optionalAdvertisingExcluded === false ||
+                      product.economics?.adCostIncluded === true
+                    ? "Advertising assumptions are included where explicitly stated."
+                    : "Advertising treatment is not available in this public view."}
               </p>
             </article>
 
@@ -138,7 +265,27 @@ export default async function ProductPage({ params }: PageProps) {
                 <div>
                   <span className="metric-label">Provider</span>
                   <p className="mt-1 font-extrabold text-[var(--navy)]">
-                    {value(product.supplier?.provider)}
+                    {supplierLabel(product.supplier?.provider)}
+                  </p>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <span className="metric-label">Rating</span>
+                    <p className="mt-1 font-extrabold text-[var(--navy)]">
+                      {product.supplier?.rating != null ? product.supplier.rating.toFixed(1) : "—"}
+                    </p>
+                  </div>
+                  <div>
+                    <span className="metric-label">Supplier orders</span>
+                    <p className="mt-1 font-extrabold text-[var(--navy)]">
+                      {value(product.supplier?.orderCount, "—")}
+                    </p>
+                  </div>
+                </div>
+                <div>
+                  <span className="metric-label">Supplier checked</span>
+                  <p className="mt-1 font-extrabold text-[var(--navy)]">
+                    {checkedAtLabel(product.supplier?.checkedAt)}
                   </p>
                 </div>
                 <div>
@@ -157,27 +304,32 @@ export default async function ProductPage({ params }: PageProps) {
                   {product.supplier?.choice ? (
                     <span className="badge badge-choice">✓ AliExpress Choice</span>
                   ) : null}
+                  {product.supplier?.inStock === true ? (
+                    <span className="badge badge-neutral">In stock</span>
+                  ) : null}
+                  {product.standbySupplier?.available ? (
+                    <span className="badge badge-neutral">Standby supplier available</span>
+                  ) : null}
                   {product.freshness?.status ? (
-                    <span className="badge badge-neutral">
-                      {product.freshness.status}
-                    </span>
+                    <span className="badge badge-neutral">{freshnessLabel(product.freshness.status)}</span>
                   ) : null}
                 </div>
               </div>
 
-              {product.access?.details === "locked" ? (
-                <div className="mt-6 rounded-2xl border border-[var(--border)] bg-white p-4">
-                  <p className="text-sm font-extrabold text-[var(--navy)]">
-                    More supplier and listing detail is available to members.
-                  </p>
-                  <Link
-                    href="https://app.ecommpilot.net/register"
-                    className="button button-primary mt-4"
-                  >
-                    Join Free
-                  </Link>
-                </div>
-              ) : null}
+              <div className="mt-6 rounded-2xl border border-[var(--border)] bg-white p-4">
+                <p className="text-sm font-extrabold text-[var(--navy)]">
+                  Want the exact supplier and listing-ready workflow?
+                </p>
+                <p className="mt-2 text-xs leading-5 text-[var(--muted)]">
+                  Member access is filtered server-side. Private supplier URLs, protected costs, competitor links and internal evidence are never exposed by the public page.
+                </p>
+                <Link
+                  href={routes.join}
+                  className="button button-primary mt-4"
+                >
+                  Get Started Free
+                </Link>
+              </div>
             </aside>
           </div>
         </div>
