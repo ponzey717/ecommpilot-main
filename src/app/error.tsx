@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 export default function ErrorPage({
   reset,
 }: {
@@ -21,9 +23,9 @@ export default function ErrorPage({
             <button type="button" className="button button-primary" onClick={() => reset()}>
               Try again
             </button>
-            <a href="/" className="button button-secondary">
+            <Link href="/" className="button button-secondary">
               Back to eCommPilot
-            </a>
+            </Link>
           </div>
         </div>
       </div>

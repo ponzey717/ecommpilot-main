@@ -513,7 +513,10 @@ test("non-published sorts disclose the V1 top-page limit", async () => {
   const grid = await source("src/components/products/catalog-product-grid.tsx");
   assert.ok(grid.includes('sort && sort !== "published" && payload.products.length >= limit'));
   assert.ok(grid.includes("Showing the top {limit} published products for this ordering."));
-  assert.ok(grid.includes("continuation pagination is available for Recently published ordering only"));
+  assert.match(
+    grid,
+    /continuation\s+pagination is available for Recently published ordering only/,
+  );
 });
 
 

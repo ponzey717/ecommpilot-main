@@ -65,7 +65,7 @@ export default function DataDeletionPage() {
                 identifiers and associated personal payloads from active storage and removes a
                 matching connected eBay seller account and its stored OAuth credentials. The
                 operational record kept for compliance contains the notification identifier,
-                processing time and aggregate match counts, not the deleted user's identifiers.
+                processing time and aggregate match counts, not the deleted user&apos;s identifiers.
               </p>
               <p>
                 This automated process is separate from an eCommPilot workspace-user deletion
@@ -100,6 +100,12 @@ export default function DataDeletionPage() {
                 legal and retention requirements.
               </p>
               <div className="flex flex-wrap gap-3">
+                <Link
+                  href={routes.appDataDeletion}
+                  className="text-sm font-extrabold text-[var(--blue)]"
+                >
+                  Open App Data Deletion →
+                </Link>
                 <Link
                   href={routes.support}
                   className="text-sm font-extrabold text-[var(--blue)]"
