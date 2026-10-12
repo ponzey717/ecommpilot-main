@@ -13,6 +13,8 @@ The public-v1 server adapter, Winning Products catalogue and detail routes, filt
 - Shared arithmetic and topic content. Percent fee inputs remain editable, and calculation pages disclose their fee bases and limits.
 - Browser-local image processing with format, size and dimension limits; allowlist HTML cleaning with a sandboxed preview.
 - `/get-started` explains the current account availability gate and links existing members to the separate app. Public tools and catalogue remain open without registration.
+- Free, Pro and Premium each have a plan-aware pricing action. `/get-started?plan=...` reflects the selected plan without creating an account or granting an entitlement while app registration remains closed.
+- `npm run build:hostinger` provides a verified Next.js Webpack build path for Hostinger environments where the Turbopack PostCSS worker exits before connecting. The normal local `npm run build` command remains unchanged.
 - Original approved logo and icon PNGs copied from `ponzey717/ecommpilot/apps/web/public/brand/`, with the original icon converted to a 256px favicon. The horizontal PNG is SHA-256 `51e090caeede85f8a70e188b5337cc32d42b411a01ab8891babec72420760a89` and matches the app asset byte for byte. The older public SVG has visibly different geometry and is no longer rendered.
 
 ## Local checks

@@ -59,11 +59,50 @@ for (const size of sizes) {
     await page.getByLabel("eBay selling fee rate").fill("10");
     await page.getByLabel("Fixed transaction fee").fill("0.30");
     if (!(await page.getByText("$4.80", { exact: true }).isVisible())) failures.push("Fee calculator did not include entered buyer tax in the fee base");
+    await page.goto(base + "/free-tools/profit-margin-calculator", { waitUntil: "domcontentloaded" });
+    await page.getByLabel("Item selling price").fill("40");
+    await page.getByLabel("Product cost").fill("20");
+    await page.getByLabel("eBay selling fee rate").fill("10");
+    await page.getByLabel("Fixed transaction fee").fill("0.30");
+    if (!(await page.getByText("$15.70", { exact: true }).first().isVisible())) failures.push("Profit calculator did not return the expected net profit");
+    await page.goto(base + "/free-tools/title-length-checker", { waitUntil: "domcontentloaded" });
+    await page.getByLabel("eBay listing title").fill("x".repeat(81));
+    if (!(await page.getByText("1 characters over the standard limit.", { exact: true }).isVisible())) failures.push("Title checker did not report the over-limit state");
+    const calculatorCases = [
+      ["ebay-promoted-listings-calculator", [["Item selling price", "40"], ["Product cost", "20"], ["eBay selling fee rate", "10"], ["Fixed transaction fee", "0.30"], ["Advertising rate", "5"]], "$13.70"],
+      ["ebay-best-offer-calculator", [["Original listing price", "40"], ["Buyer offer", "30"], ["Product cost", "20"], ["eBay selling fee rate", "10"], ["Fixed transaction fee", "0.30"], ["Minimum desired profit", "5"]], "$28.12"],
+      ["ebay-shipping-profit-calculator", [["Item selling price", "40"], ["Shipping charged to buyer", "5"], ["Product cost", "20"], ["Seller-paid postage", "5"], ["eBay selling fee rate", "10"]], "$15.50"],
+      ["ebay-sell-through-rate-calculator", [["Items sold in selected period", "30"], ["Currently active listings", "70"]], "30.0%"],
+    ];
+    for (const [slug, inputs, expected] of calculatorCases) {
+      await page.goto(`${base}/free-tools/${slug}`, { waitUntil: "domcontentloaded" });
+      for (const [label, value] of inputs) await page.getByLabel(label).fill(value);
+      if (!(await page.getByText(expected, { exact: true }).first().isVisible())) failures.push(`${slug} did not return ${expected}`);
+    }
     await page.goto(base + "/free-tools/ebay-image-resizer", { waitUntil: "domcontentloaded" });
     const png = await page.evaluate(() => { const canvas = document.createElement("canvas"); canvas.width = 10; canvas.height = 10; canvas.getContext("2d").fillRect(0, 0, 10, 10); return canvas.toDataURL("image/png").split(",")[1]; });
     await page.getByLabel("Choose a local image").setInputFiles({ name: "sample.png", mimeType: "image/png", buffer: Buffer.from(png, "base64") });
     await page.getByRole("button", { name: "Resize image" }).click();
     await page.getByRole("link", { name: "Download resized image" }).waitFor({ timeout: 10000 });
+    await page.goto(base + "/pricing", { waitUntil: "domcontentloaded" });
+    const planActions = [
+      ["Get Started Free", "/get-started?plan=free"],
+      ["Choose Pro", "/get-started?plan=pro"],
+      ["Choose Premium", "/get-started?plan=premium"],
+    ];
+    const pricingContent = page.locator("#main-content");
+    for (const [name, href] of planActions) {
+      if (await pricingContent.getByRole("link", { name, exact: true }).getAttribute("href") !== href) {
+        failures.push(`${name} does not preserve the selected plan`);
+      }
+    }
+    await pricingContent.getByRole("link", { name: "Choose Premium", exact: true }).click();
+    await page.getByRole("heading", { name: "You selected Premium." }).waitFor();
+    if (!(await page.getByText(/does not grant paid access/).isVisible())) {
+      failures.push("Registration-unavailable page did not disclose the entitlement boundary");
+    }
+    await page.goBack();
+    if (!page.url().endsWith("/pricing")) failures.push("Pricing back navigation did not restore the page");
   }
   await context.close();
 }

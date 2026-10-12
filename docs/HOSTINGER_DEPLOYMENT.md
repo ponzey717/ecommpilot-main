@@ -21,8 +21,14 @@ Package commands:
 
 ```text
 Build: npm run build
+Hostinger compatibility build: npm run build:hostinger
 Start: npm start
 ```
+
+The compatibility command runs `next build --webpack`. Use it for Hostinger when
+the platform's Turbopack worker exits before connecting while processing PostCSS.
+It preserves the normal Turbopack build for local development and produces the
+same Next.js route/runtime output without changing the stylesheet or Tailwind setup.
 
 Hostinger should be allowed to detect **Next.js** automatically.
 
@@ -82,7 +88,8 @@ In Hostinger:
 5. Select this repository and the approved deployment branch.
 6. Confirm framework detection says Next.js.
 7. Confirm Node.js 22.x.
-8. Confirm the build command is `npm run build`.
+8. Use `npm run build:hostinger` when recovering from the documented
+   Turbopack/PostCSS worker-process failure; otherwise `npm run build` remains valid.
 9. Use the normal Next.js start/runtime behavior. Do not invent a custom server file for this repo.
 
 Hostinger's current Node.js Web App flow supports GitHub-connected Next.js deployments and rebuilds on redeploy.

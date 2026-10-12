@@ -328,6 +328,24 @@ test("documented public and app URL environment variables drive runtime links", 
   assert.ok(product.includes("routes.join"));
 });
 
+test("pricing keeps every plan action truthful and plan-aware while registration is closed", async () => {
+  const [pricing, getStarted] = await Promise.all([
+    source("src/app/pricing/page.tsx"),
+    source("src/app/get-started/page.tsx"),
+  ]);
+
+  for (const action of ["Get Started Free", "Choose Pro", "Choose Premium"]) {
+    assert.ok(pricing.includes(action), action);
+  }
+  for (const plan of ["free", "pro", "premium"]) {
+    assert.ok(pricing.includes(`id: "${plan}"`), plan);
+  }
+  assert.ok(pricing.includes("?plan=${plan.id}"));
+  assert.ok(getStarted.includes("does not grant paid access"));
+  assert.ok(getStarted.includes("We recorded no account or entitlement"));
+  assert.equal(getStarted.includes("/register"), false);
+});
+
 
 test("public catalog requests are bounded and fail safely", async () => {
   const api = await source("src/lib/api/public-catalog.ts");
