@@ -6,7 +6,7 @@ async function source(path) {
   return readFile(new URL("../" + path, import.meta.url), "utf8");
 }
 
-test("locked primary navigation and homepage positioning remain present", async () => {
+test("locked navigation and focused homepage journey remain present", async () => {
   const [header, home] = await Promise.all([
     source("src/components/site/header.tsx"),
     source("src/app/page.tsx"),
@@ -21,10 +21,14 @@ test("locked primary navigation and homepage positioning remain present", async 
   assert.ok(header.includes("Login"));
   assert.ok(header.includes("Get Started Free"));
   assert.ok(header.includes("routes.trending"));
-  assert.ok(home.includes("Stop Searching. Start Listing Winning eBay Products."));
-  assert.ok(home.includes("You only need your eBay account. We handle the product work."));
-  assert.ok(home.includes("Your eBay account is ready. Your products should be too."));
-  assert.ok(home.includes("Explore Free Tools"));
+  assert.ok(home.includes("Find your next"));
+  assert.ok(home.includes("winning product."));
+  assert.ok(home.includes("Browse winning products"));
+  assert.ok(home.includes("From discovery to decision."));
+  assert.ok(home.includes("All free tools"));
+  assert.ok(home.includes("Research at your pace."));
+  assert.ok(home.includes("CatalogProductGrid"));
+  assert.equal(home.includes("invented sales"), false);
   const shell = await source("src/components/site/page-shell.tsx");
   assert.ok(shell.includes('href="#main-content"'));
   assert.ok(shell.includes('id="main-content"'));

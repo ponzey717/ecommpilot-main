@@ -56,6 +56,9 @@ export function MarketFilter({
           ))}
         </div>
 
+        <details className="catalog-more-filters" open={filters.profit != null || filters.sales != null || filters.delivery != null || filters.supplier != null || filters.freshness != null}>
+          <summary>More filters <span aria-hidden="true">⌄</span></summary>
+          <div className="catalog-more-filters-content">
         <div className="flex flex-wrap items-center gap-2">
           <span className="filter-label">Minimum profit</span>
           <Link
@@ -147,6 +150,8 @@ export function MarketFilter({
             </Link>
           ))}
         </div>
+          </div>
+        </details>
 
         <div className="flex flex-wrap items-center gap-2">
           <span className="filter-label">Sort</span>
