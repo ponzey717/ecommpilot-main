@@ -4,6 +4,7 @@ import { LiveHeroSnapshot } from "@/components/products/live-hero-snapshot";
 import { PageShell } from "@/components/site/page-shell";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { routes } from "@/config/routes";
+import { tools, toolPath } from "@/config/tools";
 
 const painPoints = [
   {
@@ -69,8 +70,8 @@ export default function Home() {
               <Link href={routes.winningProducts} className="button button-cyan">
                 Browse Winning Products
               </Link>
-              <Link href={routes.howItWorks} className="button button-dark-ghost">
-                See How It Works
+              <Link href={routes.freeTools} className="button button-dark-ghost">
+                Explore Free Tools
               </Link>
             </div>
             <p className="mt-8 text-sm font-semibold text-white/60">
@@ -138,6 +139,15 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <section className="bg-white py-16 md:py-20">
+        <div className="site-container">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between"><SectionHeading eyebrow="Free eBay seller tools" title="Make the next listing decision with your own numbers." description="Ten free, instant tools for fees, profit, offers, shipping, demand and listing preparation. No registration required." /><Link href={routes.freeTools} className="button button-primary self-start">Explore All Free eBay Tools</Link></div>
+          <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">{tools.slice(0, 8).map((tool) => <Link key={tool.slug} href={toolPath(tool.slug)} className="tool-card"><span className="tool-icon" aria-hidden="true">{tool.icon}</span><h3 className="mt-5 text-lg font-extrabold text-[var(--navy)]">{tool.title}</h3><p className="mt-3 text-sm leading-6 text-[var(--muted)]">{tool.summary}</p><p className="mt-5 text-sm font-extrabold text-[var(--blue)]">Open tool →</p></Link>)}</div>
+        </div>
+      </section>
+
+      <section className="soft-section py-14"><div className="site-container"><SectionHeading eyebrow="Markets" title="Start with your eBay marketplace." description="Browse published opportunities for eBay US, UK and AU. Pricing and profit are shown in each market’s own currency when data is available." /><div className="mt-7 grid gap-4 sm:grid-cols-3">{[["eBay USA", "us", "USD"], ["eBay UK", "uk", "GBP"], ["eBay Australia", "au", "AUD"]].map(([label, slug, currency]) => <Link key={slug} href={`/winning-products/${slug}`} className="tool-card"><h3 className="text-xl font-extrabold text-[var(--navy)]">{label}</h3><p className="mt-2 text-sm text-[var(--muted)]">{currency} · Browse Winning Products →</p></Link>)}</div></div></section>
 
       <section className="bg-white py-16 md:py-20">
         <div className="site-container">

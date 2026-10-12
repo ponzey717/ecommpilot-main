@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
-import { ProfitMarginCalculator } from "@/components/tools/calculators";
+import { ProfitMarginCalculator } from "@/components/tools/ep11-calculators";
+import { ToolEditorial } from "@/components/tools/tool-editorial";
 import { JsonLd } from "@/components/seo/json-ld";
 import { breadcrumbSchema, softwareApplicationSchema } from "@/lib/seo/schema";
 import { buildMetadata } from "@/lib/seo/metadata";
@@ -51,6 +52,7 @@ export default function Page() {
           <div className="mt-8">
             <ProfitMarginCalculator />
           </div>
+          <ToolEditorial slug="profit-margin-calculator" />
           <div className="mt-10 grid gap-5 lg:grid-cols-2">
             <article className="feature-card">
               <p className="eyebrow">Formula</p>

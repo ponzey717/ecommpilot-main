@@ -12,9 +12,9 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: siteConfig.brand.midnightNavy,
     icons: [
       {
-        src: "/icon.svg",
-        sizes: "any",
-        type: "image/svg+xml",
+        src: "/brand/ecommpilot-icon-original.png",
+        sizes: "1254x1254",
+        type: "image/png",
       },
     ],
   };

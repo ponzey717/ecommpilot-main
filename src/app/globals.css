@@ -82,6 +82,11 @@ h1, h2, h3, h4 {
   font-weight: 800;
 }
 
+.header-login { display: none; }
+@media (min-width: 640px) { .header-login { display: inline-flex; } }
+.header-cta { padding-inline: 10px; font-size: 12px; white-space: nowrap; }
+@media (min-width: 640px) { .header-cta { padding-inline: 18px; font-size: 14px; } }
+
 .button-primary {
   background: linear-gradient(135deg, var(--blue), var(--deep-blue));
   color: white;

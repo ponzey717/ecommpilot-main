@@ -13,17 +13,18 @@ test("locked primary navigation and homepage positioning remain present", async 
   ]);
   for (const label of [
     "Winning Products",
-    "What's Trending",
+    "Free Tools",
     "How It Works",
     "Pricing",
     "Learn",
   ]) assert.ok(header.includes(label), label);
   assert.ok(header.includes("Login"));
-  assert.ok(header.includes("Get Started"));
+  assert.ok(header.includes("Get Started Free"));
+  assert.ok(header.includes("routes.trending"));
   assert.ok(home.includes("Stop Searching. Start Listing Winning eBay Products."));
   assert.ok(home.includes("You only need your eBay account. We handle the product work."));
   assert.ok(home.includes("Your eBay account is ready. Your products should be too."));
-  assert.ok(home.includes("See How It Works"));
+  assert.ok(home.includes("Explore Free Tools"));
   const shell = await source("src/components/site/page-shell.tsx");
   assert.ok(shell.includes('href="#main-content"'));
   assert.ok(shell.includes('id="main-content"'));
@@ -161,20 +162,18 @@ test("Winning Products category search and supplier preserve the active server f
 
 
 test("public calculators are US UK AU aware and do not hardcode a universal fee rate", async () => {
-  const calculators = await source("src/components/tools/calculators.tsx");
+  const calculators = await source("src/components/tools/ep11-calculators.tsx");
   for (const currency of ["USD", "GBP", "AUD"]) {
     assert.ok(calculators.includes(currency), currency);
   }
-  assert.ok(calculators.includes("Mandatory fixed transaction fees"));
-  assert.ok(calculators.includes("Fixed transaction fee (if any)"));
-  assert.ok(calculators.includes('useState("")'));
+  assert.ok(calculators.includes("Fixed transaction fee"));
+  assert.ok(calculators.includes("eBay selling fee rate"));
+  assert.ok(calculators.includes('useState<Record<string, string>>({})'));
   assert.equal(calculators.includes('useState("13.25")'), false);
-  assert.ok(calculators.includes("Optional promoted-listing or ad spend is not included."));
-  assert.ok(calculators.includes('max={100}'));
-  assert.ok(calculators.includes('const feeReady = feeRate.trim() !== ""'));
-  assert.ok(calculators.includes('marketplaceFee: null'));
-  assert.ok(calculators.includes("before treating the profit estimate as complete"));
-  assert.ok(calculators.includes("to calculate an estimate"));
+  assert.ok(calculators.includes("Optional advertising cost"));
+  assert.ok(calculators.includes('max={percent ? 100 : undefined}'));
+  assert.ok(calculators.includes('values.feeRate !== ""'));
+  assert.ok(calculators.includes("ROI on landed cost"));
 });
 
 
@@ -312,7 +311,8 @@ test("documented public and app URL environment variables drive runtime links", 
   assert.ok(site.includes("process.env.NEXT_PUBLIC_SITE_URL"));
   assert.ok(site.includes("process.env.NEXT_PUBLIC_APP_URL"));
   assert.ok(routes.includes("${siteConfig.appUrl}/login"));
-  assert.ok(routes.includes("${siteConfig.appUrl}/register"));
+  assert.ok(routes.includes('join: "/get-started"'));
+  assert.equal(routes.includes("${siteConfig.appUrl}/register"), false);
   assert.ok(routes.includes("${siteConfig.appUrl}/support"));
   assert.ok(routes.includes("${siteConfig.appUrl}/data-deletion"));
 
@@ -370,9 +370,9 @@ test("brand metadata and logo loading stay explicit and efficient", async () => 
     source("src/components/site/header.tsx"),
     source("src/components/products/public-product-card.tsx"),
   ]);
-  assert.ok(manifest.includes('src: "/icon.svg"'));
-  assert.ok(manifest.includes('type: "image/svg+xml"'));
-  assert.ok(schema.includes('logo: toAbsoluteUrl("/icon.svg")'));
+  assert.ok(manifest.includes('src: "/brand/ecommpilot-icon-original.png"'));
+  assert.ok(manifest.includes('type: "image/png"'));
+  assert.ok(schema.includes('logo: toAbsoluteUrl("/brand/ecommpilot-logo-original.png")'));
   assert.ok(schema.includes("inLanguage: siteConfig.locale"));
   assert.ok(logo.includes("priority = false"));
   assert.ok(logo.includes("priority={priority}"));
@@ -502,9 +502,9 @@ test("faceted catalog and Trending URLs are noindex while clean routes stay cano
 
 
 test("title checker counts Unicode code points rather than UTF-16 code units", async () => {
-  const calculators = await source("src/components/tools/calculators.tsx");
-  assert.ok(calculators.includes("const titleLength = Array.from(title).length"));
-  assert.ok(calculators.includes("{titleLength}/80"));
+  const calculators = await source("src/components/tools/ep11-calculators.tsx");
+  assert.ok(calculators.includes("const length = Array.from(title).length"));
+  assert.ok(calculators.includes("{length}/80"));
   assert.equal(calculators.includes("{title.length}/80"), false);
 });
 

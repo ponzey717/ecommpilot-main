@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   icons: {
-    icon: "/icon.svg",
+    icon: "/brand/ecommpilot-icon-original.png",
   },
   openGraph: {
     type: "website",

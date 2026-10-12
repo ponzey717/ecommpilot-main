@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
-import { EbayFeeEstimator } from "@/components/tools/calculators";
+import { EbayFeeEstimator } from "@/components/tools/ep11-calculators";
+import { ToolEditorial } from "@/components/tools/tool-editorial";
 import { JsonLd } from "@/components/seo/json-ld";
 import { breadcrumbSchema, softwareApplicationSchema } from "@/lib/seo/schema";
 import { buildMetadata } from "@/lib/seo/metadata";
@@ -63,6 +64,7 @@ export default function Page() {
               correct for every seller.
             </p>
           </article>
+          <ToolEditorial slug="ebay-fee-estimator" />
         </div>
       </section>
     </PageShell>

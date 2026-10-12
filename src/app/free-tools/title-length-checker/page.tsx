@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
-import { TitleLengthChecker } from "@/components/tools/calculators";
+import { TitleLengthChecker } from "@/components/tools/ep11-calculators";
+import { ToolEditorial } from "@/components/tools/tool-editorial";
 import { JsonLd } from "@/components/seo/json-ld";
 import { breadcrumbSchema, softwareApplicationSchema } from "@/lib/seo/schema";
 import { buildMetadata } from "@/lib/seo/metadata";
@@ -61,6 +62,7 @@ export default function Page() {
               matter when you prepare the final listing.
             </p>
           </article>
+          <ToolEditorial slug="title-length-checker" />
         </div>
       </section>
     </PageShell>

@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { Logo } from "./logo";
 import { routes } from "@/config/routes";
+import { NavLink } from "./nav-link";
 
 const nav = [
   ["Winning Products", routes.winningProducts],
-  ["What's Trending", routes.trending],
+  ["Free Tools", routes.freeTools],
   ["How It Works", routes.howItWorks],
   ["Pricing", routes.pricing],
   ["Learn", routes.learn],
@@ -17,24 +18,24 @@ export function SiteHeader({ dark = false }: { dark?: boolean }) {
 
   return (
     <header className={dark ? "header-dark" : "header-light"}>
-      <div className="site-container flex min-h-[72px] items-center justify-between gap-5">
+      <div className="site-container flex min-h-[72px] items-center justify-between gap-2 sm:gap-5">
         <Logo light={dark} priority />
         <nav className="hidden items-center gap-5 xl:flex" aria-label="Primary navigation">
           {nav.map(([label, href]) => (
-            <Link key={href} href={href} className={"text-sm font-bold transition " + textClass}>
+            <NavLink key={href} href={href} className={"text-sm font-bold transition " + textClass} activeClassName={dark ? "!text-[var(--sky)]" : "!text-[var(--blue)]"}>
               {label}
-            </Link>
+            </NavLink>
           ))}
         </nav>
         <div className="flex items-center gap-2">
           <Link
             href={routes.login}
-            className={dark ? "button button-dark-ghost hidden sm:inline-flex" : "button button-ghost hidden sm:inline-flex"}
+            className={dark ? "button button-dark-ghost header-login" : "button button-ghost header-login"}
           >
             Login
           </Link>
-          <Link href={routes.join} className="button button-cyan">
-            Get Started
+          <Link href={routes.join} className="button button-cyan header-cta">
+            Get Started Free
           </Link>
           <details className="relative xl:hidden">
             <summary
@@ -45,10 +46,11 @@ export function SiteHeader({ dark = false }: { dark?: boolean }) {
             </summary>
             <nav className="mobile-menu" aria-label="Mobile navigation">
               {nav.map(([label, href]) => (
-                <Link key={href} href={href} className="mobile-menu-link">
+                <NavLink key={href} href={href} className="mobile-menu-link" activeClassName="bg-[var(--surface-soft)] !text-[var(--blue)]">
                   {label}
-                </Link>
+                </NavLink>
               ))}
+              <Link href={routes.trending} className="mobile-menu-link">What&apos;s Trending</Link>
               <Link href={routes.login} className="mobile-menu-link">
                 Login
               </Link>
