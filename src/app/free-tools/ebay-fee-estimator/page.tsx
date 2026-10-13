@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
-import { Breadcrumbs } from "@/components/site/breadcrumbs";
-import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
 import { EbayFeeEstimator } from "@/components/tools/ep11-calculators";
 import { ToolEditorial } from "@/components/tools/tool-editorial";
 import { JsonLd } from "@/components/seo/json-ld";
 import { breadcrumbSchema, softwareApplicationSchema } from "@/lib/seo/schema";
 import { buildMetadata } from "@/lib/seo/metadata";
+import { ToolPageIntro } from "@/components/tools/tool-page-intro";
 
 const path = "/free-tools/ebay-fee-estimator";
 
@@ -35,35 +34,10 @@ export default function Page() {
           ]),
         ]}
       />
-      <PageHero
-        eyebrow="Free eBay tool"
-        title="eBay Fee Estimator"
-        description="Estimate marketplace fees using the rate and fixed transaction assumptions that apply to your own market and category."
-      />
-      <section className="py-12 md:py-16">
+      <ToolPageIntro title="eBay Fee Calculator" description="Estimate marketplace fees and seller payout using the assumptions for your market, category and account." />
+      <section className="tool-page-body">
         <div className="site-container">
-          <Breadcrumbs
-            items={[
-              { label: "Home", href: "/" },
-              { label: "Free Tools", href: "/free-tools" },
-              { label: "eBay Fee Estimator" },
-            ]}
-          />
-          <div className="mt-8">
-            <EbayFeeEstimator />
-          </div>
-          <article className="feature-card mt-10">
-            <p className="eyebrow">Why the rate is editable</p>
-            <h2 className="mt-3 text-2xl font-extrabold text-[var(--navy)]">
-              eBay fees are not one universal percentage.
-            </h2>
-            <p className="mt-4 max-w-4xl text-sm leading-7 text-[var(--muted)]">
-              Marketplace, category, seller status and other account conditions can
-              change the applicable fee. This calculator deliberately lets you enter
-              the rate you want to test instead of presenting one hardcoded number as
-              correct for every seller.
-            </p>
-          </article>
+          <EbayFeeEstimator />
           <ToolEditorial slug="ebay-fee-estimator" />
         </div>
       </section>

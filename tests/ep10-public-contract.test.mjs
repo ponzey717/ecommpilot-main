@@ -21,8 +21,8 @@ test("locked navigation and focused homepage journey remain present", async () =
   assert.ok(header.includes("Login"));
   assert.ok(header.includes("Get Started Free"));
   assert.ok(header.includes("routes.trending"));
-  assert.ok(home.includes("Find your next"));
-  assert.ok(home.includes("winning product."));
+  assert.ok(home.includes("Stop Searching."));
+  assert.ok(home.includes("Start Listing Winning eBay Products."));
   assert.ok(home.includes("Browse winning products"));
   assert.ok(home.includes("From discovery to decision."));
   assert.ok(home.includes("All free tools"));
@@ -166,7 +166,10 @@ test("Winning Products category search and supplier preserve the active server f
 
 
 test("public calculators are US UK AU aware and do not hardcode a universal fee rate", async () => {
-  const calculators = await source("src/components/tools/ep11-calculators.tsx");
+  const calculators = [
+    await source("src/components/tools/ep11-calculators.tsx"),
+    await source("src/components/tools/tool-workspace.tsx"),
+  ].join("\n");
   for (const currency of ["USD", "GBP", "AUD"]) {
     assert.ok(calculators.includes(currency), currency);
   }
@@ -528,6 +531,26 @@ test("title checker counts Unicode code points rather than UTF-16 code units", a
   assert.ok(calculators.includes("const length = Array.from(title).length"));
   assert.ok(calculators.includes("{length}/80"));
   assert.equal(calculators.includes("{title.length}/80"), false);
+});
+
+test("all professional tools use intentional results and progressive disclosure", async () => {
+  const [core, advanced, workspace, image, cleaner] = await Promise.all([
+    source("src/components/tools/ep11-calculators.tsx"),
+    source("src/components/tools/advanced-calculator.tsx"),
+    source("src/components/tools/tool-workspace.tsx"),
+    source("src/components/tools/image-resizer.tsx"),
+    source("src/components/tools/html-cleaner.tsx"),
+  ]);
+  assert.ok(workspace.includes("Advanced settings"));
+  assert.ok(core.includes("Estimated net loss"));
+  assert.ok(core.includes("Negative values are never shown as a pie slice"));
+  for (const outcome of ["Minimum break-even selling price", "Profit after advertising", "Offer meets target", "Which shipping strategy leaves more profit?", "Estimated sell-through ratio"]) {
+    assert.ok(advanced.includes(outcome), outcome);
+  }
+  assert.ok(image.includes("Your file never leaves this browser"));
+  assert.ok(image.includes("Protect original aspect ratio"));
+  assert.ok(cleaner.includes('sandbox=""'));
+  assert.ok(cleaner.includes("ALLOW_DATA_ATTR: false"));
 });
 
 

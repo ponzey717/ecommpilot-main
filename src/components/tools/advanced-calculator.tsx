@@ -1,78 +1,112 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { calculate, type CalculatorSlug } from "@/lib/tools/calculations";
+import { calculate, type CalculatorSlug, type Result } from "@/lib/tools/calculations";
+import { AdvancedSettings, ComparisonBars, EmptyResult, ErrorResult, formatMoney, MarketSelector, NumberField, ResultHero, ResultRow, ToolWorkspace, type Currency } from "./tool-workspace";
 
-type Field = { key: string; label: string; percent?: boolean; count?: boolean };
-const common: Field[] = [
-  { key: "productCost", label: "Product cost" },
-  { key: "supplierShipping", label: "Supplier shipping" },
-  { key: "postage", label: "Seller-paid postage" },
-  { key: "tax", label: "Purchase tax / GST / VAT" },
-  { key: "feeRate", label: "eBay selling fee rate", percent: true },
-  { key: "fixedFee", label: "Fixed transaction fee" },
-  { key: "other", label: "Other costs" },
-];
-const sale: Field = { key: "salePrice", label: "Item selling price" };
-const grossSale: Field = { key: "salePrice", label: "Chosen gross buyer payment" };
-const shipping: Field = { key: "buyerShipping", label: "Shipping charged to buyer" };
-const fields: Record<CalculatorSlug, Field[]> = {
-  "ebay-break-even-calculator": [...common, grossSale, { key: "desiredProfit", label: "Desired profit" }],
-  "ebay-promoted-listings-calculator": [sale, shipping, ...common, { key: "adRate", label: "Advertising rate", percent: true }, { key: "adFixed", label: "Fixed advertising cost" }],
-  "ebay-best-offer-calculator": [{ key: "listingPrice", label: "Original listing price" }, { key: "offer", label: "Buyer offer" }, shipping, ...common, { key: "desiredProfit", label: "Minimum desired profit" }],
-  "ebay-shipping-profit-calculator": [sale, shipping, ...common],
-  "ebay-sell-through-rate-calculator": [{ key: "sold", label: "Items sold in selected period", count: true }, { key: "active", label: "Currently active listings", count: true }],
+type Field = { key: string; label: string; percent?: boolean; count?: boolean; hint?: string };
+const definitions: Record<CalculatorSlug, { basic: Field[]; advanced: Field[]; required: string[]; examples: Record<string, string> }> = {
+  "ebay-break-even-calculator": {
+    basic: [{ key: "productCost", label: "Product cost" }, { key: "feeRate", label: "eBay selling fee rate", percent: true }, { key: "fixedFee", label: "Fixed transaction fee" }, { key: "desiredProfit", label: "Target profit" }],
+    advanced: [{ key: "salePrice", label: "Price to test" }, { key: "supplierShipping", label: "Supplier shipping" }, { key: "postage", label: "Seller-paid postage" }, { key: "tax", label: "Purchase tax / GST / VAT" }, { key: "other", label: "Other costs" }],
+    required: ["productCost", "feeRate"], examples: { productCost: "20", feeRate: "10", fixedFee: "0.30", desiredProfit: "5", salePrice: "30" },
+  },
+  "ebay-promoted-listings-calculator": {
+    basic: [{ key: "salePrice", label: "Selling price" }, { key: "productCost", label: "Product cost" }, { key: "feeRate", label: "eBay selling fee rate", percent: true }, { key: "adRate", label: "Advertising rate", percent: true }],
+    advanced: [{ key: "buyerShipping", label: "Buyer-paid shipping" }, { key: "fixedFee", label: "Fixed transaction fee" }, { key: "adFixed", label: "Fixed advertising cost" }, { key: "supplierShipping", label: "Supplier shipping" }, { key: "postage", label: "Seller-paid postage" }, { key: "tax", label: "Purchase tax" }, { key: "other", label: "Other costs" }],
+    required: ["salePrice", "productCost", "feeRate"], examples: { salePrice: "40", productCost: "20", feeRate: "10", fixedFee: "0.30", adRate: "5" },
+  },
+  "ebay-best-offer-calculator": {
+    basic: [{ key: "listingPrice", label: "Original listing price" }, { key: "offer", label: "Buyer offer" }, { key: "productCost", label: "Product cost" }, { key: "desiredProfit", label: "Desired minimum profit" }, { key: "feeRate", label: "eBay selling fee rate", percent: true }],
+    advanced: [{ key: "buyerShipping", label: "Buyer-paid shipping" }, { key: "fixedFee", label: "Fixed transaction fee" }, { key: "supplierShipping", label: "Supplier shipping" }, { key: "postage", label: "Seller-paid postage" }, { key: "tax", label: "Purchase tax" }, { key: "other", label: "Other costs" }],
+    required: ["listingPrice", "offer", "productCost", "feeRate"], examples: { listingPrice: "40", offer: "30", productCost: "20", desiredProfit: "5", feeRate: "10", fixedFee: "0.30" },
+  },
+  "ebay-shipping-profit-calculator": {
+    basic: [{ key: "salePrice", label: "Item selling price" }, { key: "buyerShipping", label: "Shipping charged to buyer" }, { key: "postage", label: "Your postage expense" }, { key: "productCost", label: "Product cost" }, { key: "feeRate", label: "eBay selling fee rate", percent: true }],
+    advanced: [{ key: "fixedFee", label: "Fixed transaction fee" }, { key: "supplierShipping", label: "Supplier shipping" }, { key: "tax", label: "Purchase tax" }, { key: "other", label: "Other costs" }],
+    required: ["salePrice", "productCost", "feeRate"], examples: { salePrice: "40", buyerShipping: "5", postage: "5", productCost: "20", feeRate: "10" },
+  },
+  "ebay-sell-through-rate-calculator": {
+    basic: [{ key: "sold", label: "Items sold", count: true }, { key: "active", label: "Active listings", count: true }], advanced: [], required: ["sold", "active"], examples: { sold: "30", active: "70" },
+  },
 };
-const symbols = { USD: "$", GBP: "£", AUD: "A$" } as const;
-const required: Record<CalculatorSlug, string[]> = {
-  "ebay-break-even-calculator": ["productCost", "feeRate"],
-  "ebay-promoted-listings-calculator": ["salePrice", "productCost", "feeRate"],
-  "ebay-best-offer-calculator": ["listingPrice", "offer", "productCost", "feeRate"],
-  "ebay-shipping-profit-calculator": ["salePrice", "productCost", "feeRate"],
-  "ebay-sell-through-rate-calculator": ["sold", "active"],
-};
-type Currency = keyof typeof symbols;
+
+const valueOf = (results: Result[], label: string) => results.find((result) => result.label === label)?.value ?? null;
 
 export function AdvancedCalculator({ slug }: { slug: CalculatorSlug }) {
+  const config = definitions[slug];
   const [currency, setCurrency] = useState<Currency>("USD");
   const [period, setPeriod] = useState("30 days");
   const [values, setValues] = useState<Record<string, string>>({});
-  const parsed = useMemo(() => {
-    const entries = fields[slug].map(({ key }) => [key, values[key] === undefined || values[key] === "" ? 0 : Number(values[key])]);
-    return Object.fromEntries(entries) as Record<string, number>;
-  }, [slug, values]);
-  const error = fields[slug].some(({ key }) => values[key] !== undefined && values[key] !== "" && (!Number.isFinite(parsed[key]) || parsed[key] < 0))
+  const [message, setMessage] = useState("");
+  const parsed = useMemo(() => Object.fromEntries([...config.basic, ...config.advanced].map(({ key }) => [key, values[key] === undefined || values[key] === "" ? 0 : Number(values[key])])), [config, values]);
+  const error = [...config.basic, ...config.advanced].some(({ key }) => values[key] !== undefined && values[key] !== "" && (!Number.isFinite(parsed[key]) || parsed[key] < 0))
     ? "Enter non-negative numbers in every field."
-    : slug === "ebay-best-offer-calculator" && parsed.offer > parsed.listingPrice
-      ? "The offer cannot exceed the listing price."
-      : null;
-  const ready = required[slug].every((key) => values[key] !== undefined && values[key] !== "");
+    : slug === "ebay-best-offer-calculator" && parsed.offer > parsed.listingPrice ? "The offer cannot exceed the listing price." : null;
+  const ready = config.required.every((key) => values[key] !== undefined && values[key] !== "");
   const outcome = useMemo(() => {
-    if (error) return { error, results: [] };
-    if (!ready) return { error: null, results: [] };
+    if (error || !ready) return { error, results: [] as Result[] };
     try { return { error: null, results: calculate(slug, parsed) }; }
-    catch (cause) { return { error: cause instanceof Error ? cause.message : "Check your inputs.", results: [] }; }
+    catch (cause) { return { error: cause instanceof Error ? cause.message : "Check your inputs.", results: [] as Result[] }; }
   }, [error, ready, slug, parsed]);
-  const format = (value: number | null, unit: "money" | "percent" | "number" | "boolean") => {
-    if (value === null) return "—";
-    if (unit === "boolean") return value ? "Yes" : "No";
-    if (unit === "percent") return `${value.toFixed(1)}%`;
-    if (unit === "number") return value.toLocaleString();
-    return new Intl.NumberFormat(currency === "GBP" ? "en-GB" : currency === "AUD" ? "en-AU" : "en-US", { style: "currency", currency }).format(value);
+  const set = (key: string, value: string) => { setValues((current) => ({ ...current, [key]: value })); setMessage(""); };
+  const money = (value: number | null) => value === null ? "—" : formatMoney(currency, value);
+  const percent = (value: number | null) => value === null ? "—" : `${value.toFixed(1)}%`;
+  const reset = () => { setValues({}); setPeriod("30 days"); setCurrency("USD"); setMessage(""); };
+  const copy = async () => {
+    const text = outcome.results.map((result) => `${result.label}: ${result.unit === "money" ? money(result.value) : result.unit === "percent" ? percent(result.value) : result.unit === "boolean" ? result.value ? "Yes" : "No" : result.value ?? "—"}`).join("\n");
+    try { await navigator.clipboard.writeText(text); setMessage("Results copied."); } catch { setMessage("Copy failed. Select and copy the results manually."); }
   };
+  const field = (item: Field) => <NumberField key={item.key} label={item.label} value={values[item.key] ?? ""} onChange={(value) => set(item.key, value)} currency={item.percent || item.count ? undefined : currency} percent={item.percent} count={item.count} hint={item.hint} required={config.required.includes(item.key)} />;
 
-  return <div className="grid min-w-0 gap-6 lg:grid-cols-[1.1fr_.9fr]">
-    <div className="feature-card min-w-0">
-      <div className="grid gap-4 sm:grid-cols-2">
-        {slug === "ebay-sell-through-rate-calculator" ? <label className="grid gap-2 text-sm font-bold text-[var(--navy)]">Observation period<input className="catalog-input" value={period} maxLength={40} onChange={(event) => setPeriod(event.target.value)} /></label> : <label className="grid gap-2 text-sm font-bold text-[var(--navy)]">eBay market and currency<select className="catalog-input" value={currency} onChange={(event) => setCurrency(event.target.value as Currency)}><option value="USD">US · USD</option><option value="GBP">UK · GBP</option><option value="AUD">AU · AUD</option></select></label>}
-        {fields[slug].map((field) => <label key={field.key} className="grid gap-2 text-sm font-bold text-[var(--navy)]">{field.label}{required[slug].includes(field.key) ? " *" : ""}<span className="flex min-w-0 items-center rounded-xl border border-[var(--border)] bg-white px-3 focus-within:border-[var(--blue)]">{!field.percent && !field.count ? <span className="mr-2 text-[var(--muted)]">{symbols[currency]}</span> : null}<input className="min-w-0 flex-1 bg-transparent py-3 outline-none" type="number" inputMode={field.count ? "numeric" : "decimal"} min="0" max={field.percent ? "100" : undefined} step={field.count ? "1" : "0.01"} aria-required={required[slug].includes(field.key)} placeholder="0" value={values[field.key] ?? ""} onChange={(event) => setValues((current) => ({ ...current, [field.key]: event.target.value }))} />{field.percent ? <span className="ml-2 text-[var(--muted)]">%</span> : null}</span></label>)}
-      </div>
-      <button type="button" className="button button-secondary mt-5" onClick={() => { setValues({}); setPeriod("30 days"); }}>Reset inputs</button>
-    </div>
-    <div className="snapshot-card self-start" aria-live="polite">
-      <p className="eyebrow">Your estimate</p>
-      {outcome.error ? <p role="alert" className="mt-5 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">{outcome.error}</p> : !ready ? <p className="mt-5 text-sm text-[var(--muted)]">Enter the required values to see your estimate. Optional costs can stay blank.</p> : <div className="mt-5 grid gap-3 sm:grid-cols-2">{outcome.results.map((result) => <div key={result.label} className="metric-box"><span className="metric-label">{result.label}</span><strong className="!text-lg">{format(result.value, result.unit)}</strong>{result.note ? <small className="text-[var(--muted)]">{result.note}</small> : null}</div>)}</div>}
-      {slug === "ebay-sell-through-rate-calculator" ? <p className="mt-5 text-sm text-[var(--muted)]">Period: {period || "not specified"}. Formula: sold ÷ (sold + active) × 100. Enter observed sold counts yourself.</p> : <p className="mt-5 text-xs leading-5 text-[var(--muted)]">Amounts are estimates in {currency}. Enter the actual costs and fee rate for your marketplace, category and account. Percentage selling fees are applied to the total buyer payment.</p>}
-    </div>
-  </div>;
+  const results = outcome.error ? <ErrorResult message={outcome.error} /> : !ready ? <EmptyResult /> : renderResults(slug, outcome.results, parsed, currency, period);
+  return <ToolWorkspace
+    inputTitle={inputTitle(slug)} inputDescription={inputDescription(slug)}
+    inputs={<><div className="tool-field-grid">{slug === "ebay-sell-through-rate-calculator" ? <label className="tool-field"><span>Observation period</span><input className="tool-control" value={period} maxLength={40} onChange={(event) => setPeriod(event.target.value)} /></label> : <MarketSelector currency={currency} onChange={setCurrency} />}{config.basic.map(field)}</div>{config.advanced.length ? <AdvancedSettings>{config.advanced.map(field)}</AdvancedSettings> : null}</>}
+    actions={<><button type="button" className="button button-primary" onClick={() => setValues(config.examples)}>Try example</button><button type="button" className="button button-secondary" onClick={reset}>Reset</button>{ready && !outcome.error ? <button type="button" className="button button-ghost" onClick={copy}>Copy results</button> : null}{message ? <span role="status">{message}</span> : null}</>}
+    results={results}
+  />;
+}
+
+function inputTitle(slug: CalculatorSlug) {
+  return ({ "ebay-break-even-calculator": "Set your cost floor", "ebay-promoted-listings-calculator": "Compare ad impact", "ebay-best-offer-calculator": "Evaluate the offer", "ebay-shipping-profit-calculator": "Compare shipping strategies", "ebay-sell-through-rate-calculator": "Enter observed listing counts" } as const)[slug];
+}
+function inputDescription(slug: CalculatorSlug) {
+  return ({ "ebay-break-even-calculator": "Find the minimum price that covers every entered cost.", "ebay-promoted-listings-calculator": "See the difference between profit before and after advertising.", "ebay-best-offer-calculator": "Set your target, then check a buyer's offer against it.", "ebay-shipping-profit-calculator": "Use the same product and postage costs for a fair comparison.", "ebay-sell-through-rate-calculator": "Use counts from one consistent observation period." } as const)[slug];
+}
+
+function renderResults(slug: CalculatorSlug, results: Result[], values: Record<string, number>, currency: Currency, period: string) {
+  const money = (label: string) => formatMoney(currency, valueOf(results, label) ?? 0);
+  if (slug === "ebay-break-even-calculator") {
+    const breakEven = valueOf(results, "Break-even sale price") ?? 0;
+    const target = valueOf(results, "Price for desired profit") ?? 0;
+    const chosen = values.salePrice ?? 0;
+    const max = Math.max(breakEven, target, chosen, 1);
+    return <><ResultHero eyebrow="Minimum break-even selling price" value={formatMoney(currency, breakEven)} description="The lowest item price that covers the costs and fee rate entered." /><div className="threshold-chart"><div><i style={{ width: `${breakEven / max * 100}%` }} /><span>Break-even {formatMoney(currency, breakEven)}</span></div><div><i style={{ width: `${target / max * 100}%` }} /><span>Target-profit price {formatMoney(currency, target)}</span></div>{chosen ? <div><i style={{ width: `${chosen / max * 100}%` }} /><span>Price tested {formatMoney(currency, chosen)}</span></div> : null}</div><div className="result-list"><ResultRow label="Total entered costs" value={money("Total fixed costs")} /><ResultRow label="Entered selling fee" value={`${values.feeRate.toFixed(2)}%`} /><ResultRow label="Target profit" value={formatMoney(currency, values.desiredProfit)} /><ResultRow label="Required price for target" value={formatMoney(currency, target)} strong /></div><p className="result-note">Below the break-even point is a loss. At the threshold costs are covered; above it is profit before unentered costs.</p></>;
+  }
+  if (slug === "ebay-promoted-listings-calculator") {
+    const before = valueOf(results, "Profit before advertising") ?? 0;
+    const after = valueOf(results, "Profit after advertising") ?? 0;
+    const revenue = values.salePrice + values.buyerShipping;
+    const beforeMargin = revenue ? before / revenue * 100 : 0;
+    const afterMargin = revenue ? after / revenue * 100 : 0;
+    const landed = values.productCost + values.supplierShipping + values.tax;
+    return <><ResultHero eyebrow="Profit after advertising" value={formatMoney(currency, after)} description="Promotion reduces the pre-ad estimate by the entered advertising charge." tone={after < 0 ? "negative" : "positive"} /><ComparisonBars currency={currency} items={[{ label: "Without promotion", value: before, color: "#071a3d" }, { label: "With promotion", value: after, color: "#146cff" }]} /><div className="result-list"><ResultRow label="Profit before advertising" value={formatMoney(currency, before)} /><ResultRow label="Advertising charge" value={money("Advertising cost")} /><ResultRow label="Margin change" value={`${beforeMargin.toFixed(1)}% → ${afterMargin.toFixed(1)}%`} /><ResultRow label="ROI after advertising" value={landed ? `${(after / landed * 100).toFixed(1)}%` : "—"} strong /></div><p className="result-note">This compares costs only. Advertising does not guarantee additional sales.</p></>;
+  }
+  if (slug === "ebay-best-offer-calculator") {
+    const meets = valueOf(results, "Meets profit target") === 1;
+    const offerProfit = valueOf(results, "Estimated offer profit") ?? 0;
+    const costs = values.productCost + values.supplierShipping + values.postage + values.tax + values.other + values.fixedFee;
+    const listingProfit = (values.listingPrice + values.buyerShipping) * (1 - values.feeRate / 100) - costs;
+    return <><ResultHero eyebrow="Minimum acceptable offer" value={money("Minimum acceptable offer")} description="The lowest estimated offer that reaches your entered profit target." /><div className={`offer-verdict ${meets ? "offer-verdict-good" : "offer-verdict-bad"}`}><b>{meets ? "Offer meets target" : "Below target"}</b><span>{meets ? "This offer reaches your minimum profit assumption." : `This offer is ${formatMoney(currency, Math.abs(values.desiredProfit - offerProfit))} short of your target.`}</span></div><div className="result-list"><ResultRow label="Profit at original price" value={formatMoney(currency, listingProfit)} /><ResultRow label="Profit at offer price" value={formatMoney(currency, offerProfit)} /><ResultRow label="Desired minimum profit" value={formatMoney(currency, values.desiredProfit)} /><ResultRow label="Difference from target" value={formatMoney(currency, offerProfit - values.desiredProfit)} strong /></div><p className="result-note">This tool never accepts an offer. Make the final decision in eBay after checking actual fees and tax.</p></>;
+  }
+  if (slug === "ebay-shipping-profit-calculator") {
+    const free = valueOf(results, "Profit: free shipping") ?? 0;
+    const paid = valueOf(results, "Profit: buyer-paid shipping") ?? 0;
+    const paidWins = paid >= free;
+    return <><ResultHero eyebrow="Which shipping strategy leaves more profit?" value={paidWins ? "Buyer-paid shipping" : "Free shipping"} description={`${formatMoney(currency, Math.abs(paid - free))} estimated profit difference with your inputs.`} /><ComparisonBars currency={currency} items={[{ label: "Free shipping", value: free, color: "#071a3d" }, { label: "Buyer-paid", value: paid, color: "#16a5e1" }]} /><div className="shipping-cards"><div><span>Free shipping</span><b>{formatMoney(currency, free)}</b><small>Buyer pays {formatMoney(currency, values.salePrice)}</small></div><div><span>Buyer-paid shipping</span><b>{formatMoney(currency, paid)}</b><small>Buyer pays {formatMoney(currency, values.salePrice + values.buyerShipping)}</small></div></div><div className="result-list"><ResultRow label="Postage expense" value={formatMoney(currency, values.postage)} /><ResultRow label="Profit difference" value={money("Profit difference")} strong /></div><p className="result-note">This is a profit comparison, not a conversion forecast. Neither strategy always increases sales.</p></>;
+  }
+  const ratio = valueOf(results, "Sell-through ratio");
+  const ringValue = ratio ?? 0;
+  return <><ResultHero eyebrow="Estimated sell-through ratio" value={ratio === null ? "—" : `${ratio.toFixed(1)}%`} description={`Based on the counts entered for ${period || "your selected period"}.`} /><div className="progress-ring" role="img" aria-label={`Sell-through ratio ${ringValue.toFixed(1)} percent`} style={{ background: `conic-gradient(#146cff ${Math.min(100, ringValue)}%, #e5edf6 0)` }}><div><b>{ringValue.toFixed(1)}%</b><span>sold share</span></div></div><div className="result-list"><ResultRow label="Sold count" value={values.sold.toLocaleString()} /><ResultRow label="Active listing count" value={values.active.toLocaleString()} /><ResultRow label="Observation period" value={period || "Not specified"} strong /></div><p className="result-note">Formula used: Sold ÷ (Sold + Active) × 100. Another common definition is Sold ÷ Active, so always state which method you use. No live eBay data is fetched.</p></>;
 }

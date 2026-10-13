@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { calculate } from "../src/lib/tools/calculations.ts";
+import { calculate, calculateTransaction } from "../src/lib/tools/calculations.ts";
 
 const value = (results, label) => results.find((result) => result.label === label)?.value;
 
@@ -38,4 +38,26 @@ test("sell-through uses sold over sold plus active and handles zero denominator"
   assert.equal(value(calculate("ebay-sell-through-rate-calculator", { sold: 0, active: 0 }), "Sell-through ratio"), null);
   assert.throws(() => calculate("ebay-sell-through-rate-calculator", { sold: 1.5, active: 3 }), /whole numbers/);
   assert.throws(() => calculate("ebay-sell-through-rate-calculator", { sold: -1, active: 3 }), /non-negative/);
+});
+
+test("profit example matches the approved illustrative assumptions", () => {
+  const result = calculateTransaction({ selling: 40, cost: 20, feeRate: 10, fixedFee: 0.3 });
+  assert.equal(result.fees, 4.3);
+  assert.equal(result.profit, 15.7);
+  assert.equal(result.margin, 39.25);
+  assert.equal(Number(result.breakEven.toFixed(2)), 22.56);
+});
+
+test("sales tax affects the fee base without becoming seller revenue", () => {
+  const result = calculateTransaction({ selling: 40, buyerShipping: 5, buyerTax: 4, feeRate: 10, fixedFee: 0.3 });
+  assert.equal(result.revenue, 45);
+  assert.equal(result.variableFee, 4.9);
+  assert.equal(result.fees, 5.2);
+});
+
+test("transaction calculation reports losses and impossible ad-plus-fee break-even safely", () => {
+  const loss = calculateTransaction({ selling: 10, cost: 20, feeRate: 10 });
+  assert.equal(loss.profit, -11);
+  assert.equal(calculateTransaction({ selling: 10, cost: 2, feeRate: 60, adRate: 40 }).breakEven, null);
+  assert.throws(() => calculateTransaction({ selling: 10, feeRate: 101 }), /cannot exceed 100%/);
 });

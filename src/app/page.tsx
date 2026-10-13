@@ -27,7 +27,7 @@ export default function Home() {
         <div className="site-container home-hero-grid">
           <div className="home-hero-copy">
             <p className="home-overline">Product research for eBay sellers</p>
-            <h1>Find your next <span>winning product.</span></h1>
+            <h1>Stop Searching. <span>Start Listing Winning eBay Products.</span></h1>
             <p className="home-hero-description">
               Discover published opportunities with demand, supplier and profit context in one place. Make your next listing decision with clearer evidence.
             </p>

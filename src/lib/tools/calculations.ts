@@ -11,16 +11,60 @@ export type Result = { label: string; value: number | null; unit: "money" | "per
 const round = (value: number) => Math.round((value + Number.EPSILON) * 100) / 100;
 const ceilCent = (value: number) => Math.ceil((value - Number.EPSILON) * 100) / 100;
 
+export type TransactionInput = {
+  selling: number;
+  buyerShipping?: number;
+  buyerTax?: number;
+  cost?: number;
+  supplierShipping?: number;
+  purchaseTax?: number;
+  postage?: number;
+  other?: number;
+  feeRate: number;
+  fixedFee?: number;
+  otherFees?: number;
+  adRate?: number;
+  adFixed?: number;
+};
+
+export function calculateTransaction(input: TransactionInput) {
+  for (const [name, value] of Object.entries(input)) {
+    if (!Number.isFinite(value) || value < 0) throw new Error(`${name} must be a non-negative number.`);
+  }
+  if (input.feeRate > 100 || (input.adRate ?? 0) > 100) throw new Error("A percentage cannot exceed 100%.");
+  const buyerShipping = input.buyerShipping ?? 0;
+  const revenue = input.selling + buyerShipping;
+  const rate = input.feeRate / 100;
+  const adRate = (input.adRate ?? 0) / 100;
+  const variableFee = (revenue + (input.buyerTax ?? 0)) * rate;
+  const additionalFees = (input.fixedFee ?? 0) + (input.otherFees ?? 0);
+  const fees = variableFee + additionalFees;
+  const landed = (input.cost ?? 0) + (input.supplierShipping ?? 0) + (input.purchaseTax ?? 0);
+  const advertising = revenue * adRate + (input.adFixed ?? 0);
+  const fulfilment = (input.postage ?? 0) + (input.other ?? 0);
+  const totalCosts = landed + fees + advertising + fulfilment;
+  const profit = revenue - totalCosts;
+  const denominator = 1 - rate - adRate;
+  const breakEven = denominator > 0 ? Math.max(0, (landed + fulfilment + additionalFees + (input.adFixed ?? 0) + (input.buyerTax ?? 0) * rate - buyerShipping * denominator) / denominator) : null;
+  return {
+    revenue: round(revenue), variableFee: round(variableFee), additionalFees: round(additionalFees), fees: round(fees),
+    landed: round(landed), advertising: round(advertising), fulfilment: round(fulfilment), totalCosts: round(totalCosts), profit: round(profit),
+    margin: revenue ? round(profit / revenue * 100) : null,
+    roi: landed ? round(profit / landed * 100) : null,
+    breakEven: breakEven === null ? null : ceilCent(breakEven),
+  };
+}
+
 export function calculate(slug: CalculatorSlug, values: CalculatorValues): Result[] {
   for (const [name, value] of Object.entries(values)) {
     if (!Number.isFinite(value) || value < 0) throw new Error(`${name} must be a non-negative number.`);
   }
   const get = (name: string) => values[name] ?? 0;
   const rate = get("feeRate") / 100;
-  if (rate >= 1) throw new Error("The selling fee rate must be below 100% for a finite minimum price.");
   if (get("feeRate") > 100 || get("adRate") > 100) throw new Error("A percentage cannot exceed 100%.");
 
   if (slug === "ebay-break-even-calculator") {
+    if (rate >= 1) throw new Error("The selling fee rate must be below 100% for a finite minimum price.");
     const fixed = get("productCost") + get("supplierShipping") + get("postage") + get("tax") + get("other") + get("fixedFee");
     const breakEven = ceilCent(fixed / (1 - rate));
     const targetPrice = ceilCent((fixed + get("desiredProfit")) / (1 - rate));
@@ -44,6 +88,7 @@ export function calculate(slug: CalculatorSlug, values: CalculatorValues): Resul
     ];
   }
   if (slug === "ebay-best-offer-calculator") {
+    if (rate >= 1) throw new Error("The selling fee rate must be below 100% for a finite minimum offer.");
     const offer = get("offer");
     const listing = get("listingPrice");
     const shipping = get("buyerShipping");
