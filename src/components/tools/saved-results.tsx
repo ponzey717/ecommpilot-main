@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { TDocumentDefinitions } from "pdfmake/interfaces";
-import { buildResultsCsv, recordsAsTsv, type SavedToolRecord } from "@/lib/tools/saved-results";
+import { buildResultsCsv, buildResultsPdfTable, recordsAsTsv, type SavedToolRecord } from "@/lib/tools/saved-results";
 
 const MAX_ROWS = 250;
 
@@ -43,7 +43,7 @@ export function SavedResults({ toolSlug, toolName, snapshot }: { toolSlug: strin
       const logo = await imageDataUrl("/brand/ecommpilot-logo-original.png");
       const canonical = `https://ecommpilot.net/free-tools/${toolSlug}`;
       const metricKeys = [...new Set(rows.flatMap((record) => Object.keys(record.metrics)))].slice(0, 4);
-      const body = [["Item", "Market", "Result", ...metricKeys], ...rows.map((record) => [record.label + (record.sku ? `\nSKU: ${record.sku}` : ""), [record.market, record.currency].filter(Boolean).join(" · "), record.summary, ...metricKeys.map((key) => record.metrics[key] ?? "—")])];
+      const body = buildResultsPdfTable(rows, metricKeys);
       const doc = {
         pageOrientation: "landscape" as const, pageMargins: [34, 74, 34, 48] as [number, number, number, number],
         header: () => ({ margin: [34, 18, 34, 0], columns: [{ image: logo, width: 145 }, { stack: [{ text: toolName, bold: true, color: "#071A3D", fontSize: 13, alignment: "right" as const }, { text: "Calculated Products", color: "#146CFF", fontSize: 9, alignment: "right" as const }] }] }),

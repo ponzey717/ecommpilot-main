@@ -52,10 +52,10 @@ export default function Home() {
             <Link href={routes.winningProducts} className="home-text-link">View the catalog <span aria-hidden="true">↗</span></Link>
           </div>
           <nav aria-label="Browse by marketplace" className="home-market-tabs">
-            <Link href={routes.winningProducts}>All markets</Link>
-            <Link href="/winning-products/us">US</Link>
-            <Link href="/winning-products/uk">UK</Link>
-            <Link href="/winning-products/au">AU</Link>
+            <Link href={routes.winningProducts}><span className="home-market-all" aria-hidden="true">◎</span>All markets</Link>
+            <Link href="/winning-products/us"><span className="fi fi-us" aria-hidden="true" />US</Link>
+            <Link href="/winning-products/uk"><span className="fi fi-gb" aria-hidden="true" />UK</Link>
+            <Link href="/winning-products/au"><span className="fi fi-au" aria-hidden="true" />AU</Link>
           </nav>
           <CatalogProductGrid sort="most_sold" limit={3} />
         </div>

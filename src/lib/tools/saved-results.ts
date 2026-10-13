@@ -29,3 +29,18 @@ export function buildResultsCsv(records: SavedToolRecord[]) {
 export function recordsAsTsv(records: SavedToolRecord[]) {
   return records.map((record) => [record.label, record.sku ?? "", record.market ?? "", record.summary, ...Object.entries(record.metrics).map(([key, value]) => `${key}: ${value}`)].map((value) => safeSpreadsheetCell(String(value)).replace(/[\t\r\n]+/g, " ")).join("\t")).join("\n");
 }
+
+export function buildResultsPdfTable(records: SavedToolRecord[], metricKeys: string[]) {
+  const headers = ["Item", "Market", "Result", ...metricKeys].map((text) => ({
+    text,
+    bold: true,
+    color: "#FFFFFF",
+  }));
+  const rows = records.map((record) => [
+    record.label + (record.sku ? `\nSKU: ${record.sku}` : ""),
+    [record.market, record.currency].filter(Boolean).join(" · "),
+    record.summary,
+    ...metricKeys.map((key) => record.metrics[key] ?? "—"),
+  ]);
+  return [headers, ...rows];
+}

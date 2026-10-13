@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { ebayMarkets } from "../src/config/ebay-markets.ts";
 import { calculateOfficialEbayFees, solveMinimumItemPrice } from "../src/lib/tools/ebay-fees.ts";
-import { buildResultsCsv, recordsAsTsv } from "../src/lib/tools/saved-results.ts";
+import { buildResultsCsv, buildResultsPdfTable, recordsAsTsv } from "../src/lib/tools/saved-results.ts";
 
 const base = { itemPrice: 100, buyerShipping: 10, buyerTax: 0, international: false, sellerPerformance: "standard" };
 
@@ -60,4 +60,11 @@ test("CSV and clipboard exports neutralize spreadsheet formula injection", () =>
   for (const unsafe of ["'=2+2", "'+CMD", "'@risk", "'-1+1"]) assert.ok(csv.includes(unsafe));
   for (const unsafe of ["'=2+2", "'+CMD", "'@risk"]) assert.ok(tsv.includes(unsafe));
   assert.ok(tsv.includes("Profit: -1+1"));
+});
+
+test("PDF table headers remain readable on the branded navy background", () => {
+  const records = [{ id: "1", createdAt: "2026-10-13T00:00:00.000Z", label: "Test item", summary: "$7.51 net profit", metrics: { Margin: "32.65%" } }];
+  const table = buildResultsPdfTable(records, ["Margin"]);
+  assert.deepEqual(table[0].map((cell) => cell.text), ["Item", "Market", "Result", "Margin"]);
+  assert.ok(table[0].every((cell) => cell.bold && cell.color === "#FFFFFF"));
 });

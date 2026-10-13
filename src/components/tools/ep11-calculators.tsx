@@ -5,7 +5,7 @@ import type { EbayMarketCode } from "@/config/ebay-markets";
 import { calculateOfficialEbayFees, feeCategories, type FeePersona, type SellerPerformance } from "@/lib/tools/ebay-fees";
 import {
   AdvancedSettings, DonutChart, EmptyResult, ErrorResult, FeeInput, feeInputAmount, formatMoney, MarketSelector,
-  NumberField, ResultHero, ResultRow, ToolWorkspace, useMarketSelection, type FeeInputValue,
+  NumberField, ResultHero, ResultRow, SmartSelect, ToolWorkspace, useMarketSelection, type FeeInputValue, type SmartSelectOption,
 } from "./tool-workspace";
 
 const number = (value: string | undefined) => value === undefined || value === "" ? 0 : Number(value);
@@ -82,14 +82,26 @@ function Calculator({ kind }: { kind: "fee" | "profit" }) {
     <p className={estimate.useOfficial ? "fee-status verified" : "fee-status manual"}><b>{estimate.useOfficial ? "Verified ruleset" : "Manual rate required"}</b> {estimate.useOfficial ? estimate.official.note : estimate.official.note || "Enter the rates shown in your own eBay account."}</p>
   </div>;
 
+  const personaOptions: SmartSelectOption<FeePersona>[] = market === "US"
+    ? [{ value: "standard", label: "US seller · no Store preset", description: "Official non-Store fee schedule", icon: "US" }]
+    : market === "UK"
+      ? [{ value: "uk-private", label: "Eligible UK private seller", description: "Private seller fee rules", icon: "UK" }, { value: "uk-business", label: "UK business seller", description: "Business seller fee rules", icon: "UK" }]
+      : market === "AU"
+        ? [{ value: "au-non-pro", label: "Eligible AU non-Pro", description: "Standard marketplace account", icon: "AU" }, { value: "au-pro-starter", label: "AU Pro Starter", description: "Starter subscription", icon: "S" }, { value: "au-pro-basic", label: "AU Pro Basic", description: "Basic subscription", icon: "B" }, { value: "au-pro-featured", label: "AU Pro Featured", description: "Featured subscription", icon: "F" }, { value: "au-pro-anchor", label: "AU Pro Anchor", description: "Anchor subscription", icon: "A" }]
+        : [{ value: "standard", label: "Enter fees manually", description: "Use rates from your seller account", icon: "✎" }];
+  const storeOptions: SmartSelectOption[] = market === "UK"
+    ? [{ value: "none", label: "No Shop", icon: "—" }, { value: "basic", label: "Basic Shop", description: "Listing allowance plan", icon: "B" }, { value: "featured", label: "Featured Shop", description: "Listing allowance plan", icon: "F" }, { value: "anchor", label: "Anchor Shop", description: "Listing allowance plan", icon: "A" }]
+    : [{ value: "none", label: "No Store", description: "Official non-Store preset", icon: "—" }, { value: "starter", label: "Starter", description: "Manual rates required", icon: "S" }, { value: "basic", label: "Basic", description: "Manual rates required", icon: "B" }, { value: "premium", label: "Premium", description: "Manual rates required", icon: "P" }, { value: "anchor", label: "Anchor", description: "Manual rates required", icon: "A" }];
+  const performanceOptions: SmartSelectOption<SellerPerformance>[] = [{ value: "standard", label: "Above Standard / Top Rated", description: "No performance surcharge", icon: "✓" }, { value: "below-standard", label: "Below Standard", description: "Apply the published surcharge", icon: "!" }, { value: "below-standard-long-term", label: "Below Standard 4+ months", description: "Apply the long-term surcharge", icon: "!!" }];
+
   const configuration = <>
-    <label className="tool-field"><span>Seller profile</span><select className="tool-control" value={persona} onChange={(event) => setPersona(event.target.value as FeePersona)}>{market === "US" ? <option value="standard">US seller · no Store preset</option> : market === "UK" ? <><option value="uk-private">Eligible UK private seller</option><option value="uk-business">UK business seller</option></> : market === "AU" ? <><option value="au-non-pro">Eligible AU non-Pro</option><option value="au-pro-starter">AU Pro Starter</option><option value="au-pro-basic">AU Pro Basic</option><option value="au-pro-featured">AU Pro Featured</option><option value="au-pro-anchor">AU Pro Anchor</option></> : <option value="standard">Enter fees manually</option>}</select></label>
-    {market === "US" ? <label className="tool-field"><span>eBay Store tier</span><select className="tool-control" value={storeTier} onChange={(event) => setStoreTier(event.target.value)}><option value="none">No Store</option><option value="starter">Starter · manual rates</option><option value="basic">Basic · manual rates</option><option value="premium">Premium · manual rates</option><option value="anchor">Anchor · manual rates</option></select></label> : null}
-    {market === "UK" ? <label className="tool-field"><span>Shop tier</span><select className="tool-control" value={storeTier} onChange={(event) => setStoreTier(event.target.value)}><option value="none">No Shop</option><option value="basic">Basic Shop</option><option value="featured">Featured Shop</option><option value="anchor">Anchor Shop</option></select><small>Shop changes listing allowances; it does not automatically lower the selected FVF.</small></label> : null}
-    {(["US", "UK", "AU"] as string[]).includes(market) ? <label className="tool-field"><span>Official fee category</span><select className="tool-control" value={category} onChange={(event) => setCategory(event.target.value)}>{feeCategories[market as "US" | "UK" | "AU"].map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}</select></label> : null}
+    <SmartSelect label="Seller profile" value={persona} onChange={setPersona} options={personaOptions} />
+    {market === "US" ? <SmartSelect label="eBay Store tier" value={storeTier} onChange={setStoreTier} options={storeOptions} /> : null}
+    {market === "UK" ? <SmartSelect label="Shop tier" value={storeTier} onChange={setStoreTier} options={storeOptions} hint="Shop changes listing allowances; it does not automatically lower the selected FVF." /> : null}
+    {(["US", "UK", "AU"] as string[]).includes(market) ? <SmartSelect label="Official fee category" value={category} onChange={setCategory} options={feeCategories[market as "US" | "UK" | "AU"].map((item) => ({ value: item.id, label: item.label, icon: "%" }))} /> : null}
     <label className="check-field"><input type="checkbox" checked={registrationMatches} onChange={(event) => setRegistrationMatches(event.target.checked)} /><span>Seller registration country matches selected marketplace</span></label>
     <label className="check-field"><input type="checkbox" checked={international} onChange={(event) => setInternational(event.target.checked)} /><span>Buyer delivery is international</span></label>
-    <label className="tool-field"><span>Seller performance</span><select className="tool-control" value={performance} onChange={(event) => setPerformance(event.target.value as SellerPerformance)}><option value="standard">Above Standard / Top Rated</option><option value="below-standard">Below Standard</option><option value="below-standard-long-term">Below Standard 4+ months</option></select></label>
+    <SmartSelect label="Seller performance" value={performance} onChange={setPerformance} options={performanceOptions} />
     {market === "UK" && persona === "uk-business" ? <NumberField label="VAT on eBay fees" value={values.ukFeeVatRate ?? "20"} onChange={(value) => set("ukFeeVatRate", value)} percent hint="Official UK business tables exclude VAT. Enter 0 only when it is not charged." /> : null}
   </>;
 

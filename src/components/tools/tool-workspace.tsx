@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState, type KeyboardEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { ebayMarkets, getEbayMarket, type CurrencyCode, type EbayMarketCode } from "@/config/ebay-markets";
 import { SavedResults } from "./saved-results";
 import type { SavedToolRecord } from "@/lib/tools/saved-results";
@@ -84,6 +84,112 @@ export function NumberField({ label, value, onChange, currency, percent, count, 
   </label>;
 }
 
+export type SmartSelectOption<T extends string = string> = {
+  value: T;
+  label: string;
+  description?: string;
+  icon?: string;
+};
+
+export function SmartSelect<T extends string>({ label, value, options, onChange, hint, className = "" }: {
+  label: string;
+  value: T;
+  options: SmartSelectOption<T>[];
+  onChange: (value: T) => void;
+  hint?: string;
+  className?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(Math.max(0, options.findIndex((option) => option.value === value)));
+  const rootRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const labelId = useId();
+  const menuId = useId();
+  const selected = options.find((option) => option.value === value) ?? options[0];
+
+  useEffect(() => {
+    function closeFromOutside(event: PointerEvent) {
+      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+    }
+    document.addEventListener("pointerdown", closeFromOutside);
+    return () => document.removeEventListener("pointerdown", closeFromOutside);
+  }, []);
+
+  function openSelect() {
+    const selectedIndex = Math.max(0, options.findIndex((option) => option.value === value));
+    setActiveIndex(selectedIndex);
+    setOpen(true);
+    queueMicrotask(() => menuRef.current?.querySelectorAll<HTMLButtonElement>("[role=option]")[selectedIndex]?.focus());
+  }
+
+  function choose(index: number) {
+    const option = options[index];
+    if (!option) return;
+    onChange(option.value);
+    setOpen(false);
+    queueMicrotask(() => buttonRef.current?.focus());
+  }
+
+  function menuKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      setOpen(false);
+      buttonRef.current?.focus();
+      return;
+    }
+    const direction = event.key === "ArrowDown" ? 1 : event.key === "ArrowUp" ? -1 : 0;
+    if (direction || event.key === "Home" || event.key === "End") {
+      event.preventDefault();
+      const next = event.key === "Home" ? 0 : event.key === "End" ? options.length - 1 : (activeIndex + direction + options.length) % options.length;
+      setActiveIndex(next);
+      menuRef.current?.querySelectorAll<HTMLButtonElement>("[role=option]")[next]?.focus();
+    }
+  }
+
+  return <div className={`tool-field tool-select-field ${className}`}>
+    <span id={labelId}>{label}</span>
+    <div ref={rootRef} className={`tool-select${open ? " is-open" : ""}`}>
+      <button
+        ref={buttonRef}
+        type="button"
+        className="tool-select-trigger"
+        aria-labelledby={labelId}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={open ? menuId : undefined}
+        onClick={() => open ? setOpen(false) : openSelect()}
+        onKeyDown={(event) => {
+          if (["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) {
+            event.preventDefault();
+            openSelect();
+          }
+        }}
+      >
+        <span className="tool-select-value">{selected?.icon ? <i aria-hidden="true">{selected.icon}</i> : null}<b>{selected?.label ?? "Select an option"}</b></span>
+        <span className="tool-select-chevron" aria-hidden="true">⌄</span>
+      </button>
+      {open ? <div ref={menuRef} id={menuId} className="tool-select-menu" role="listbox" aria-labelledby={labelId} onKeyDown={menuKeyDown}>
+        {options.map((option, index) => <button
+          key={option.value}
+          type="button"
+          role="option"
+          aria-selected={option.value === value}
+          className={`${option.value === value ? "is-selected" : ""}${activeIndex === index ? " is-active" : ""}`}
+          tabIndex={-1}
+          onMouseEnter={() => setActiveIndex(index)}
+          onClick={() => choose(index)}
+        >
+          <span className="tool-select-option-icon" aria-hidden="true">{option.icon ?? (option.value === value ? "✓" : "")}</span>
+          <span><b>{option.label}</b>{option.description ? <small>{option.description}</small> : null}</span>
+          {option.value === value ? <i aria-hidden="true">✓</i> : null}
+        </button>)}
+      </div> : null}
+    </div>
+    {hint ? <small>{hint}</small> : null}
+  </div>;
+}
+
 export type FeeInputValue = { mode: "percent" | "fixed"; value: string; basis: "item" | "buyer-total" | "supplier-cost" };
 
 export function FeeInput({ label, value, onChange, currency, hint }: { label: string; value: FeeInputValue; onChange: (value: FeeInputValue) => void; currency: Currency; hint?: string }) {
@@ -91,7 +197,7 @@ export function FeeInput({ label, value, onChange, currency, hint }: { label: st
     <span>{label}</span>
     <div className="fee-mode" role="group" aria-label={`${label} input mode`}><button type="button" className={value.mode === "percent" ? "is-selected" : ""} aria-pressed={value.mode === "percent"} onClick={() => onChange({ ...value, mode: "percent" })}>%</button><button type="button" className={value.mode === "fixed" ? "is-selected" : ""} aria-pressed={value.mode === "fixed"} onClick={() => onChange({ ...value, mode: "fixed" })}>{currencySymbol[currency]}</button></div>
     <span className="tool-number-wrap">{value.mode === "fixed" ? <span aria-hidden="true">{currencySymbol[currency]}</span> : null}<input className="tool-number" type="number" inputMode="decimal" min="0" max={value.mode === "percent" ? 100 : undefined} step="0.01" placeholder="0" value={value.value} onChange={(event) => onChange({ ...value, value: event.target.value })} />{value.mode === "percent" ? <span aria-hidden="true">%</span> : null}</span>
-    {value.mode === "percent" ? <select className="tool-control fee-basis" aria-label={`${label} percentage basis`} value={value.basis} onChange={(event) => onChange({ ...value, basis: event.target.value as FeeInputValue["basis"] })}><option value="item">of item price</option><option value="buyer-total">of buyer total</option><option value="supplier-cost">of supplier cost</option></select> : null}
+    {value.mode === "percent" ? <SmartSelect label={`${label} percentage basis`} className="fee-basis" value={value.basis} onChange={(basis) => onChange({ ...value, basis })} options={[{ value: "item", label: "Of item price", icon: "◫" }, { value: "buyer-total", label: "Of buyer total", icon: "◎" }, { value: "supplier-cost", label: "Of supplier cost", icon: "◇" }]} /> : null}
     {hint ? <small>{hint}</small> : null}
   </div>;
 }
