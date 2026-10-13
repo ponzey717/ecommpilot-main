@@ -30,7 +30,7 @@ export function CatalogQueryForm({
     <form
       method="get"
       action={basePath(market)}
-      className="mt-4 grid gap-3 rounded-[18px] border border-[var(--border)] bg-white p-4 lg:grid-cols-[minmax(220px,.8fr)_minmax(280px,1.3fr)_auto] lg:items-end"
+      className="catalog-search-panel"
     >
       {filters.profit != null ? <input type="hidden" name="profit" value={filters.profit} /> : null}
       {filters.sales != null ? <input type="hidden" name="sales" value={filters.sales} /> : null}
@@ -44,8 +44,8 @@ export function CatalogQueryForm({
         <input type="hidden" name="category" value={filters.category} />
       ) : null}
 
-      <label className="grid gap-2 text-sm font-extrabold text-[var(--navy)]">
-        Category
+      <label className="catalog-search-field">
+        <span>Category</span>
         <select
           name="category"
           defaultValue={filters.category ?? ""}
@@ -70,19 +70,18 @@ export function CatalogQueryForm({
         </select>
       </label>
 
-      <label className="grid gap-2 text-sm font-extrabold text-[var(--navy)]">
-        Search product title
-        <input
-          className="catalog-input"
-          type="search"
-          name="search"
-          maxLength={100}
-          defaultValue={filters.search ?? ""}
-          placeholder="e.g. magnetic phone holder"
-        />
+      <label className="catalog-search-field catalog-search-main">
+        <span>Search product title</span>
+        <span className="catalog-search-input"><i aria-hidden="true">⌕</i><input
+            type="search"
+            name="search"
+            maxLength={100}
+            defaultValue={filters.search ?? ""}
+            placeholder="Search products, niches or keywords…"
+          /></span>
       </label>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="catalog-search-actions">
         <button className="button button-primary" type="submit">
           Search
         </button>

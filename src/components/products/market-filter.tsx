@@ -34,33 +34,40 @@ export function MarketFilter({
   market?: (typeof markets)[number];
   filters?: PublicCatalogFilterState;
 }) {
+  const activeCount = [filters.profit, filters.sales, filters.delivery, filters.supplier, filters.freshness].filter((value) => value != null).length;
   return (
-    <div className="filter-panel !items-start">
-      <div className="grid w-full gap-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="filter-label">Market</span>
+    <section className="filter-panel" aria-label="Product filters">
+      <div className="filter-panel-head">
+        <div className="filter-panel-title"><span aria-hidden="true">⌁</span><div><b>Refine products</b><small>Use verified research signals to narrow the catalogue.</small></div></div>
+        <Link href={basePath(market)} className="filter-reset">Reset filters</Link>
+      </div>
+      <div className="filter-market-row">
+          <span className="filter-label">Marketplace</span>
+          <div className="filter-market-tabs">
           <Link
             href={href(undefined, filters, { category: undefined })}
-            className={chip(!market)}
+            className={market ? "filter-market-tab" : "filter-market-tab is-active"}
           >
-            All
+            <span aria-hidden="true">◎</span> All markets
           </Link>
           {markets.map((item) => (
             <Link
               key={item}
               href={href(item, filters, item === market ? {} : { category: undefined })}
-              className={chip(market === item)}
+              className={market === item ? "filter-market-tab is-active" : "filter-market-tab"}
             >
-              {item}
+              <span className={`fi fi-${item === "UK" ? "gb" : item.toLowerCase()}`} aria-hidden="true" /> {item}
             </Link>
           ))}
+          </div>
         </div>
 
-        <details className="catalog-more-filters" open={filters.profit != null || filters.sales != null || filters.delivery != null || filters.supplier != null || filters.freshness != null}>
-          <summary>More filters <span aria-hidden="true">⌄</span></summary>
+        <details className="catalog-more-filters" open>
+          <summary><span className="filter-summary-copy">Advanced filters {activeCount ? <b>{activeCount} active</b> : null}</span><span className="filter-summary-chevron" aria-hidden="true">⌄</span></summary>
           <div className="catalog-more-filters-content">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="filter-label">Minimum profit</span>
+        <div className="filter-group">
+          <span className="filter-label"><i aria-hidden="true">%</i> Minimum profit</span>
+          <div className="filter-options">
           <Link
             href={href(market, filters, { profit: undefined })}
             className={chip(filters.profit == null)}
@@ -76,10 +83,12 @@ export function MarketFilter({
               {band}%+
             </Link>
           ))}
+          </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="filter-label">30-day SOLD</span>
+        <div className="filter-group">
+          <span className="filter-label"><i aria-hidden="true">↗</i> 30-day SOLD</span>
+          <div className="filter-options">
           <Link
             href={href(market, filters, { sales: undefined })}
             className={chip(filters.sales == null)}
@@ -95,10 +104,12 @@ export function MarketFilter({
               {sales}+
             </Link>
           ))}
+          </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="filter-label">Max delivery</span>
+        <div className="filter-group">
+          <span className="filter-label"><i aria-hidden="true">⇢</i> Max delivery</span>
+          <div className="filter-options">
           <Link
             href={href(market, filters, { delivery: undefined })}
             className={chip(filters.delivery == null)}
@@ -114,10 +125,12 @@ export function MarketFilter({
               {days} days
             </Link>
           ))}
+          </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="filter-label">Supplier</span>
+        <div className="filter-group">
+          <span className="filter-label"><i aria-hidden="true">◇</i> Supplier</span>
+          <div className="filter-options">
           <Link
             href={href(market, filters, { supplier: undefined })}
             className={chip(filters.supplier == null)}
@@ -130,10 +143,12 @@ export function MarketFilter({
           >
             AliExpress
           </Link>
+          </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="filter-label">Freshness</span>
+        <div className="filter-group">
+          <span className="filter-label"><i aria-hidden="true">◷</i> Freshness</span>
+          <div className="filter-options">
           <Link
             href={href(market, filters, { freshness: undefined })}
             className={chip(filters.freshness == null)}
@@ -149,12 +164,14 @@ export function MarketFilter({
               {hours === 24 ? "24h" : hours === 72 ? "3 days" : "7 days"}
             </Link>
           ))}
+          </div>
         </div>
           </div>
         </details>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="filter-label">Sort</span>
+        <div className="filter-sort-row">
+          <span className="filter-label">Sort results</span>
+          <div className="filter-sort-options">
           {publicSorts.map(([value, label]) => (
             <Link
               key={value}
@@ -166,8 +183,8 @@ export function MarketFilter({
               {label}
             </Link>
           ))}
+          </div>
         </div>
-      </div>
-    </div>
+    </section>
   );
 }

@@ -43,10 +43,10 @@ export function MarketSelector({ market, onChange }: { market: EbayMarketCode; o
     <legend>eBay marketplace</legend>
     <p>Choose the listing site. Seller registration and buyer destination are separate fee inputs.</p>
     <div className="market-grid" role="radiogroup" aria-label="eBay marketplace">
-      {ebayMarkets.map((item, index) => <button key={item.code} type="button" role="radio" aria-checked={market === item.code} tabIndex={market === item.code ? 0 : -1} className={market === item.code ? "market-option is-selected" : "market-option"} onClick={() => onChange(item.code)} onKeyDown={(event) => move(event, index)} title={`${item.name} · ${item.site}`}>
+      {ebayMarkets.map((item, index) => <button key={item.code} type="button" role="radio" aria-label={`${item.name} · ${item.site}`} aria-checked={market === item.code} tabIndex={market === item.code ? 0 : -1} className={market === item.code ? "market-option is-selected" : "market-option"} onClick={() => onChange(item.code)} onKeyDown={(event) => move(event, index)} title={`${item.name} · ${item.site}`}>
         <span className={`fi fi-${item.flag} market-flag`} aria-hidden="true" />
         <span className="market-radio" aria-hidden="true"><i /></span>
-        <b>{item.name}</b><small>{item.site}</small>
+        <b>{item.code}</b>
       </button>)}
     </div>
   </fieldset>;
