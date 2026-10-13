@@ -1,27 +1,55 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useCallback, useEffect, useState, type KeyboardEvent, type ReactNode } from "react";
+import { ebayMarkets, getEbayMarket, type CurrencyCode, type EbayMarketCode } from "@/config/ebay-markets";
+import { SavedResults } from "./saved-results";
+import type { SavedToolRecord } from "@/lib/tools/saved-results";
 
-export type Currency = "USD" | "GBP" | "AUD";
+export type Currency = CurrencyCode;
 
-export const currencySymbol: Record<Currency, string> = { USD: "$", GBP: "£", AUD: "A$" };
+export const currencySymbol: Record<Currency, string> = { USD: "$", GBP: "£", EUR: "€", CAD: "C$", AUD: "A$", CHF: "CHF", PLN: "zł", HKD: "HK$", SGD: "S$", MYR: "RM", PHP: "₱" };
 
 export function formatMoney(currency: Currency, value: number) {
-  return new Intl.NumberFormat(currency === "GBP" ? "en-GB" : currency === "AUD" ? "en-AU" : "en-US", {
+  const market = ebayMarkets.find((item) => item.currency === currency);
+  return new Intl.NumberFormat(market?.locale ?? "en-US", {
     style: "currency",
     currency,
   }).format(value);
 }
 
-export function MarketSelector({ currency, onChange }: { currency: Currency; onChange: (value: Currency) => void }) {
-  return <label className="tool-field">
-    <span>Market &amp; currency</span>
-    <select className="tool-control" value={currency} onChange={(event) => onChange(event.target.value as Currency)}>
-      <option value="USD">US · USD</option>
-      <option value="GBP">UK · GBP</option>
-      <option value="AUD">AU · AUD</option>
-    </select>
-  </label>;
+export function useMarketSelection(initial: EbayMarketCode = "US") {
+  const [market, setMarketState] = useState<EbayMarketCode>(initial);
+  useEffect(() => {
+    const saved = window.localStorage.getItem("ecommpilot-market");
+    if (saved && ebayMarkets.some((item) => item.code === saved)) queueMicrotask(() => setMarketState(saved as EbayMarketCode));
+  }, []);
+  const setMarket = useCallback((value: EbayMarketCode) => {
+    setMarketState(value);
+    window.localStorage.setItem("ecommpilot-market", value);
+  }, []);
+  return [market, setMarket, getEbayMarket(market)] as const;
+}
+
+export function MarketSelector({ market, onChange }: { market: EbayMarketCode; onChange: (value: EbayMarketCode) => void }) {
+  const move = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
+    if (!["ArrowRight", "ArrowLeft", "ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+    const next = event.key === "Home" ? 0 : event.key === "End" ? ebayMarkets.length - 1 : (index + (event.key === "ArrowRight" || event.key === "ArrowDown" ? 1 : -1) + ebayMarkets.length) % ebayMarkets.length;
+    onChange(ebayMarkets[next].code);
+    const buttons = event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>("button[role=radio]");
+    buttons?.[next]?.focus();
+  };
+  return <fieldset className="market-selector">
+    <legend>eBay marketplace</legend>
+    <p>Choose the listing site. Seller registration and buyer destination are separate fee inputs.</p>
+    <div className="market-grid" role="radiogroup" aria-label="eBay marketplace">
+      {ebayMarkets.map((item, index) => <button key={item.code} type="button" role="radio" aria-checked={market === item.code} tabIndex={market === item.code ? 0 : -1} className={market === item.code ? "market-option is-selected" : "market-option"} onClick={() => onChange(item.code)} onKeyDown={(event) => move(event, index)} title={`${item.name} · ${item.site}`}>
+        <span className={`fi fi-${item.flag} market-flag`} aria-hidden="true" />
+        <span className="market-radio" aria-hidden="true"><i /></span>
+        <b>{item.name}</b><small>{item.site}</small>
+      </button>)}
+    </div>
+  </fieldset>;
 }
 
 export function NumberField({ label, value, onChange, currency, percent, count, hint, required }: {
@@ -56,6 +84,24 @@ export function NumberField({ label, value, onChange, currency, percent, count, 
   </label>;
 }
 
+export type FeeInputValue = { mode: "percent" | "fixed"; value: string; basis: "item" | "buyer-total" | "supplier-cost" };
+
+export function FeeInput({ label, value, onChange, currency, hint }: { label: string; value: FeeInputValue; onChange: (value: FeeInputValue) => void; currency: Currency; hint?: string }) {
+  return <div className="tool-field fee-input">
+    <span>{label}</span>
+    <div className="fee-mode" role="group" aria-label={`${label} input mode`}><button type="button" className={value.mode === "percent" ? "is-selected" : ""} aria-pressed={value.mode === "percent"} onClick={() => onChange({ ...value, mode: "percent" })}>%</button><button type="button" className={value.mode === "fixed" ? "is-selected" : ""} aria-pressed={value.mode === "fixed"} onClick={() => onChange({ ...value, mode: "fixed" })}>{currencySymbol[currency]}</button></div>
+    <span className="tool-number-wrap">{value.mode === "fixed" ? <span aria-hidden="true">{currencySymbol[currency]}</span> : null}<input className="tool-number" type="number" inputMode="decimal" min="0" max={value.mode === "percent" ? 100 : undefined} step="0.01" placeholder="0" value={value.value} onChange={(event) => onChange({ ...value, value: event.target.value })} />{value.mode === "percent" ? <span aria-hidden="true">%</span> : null}</span>
+    {value.mode === "percent" ? <select className="tool-control fee-basis" aria-label={`${label} percentage basis`} value={value.basis} onChange={(event) => onChange({ ...value, basis: event.target.value as FeeInputValue["basis"] })}><option value="item">of item price</option><option value="buyer-total">of buyer total</option><option value="supplier-cost">of supplier cost</option></select> : null}
+    {hint ? <small>{hint}</small> : null}
+  </div>;
+}
+
+export function feeInputAmount(input: FeeInputValue, bases: { item: number; "buyer-total": number; "supplier-cost": number }) {
+  const amount = Number(input.value || 0);
+  if (!Number.isFinite(amount) || amount < 0 || (input.mode === "percent" && amount > 100)) return NaN;
+  return input.mode === "fixed" ? amount : bases[input.basis] * amount / 100;
+}
+
 export function AdvancedSettings({ children }: { children: ReactNode }) {
   return <details className="tool-advanced">
     <summary><span>Advanced settings</span><small>Optional costs &amp; assumptions</small></summary>
@@ -63,15 +109,16 @@ export function AdvancedSettings({ children }: { children: ReactNode }) {
   </details>;
 }
 
-export function ToolWorkspace({ inputTitle, inputDescription, inputs, actions, results, resultId = "tool-results" }: {
+export function ToolWorkspace({ inputTitle, inputDescription, inputs, actions, results, resultId = "tool-results", saved }: {
   inputTitle: string;
   inputDescription: string;
   inputs: ReactNode;
   actions: ReactNode;
   results: ReactNode;
   resultId?: string;
+  saved?: { toolSlug: string; toolName: string; snapshot: Omit<SavedToolRecord, "id" | "createdAt"> | null };
 }) {
-  return <div className="tool-workspace">
+  return <><div className="tool-workspace">
     <section className="tool-input-panel" aria-labelledby="tool-input-title">
       <div className="tool-panel-head">
         <div><p className="tool-panel-kicker">Your inputs</p><h2 id="tool-input-title">{inputTitle}</h2><p>{inputDescription}</p></div>
@@ -81,7 +128,7 @@ export function ToolWorkspace({ inputTitle, inputDescription, inputs, actions, r
       <div className="tool-actions">{actions}</div>
     </section>
     <section id={resultId} className="tool-results-panel" aria-live="polite" aria-atomic="false">{results}</section>
-  </div>;
+  </div>{saved ? <SavedResults {...saved} /> : null}</>;
 }
 
 export function ResultHero({ eyebrow, value, description, tone = "default" }: {

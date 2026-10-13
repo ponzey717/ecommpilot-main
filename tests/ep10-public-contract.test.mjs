@@ -165,10 +165,11 @@ test("Winning Products category search and supplier preserve the active server f
 });
 
 
-test("public calculators are US UK AU aware and do not hardcode a universal fee rate", async () => {
+test("public calculators use the 18-market model and do not hardcode a universal fee rate", async () => {
   const calculators = [
     await source("src/components/tools/ep11-calculators.tsx"),
     await source("src/components/tools/tool-workspace.tsx"),
+    await source("src/config/ebay-markets.ts"),
   ].join("\n");
   for (const currency of ["USD", "GBP", "AUD"]) {
     assert.ok(calculators.includes(currency), currency);
@@ -177,7 +178,7 @@ test("public calculators are US UK AU aware and do not hardcode a universal fee 
   assert.ok(calculators.includes("eBay selling fee rate"));
   assert.ok(calculators.includes('useState<Record<string, string>>({})'));
   assert.equal(calculators.includes('useState("13.25")'), false);
-  assert.ok(calculators.includes("Optional advertising cost"));
+  assert.ok(calculators.includes("Promoted Listings General rate"));
   assert.ok(calculators.includes('max={percent ? 100 : undefined}'));
   assert.ok(calculators.includes('values.feeRate !== ""'));
   assert.ok(calculators.includes("ROI on landed cost"));
@@ -401,7 +402,7 @@ test("brand metadata and logo loading stay explicit and efficient", async () => 
   assert.ok(schema.includes("inLanguage: siteConfig.locale"));
   assert.ok(logo.includes("priority = false"));
   assert.ok(logo.includes("priority={priority}"));
-  assert.ok(header.includes("<Logo light={dark} priority />"));
+  assert.ok(header.includes("<Logo priority />"));
   assert.ok(card.includes('sizes="(min-width: 1280px) 31vw, (min-width: 768px) 48vw, 100vw"'));
 });
 

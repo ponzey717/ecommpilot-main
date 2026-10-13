@@ -5,6 +5,7 @@ import { siteConfig } from "@/config/site";
 import { organizationSchema, websiteSchema } from "@/lib/seo/schema";
 import { publicIndexingEnabled } from "@/lib/public-indexing";
 import "./globals.css";
+import "flag-icons/css/flag-icons.min.css";
 
 const inter = Inter({
   variable: "--font-inter",

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { SavedResults } from "./saved-results";
 
 const accepted = ["image/jpeg", "image/png", "image/webp"];
 const extension = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" } as const;
@@ -64,7 +65,8 @@ export function ImageResizer() {
     finally { bitmap?.close(); setBusy(false); }
   };
 
-  return <div className="tool-workspace image-workspace">
+  const snapshot = blob && file ? { label: file.name, market: "Browser-local", summary: `${dimensions} · ${fileSize(blob.size)}`, metrics: { "Original size": fileSize(file.size), "Output size": fileSize(blob.size), Format: extension[blob.type as keyof typeof extension].toUpperCase(), Change: blob.size <= file.size ? `${((1 - blob.size / file.size) * 100).toFixed(0)}% smaller` : `${((blob.size / file.size - 1) * 100).toFixed(0)}% larger` }, assumptions: "Processed locally in the browser. Image content is not stored in the saved list." } : null;
+  return <><div className="tool-workspace image-workspace">
     <section className="tool-input-panel">
       <div className="tool-panel-head"><div><p className="tool-panel-kicker">Local image</p><h2>Resize &amp; compress</h2><p>Your file never leaves this browser.</p></div></div>
       <label className="image-drop-zone" onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); select(event.dataTransfer.files[0]); }}>
@@ -80,5 +82,5 @@ export function ImageResizer() {
       {!before ? <div className="result-empty"><span aria-hidden="true">▧</span><h2>Your previews will appear here</h2><p>Choose an image to inspect its dimensions and file size.</p></div> : <div className="image-comparison"><figure><div>{before ? <Image unoptimized src={before} width={520} height={320} alt="Original selected image preview" /> : null}</div><figcaption><b>Original</b><span>{original.width} × {original.height} px · {file ? fileSize(file.size) : ""}</span></figcaption></figure><figure className={!after ? "image-awaiting" : ""}><div>{after ? <Image unoptimized src={after} width={520} height={320} alt="Converted image preview" /> : <span>Converted preview</span>}</div><figcaption><b>Converted</b><span>{blob ? `${dimensions} · ${fileSize(blob.size)}` : "Resize to compare"}</span></figcaption></figure></div>}
       {blob && after && file ? <><div className="image-savings"><span>File-size change</span><b>{blob.size <= file.size ? `${((1 - blob.size / file.size) * 100).toFixed(0)}% smaller` : `${((blob.size / file.size - 1) * 100).toFixed(0)}% larger`}</b></div><a className="button button-cyan result-download" href={after} download={`ebay-image.${extension[blob.type as keyof typeof extension]}`}>Download converted image</a></> : null}
     </section>
-  </div>;
+  </div><SavedResults toolSlug="ebay-image-resizer" toolName="eBay Image Resizer" snapshot={snapshot} /></>;
 }

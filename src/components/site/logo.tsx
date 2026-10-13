@@ -15,7 +15,7 @@ export function Logo({
     : "/brand/ecommpilot-logo-original.png";
 
   return (
-    <Link href="/" className={light ? "inline-flex shrink-0 items-center rounded-xl bg-white px-1" : "inline-flex shrink-0 items-center"} aria-label="eCommPilot home">
+    <Link href="/" className="inline-flex shrink-0 items-center" data-header-context={light ? "dark" : "light"} aria-label="eCommPilot home">
       <Image
         src={src}
         alt="eCommPilot"
