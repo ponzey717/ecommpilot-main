@@ -11,20 +11,18 @@ export function Logo({
   priority?: boolean;
 }) {
   const src = compact
-    ? "/brand/ecommpilot-mark.svg"
-    : light
-      ? "/brand/ecommpilot-logo-light.svg"
-      : "/brand/ecommpilot-logo.svg";
+    ? "/brand/ecommpilot-icon-original.png"
+    : "/brand/ecommpilot-logo-original.png";
 
   return (
-    <Link href="/" className="inline-flex items-center" aria-label="eCommPilot home">
+    <Link href="/" className="inline-flex shrink-0 items-center" data-header-context={light ? "dark" : "light"} aria-label="eCommPilot home">
       <Image
         src={src}
         alt="eCommPilot"
-        width={compact ? 44 : 190}
-        height={compact ? 44 : 45}
+        width={compact ? 44 : 2048}
+        height={compact ? 44 : 682}
         priority={priority}
-        className={compact ? "h-10 w-10" : "h-10 w-auto"}
+        className={compact ? "h-10 w-10" : "h-[48px] w-[135px] object-contain sm:h-[60px] sm:w-[180px]"}
       />
     </Link>
   );

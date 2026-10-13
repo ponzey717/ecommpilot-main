@@ -1,0 +1,14 @@
+# EP-11 free tool search intent and content choices
+
+Checked 13 October 2026. This is qualitative search-result and primary-source research; no search-volume or ranking estimate is claimed.
+
+| Topic cluster | Likely seller query intent | Evidence and competition observed | EP-11 page choice |
+| --- | --- | --- | --- |
+| Fees and profit | Understand the fees deducted from a sale and the amount left after costs | [eBay selling fees](https://www.ebay.com/help/selling/fees-credits-invoices/x?id=4822) describes percentage and per-order fees with category and seller variations. Search results include [Instica](https://docs.instica.com/tools/ebay-fee-calculator), [Strooply](https://strooply.com/ebay-profit-calculator) and [Treecat](https://treecat.io/tools/ebay-fee-calculator) fee tools. | Keep `ebay-fee-estimator` and `profit-margin-calculator`; use editable fee inputs and explain the assumed fee base. Avoid an unverified official rate table. |
+| Pricing and offers | Find a floor price or assess a buyer offer | Fee-dependent break-even and offer decisions follow directly from the same cost inputs. Competing fee tools commonly bundle profit, so focused floor-price and offer pages need usable arithmetic and examples. | Dedicated break-even and Best Offer calculators, cross-linked to profit and fees. |
+| Advertising | Compare promoted-listing cost with profit | [eBay selling fees](https://www.ebay.com/help/selling/fees-credits-invoices/x?id=4822) distinguishes optional listing costs from normal final value fees. | A user-entered ad rate or cost with before/after profit; no campaign-performance prediction. |
+| Shipping | Compare a buyer-paid shipping charge with free shipping | [eBay selling fees](https://www.ebay.com/help/selling/fees-credits-invoices/x?id=4822) says shipping collected from buyers can be part of the fee base, with exceptions. | Show revenue, fees and profit under both options and disclose the chosen fee assumption. |
+| Demand | Interpret manually observed sold and active listing counts | Sellers use different sell-through formulas. The site cannot retrieve live sold history from a free calculator. | State `sold / (sold + active)` visibly and show the observation period. |
+| Listings and images | Check titles, resize photos and simplify description markup | [eBay photo guidance](https://www.ebay.com/help/selling/listings/creating-managing-listings/add-pictures?id=4148) emphasizes image quality. [eBay developer guidance](https://developer.ebay.com/cms/files/connect-2020/aspect_mikecuttone.pdf) states an 80-character title limit. | Browser-local title, image and HTML utilities with explicit limits and a final-editor check. |
+
+The individual pages use one canonical URL each. Their worked examples are hypothetical arithmetic examples, never purported live product, fee, sales or search-volume data. US, UK and AU are selectable in the money tools; fee and tax rates remain user supplied because those rules vary.

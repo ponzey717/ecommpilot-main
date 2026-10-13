@@ -13,7 +13,7 @@ export function organizationSchema() {
     "@id": `${siteConfig.url}/#organization`,
     name: siteConfig.name,
     url: siteConfig.url,
-    logo: toAbsoluteUrl("/icon.svg"),
+    logo: toAbsoluteUrl("/brand/ecommpilot-logo-original.png"),
   };
 }
 

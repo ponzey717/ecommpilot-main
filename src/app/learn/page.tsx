@@ -4,6 +4,7 @@ import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
 import { routes } from "@/config/routes";
 import { buildMetadata } from "@/lib/seo/metadata";
+import { tools, toolPath } from "@/config/tools";
 
 export const metadata: Metadata = buildMetadata({
   title: "Learn eBay Dropshipping & Product Research",
@@ -73,6 +74,12 @@ export default function LearnPage() {
               </article>
             ))}
           </div>
+
+          <section className="mt-10 rounded-[24px] border border-[var(--border)] bg-white p-6 md:p-8">
+            <p className="eyebrow">Practice with your own inputs</p>
+            <h2 className="mt-3 text-2xl font-extrabold text-[var(--navy)]">Free tools for each seller decision</h2>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{tools.map((tool) => <Link key={tool.slug} href={toolPath(tool.slug)} className="rounded-xl border border-[var(--border)] p-4 text-sm font-bold text-[var(--blue)] hover:bg-[var(--surface-soft)]">{tool.title} →</Link>)}</div>
+          </section>
 
           <div className="mt-10 rounded-[24px] border border-[var(--border)] bg-white p-6 md:p-8">
             <p className="eyebrow">Learning principle</p>

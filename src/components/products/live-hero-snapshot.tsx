@@ -26,15 +26,13 @@ export async function LiveHeroSnapshot() {
   if (payload == null) {
     return (
       <div className="snapshot-card">
-        <div className="hero-glow" />
-        <div className="relative z-10">
-          <p className="eyebrow">Live catalog connection</p>
-          <h2 className="mt-2 text-2xl font-extrabold text-[var(--navy)]">
-            Product data is temporarily unavailable.
-          </h2>
-          <p className="mt-5 text-sm leading-6 text-[var(--muted)]">
-            eCommPilot will not replace an unavailable live catalog with invented sales, supplier or profit figures.
-          </p>
+        <p className="eyebrow">Catalog status</p>
+        <h2 className="mt-2 text-xl font-extrabold text-[var(--navy)]">Product data is temporarily unavailable.</h2>
+        <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
+          Live figures are not shown until the catalog connection is restored.
+        </p>
+        <div className="mt-5 border-t border-[var(--border)] pt-4 text-xs font-bold text-[var(--muted)]">
+          Demand · Supplier · Profit · Freshness
         </div>
       </div>
     );
@@ -43,24 +41,25 @@ export async function LiveHeroSnapshot() {
   if (!product) {
     return (
       <div className="snapshot-card">
-        <div className="hero-glow" />
-        <div className="relative z-10">
-          <p className="eyebrow">Winning Product snapshot</p>
-          <h2 className="mt-2 text-2xl font-extrabold text-[var(--navy)]">
-            Published only when the evidence is ready.
-          </h2>
-          <div className="mt-6 grid grid-cols-2 gap-3">
-            {["30-day SOLD demand", "Supplier & delivery", "Profit & ROI", "Freshness"].map((label) => (
-              <div className="metric-box" key={label}>
-                <span className="metric-label">{label}</span>
-                <strong className="!text-base">Verified before publish</strong>
-              </div>
-            ))}
-          </div>
-          <p className="mt-5 text-sm leading-6 text-[var(--muted)]">
-            No public product is available in this view yet. eCommPilot does not fill an empty catalog with invented sales, supplier or profit figures.
-          </p>
+        <p className="eyebrow">The research layer</p>
+        <h2 className="mt-2 text-xl font-extrabold text-[var(--navy)]">
+          A clearer view of the opportunity.
+        </h2>
+        <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
+          Every published product is designed to bring the evidence together.
+        </p>
+        <div className="research-preview" aria-label="Product research fields">
+          {["eBay demand", "Supplier & delivery", "Profit & ROI", "Evidence freshness"].map((label, index) => (
+            <div className="research-preview-row" key={label}>
+              <span className="research-preview-number">0{index + 1}</span>
+              <span>{label}</span>
+              <span className="research-preview-line" aria-hidden="true" />
+            </div>
+          ))}
         </div>
+        <p className="mt-4 text-xs leading-5 text-[var(--muted)]">
+          No public product is published yet; this preview shows fields, not invented results.
+        </p>
       </div>
     );
   }

@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/config/site";
+import { tools, toolPath } from "@/config/tools";
 import {
   getPublicCategories,
   getPublicMarketsWithFallback,
@@ -14,9 +15,6 @@ const staticPaths = [
   "/markets",
   "/categories",
   "/free-tools",
-  "/free-tools/profit-margin-calculator",
-  "/free-tools/ebay-fee-estimator",
-  "/free-tools/title-length-checker",
   "/learn",
   "/pricing",
   "/about",
@@ -52,7 +50,7 @@ async function publishedProductsForSitemap(maxProducts: number): Promise<PublicP
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const staticEntries: MetadataRoute.Sitemap = staticPaths.map((path) => ({
+  const staticEntries: MetadataRoute.Sitemap = [...staticPaths, ...tools.map((tool) => toolPath(tool.slug))].map((path) => ({
     url: new URL(path, siteConfig.url).toString(),
     changeFrequency:
       path === "/" || path === "/winning-products" || path === "/whats-trending"
