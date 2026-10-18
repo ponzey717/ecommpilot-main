@@ -19,5 +19,14 @@ test("growth guide slugs are unique, valid and useful", () => {
 
 test("unapproved draft articles are not published", () => {
   assert.ok(publishedGrowthGuides().every((guide) => guide.status === "published" && guide.datePublished));
-  assert.ok(!publishedGrowthGuides().some((guide) => guide.status === "draft"));
+  assert.ok(!publishedGrowthGuides().some((guide) => guide.status !== "published"));
+});
+
+test("tool intent remains on the calculator page and flagship drafts stay unpublished", () => {
+  assert.ok(!growthGuides.some((guide) => guide.primaryKeyword === "ebay profit calculator"));
+  assert.deepEqual(growthGuides.map((guide) => guide.slug).sort(), ["research-ebay-sold-products", "verify-aliexpress-supplier-variations"]);
+  assert.ok(growthGuides.every((guide) => guide.status === "review" && !guide.datePublished));
+  assert.equal(publishedGrowthGuides().length, 0);
+  assert.ok(growthGuides.every((guide) => guide.screenshotRequirements.length > 0));
+  assert.ok(growthGuides.every((guide) => guide.sources.every((source) => /^\d{4}-\d{2}-\d{2}$/.test(source.checkedAt))));
 });

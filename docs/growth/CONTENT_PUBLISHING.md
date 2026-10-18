@@ -1,24 +1,25 @@
-# eCommPilot growth-guide publishing foundation
+# eCommPilot editorial publishing workflow
 
-Branch: `growth/content-foundation-20261018`. This is an editorial infrastructure PR based on `feature/ep11-public-site-implementation`, separate from Claude's unpushed audit fixes and Desktop/SaaS PR #123.
+Updated 2026-10-18. The two flagship manuscripts in `src/content/growth-guides.ts` are **review** content. Their proposed public routes return 404, and they do not enter the Learn listing, sitemap, or Article schema. Review source content locally. No owner approval or publication is implied.
 
-## Current behavior
-- Draft guides are reachable for editorial preview at `/learn/<slug>`, but carry `noindex` and have no Article schema or sitemap entry.
-- Publication requires `status: "published"`, a real `datePublished`, dated source checking, screenshot/editorial approval, and a deployed/verified release.
-- The public site still remains globally noindexed behind the existing `ECOMMPILOT_PUBLIC_INDEXING_ENABLED` launch gate.
-- Two evidence-backed sample drafts are present, not promoted to live articles: profit calculations and dropshipping sourcing/policy.
+## Workflow
 
-## Adding or updating a guide
-1. Draft and approve text in Google Drive `ecommpilot Growth/03 Blog Editorial and Drafts` and track its keywords/intent in the mapped workbook.
-2. Add a new unique entry to `src/content/growth-guides.ts`, with slug, title, description, region, content sections, real related-tool URLs and official sources. Keep `status: "draft"`.
-3. Test `/learn/<slug>` in staging and verify human-readable formatting, policy claims and mobile view; add original cropped UI screenshots when approved.
-4. Review editorial quality, dates, citations, internal links, accessibility, page metadata, duplicate target intent, structured data and privacy. Only then switch to `published` and set `datePublished`.
-5. Add approved articles to the Learn hub; include only published articles in the sitemap; test canonical/indexing and 200 status. Create a PR, wait for CI and human approval, and then deploy.
+Keyword research → search intent check → existing URL/cannibalization check → brief → official-source research → draft → fact check → real screenshot requirements → visuals → internal links → SEO audit → staging review → owner approval → publish → post-publication performance review.
 
-## Required next implementation
-- Add approval-driven listing of published guides in the Learn hub and auto-sitemap entries (no draft URLs).
-- Turn long-form Drive drafts into approved page content with source review, original screenshots and independent fee tests.
-- Add publishing workflow tests (status gate, unique slugs, metadata, internal links, no unsafe HTML).
-- Add a secure editorial CMS only after owner selects its hosting, authentication and permissions. Do not add an unauthenticated writing API.
+Use `docs/KEYWORD_MASTER_MAP.csv` for ownership and `docs/EDITORIAL_BRIEFS.csv` for the first 20 proposed articles. Search volume and difficulty are unavailable; do not invent them. Calculator intent belongs to its calculator URL, including formulas, examples and fee references. A Learn article needs a distinct educational question.
 
-This PR intentionally does not merge Claude's fee fixes or enable public indexing.
+## Add or edit a guide
+
+1. Add a unique slug and complete the typed entry in `src/content/growth-guides.ts`. Keep `status: "draft"` or `"review"` while sources, screenshots, policy, links and copy are checked.
+2. Record the source URL and checked date. Use the exact marketplace context. Reverify changing fees, seller policy and API claims before approval.
+3. Use genuine redacted screenshots and original diagrams. The article component shows explicit screenshot requirements if an image has not been supplied; remove placeholders only after evidence exists.
+4. Review metadata, source claims, accessible headings and links, internal links, policy risk and mobile layout. Confirm the article does not target a tool's primary search intent.
+5. Record owner approval and set `status: "published"` with a genuine `datePublished`. The published selector then adds it to the Learn listing and sitemap. Deploy only after the separate production approval.
+6. After release, monitor Search Console and user feedback where authorized; update the article and `dateModified` when facts change.
+
+## Current blockers
+
+- No authorized Search Console or paid keyword data was available in this local pass. The map uses qualitative priority only.
+- Real Seller Hub and supplier variation screenshots need authenticated owner/editor access and redaction.
+- The two flagship manuscripts require owner fact check and approval. The supplier article also requires careful review against [eBay's dropshipping policy](https://www.ebay.com/help/selling/listings/dropshipping?id=4176).
+- Chrome viewport and interaction checks are local evidence only. Hosting, DNS, WordPress redirects and production indexing have not been changed.

@@ -1,3 +1,4 @@
+import { LearnLibrary } from "@/components/learn/learn-library";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/site/page-hero";
@@ -83,21 +84,11 @@ export default function LearnPage() {
             <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{tools.map((tool) => <Link key={tool.slug} href={toolPath(tool.slug)} className="rounded-xl border border-[var(--border)] p-4 text-sm font-bold text-[var(--blue)] hover:bg-[var(--surface-soft)]">{tool.title} →</Link>)}</div>
           </section>
 
-          {publishedGuides.length > 0 ? (
-            <section className="mt-10 rounded-[24px] border border-[var(--border)] bg-white p-6 md:p-8">
-              <p className="eyebrow">Practical seller guides</p>
-              <h2 className="mt-3 text-2xl font-extrabold text-[var(--navy)]">Learn with worked examples</h2>
-              <div className="mt-5 grid gap-4 md:grid-cols-2">
-                {publishedGuides.map((guide) => (
-                  <Link key={guide.slug} href={`/learn/${guide.slug}`} className="rounded-xl border border-[var(--border)] p-5 hover:bg-[var(--surface-soft)]">
-                    <h3 className="text-lg font-bold text-[var(--navy)]">{guide.title}</h3>
-                    <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{guide.description}</p>
-                    <span className="mt-3 inline-block text-sm font-bold text-[var(--blue)]">Read guide →</span>
-                  </Link>
-                ))}
-              </div>
-            </section>
-          ) : null}
+          <section className="mt-10 rounded-[24px] border border-[var(--border)] bg-white p-6 md:p-8">
+            <p className="eyebrow">Practical seller guides</p>
+            <h2 className="mt-3 text-2xl font-extrabold text-[var(--navy)]">Read published guides</h2>
+            {publishedGuides.length > 0 ? <LearnLibrary guides={publishedGuides.map((guide) => ({ title: guide.title, description: guide.description, href: `/learn/${guide.slug}`, topic: guide.topic, readingMinutes: guide.readingMinutes, publishedAt: guide.datePublished }))} /> : <p className="mt-4 text-sm leading-7 text-[var(--muted)]">Our first guides are in editorial review. Explore the learning tracks and free tools above while we verify sources and visuals.</p>}
+          </section>
 
           <div className="mt-10 rounded-[24px] border border-[var(--border)] bg-white p-6 md:p-8">
             <p className="eyebrow">Learning principle</p>
