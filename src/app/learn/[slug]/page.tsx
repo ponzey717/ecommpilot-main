@@ -86,8 +86,8 @@ export default async function GrowthGuidePage({ params }: Props) {
               ) : null}
             </section>
           ))}
-          <ProcessFlow title="Research decision flow" stages={guide.processFlow} />
-          <div className="mt-6"><Callout kind="warning" title="Verify changing marketplace facts">Fee schedules, shipping terms and sourcing policies can change. Check the current local marketplace rules before acting.</Callout></div>
+          <ProcessFlow title={guide.topic === "Suppliers" ? "Supplier verification flow" : "Research decision flow"} stages={guide.processFlow} />
+          <div className="mt-6"><Callout kind="warning" title="Recheck changing evidence">Prices, stock, delivery quotes and marketplace research results can change. Keep the source and capture date with your decision.</Callout></div>
           <section className="mt-9">
             <h2 className="text-xl font-bold text-[var(--navy)]">Visual evidence</h2>
             {guide.screenshotRequirements.map((requirement) => <ScreenshotFrame key={requirement} alt={requirement} caption={requirement} />)}
