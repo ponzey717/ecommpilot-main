@@ -5,6 +5,7 @@ import { PageShell } from "@/components/site/page-shell";
 import { routes } from "@/config/routes";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { tools, toolPath } from "@/config/tools";
+import { publishedGrowthGuides } from "@/content/growth-guides";
 
 export const metadata: Metadata = buildMetadata({
   title: "Learn eBay Dropshipping & Product Research",
@@ -53,6 +54,7 @@ const tracks = [
 ] as const;
 
 export default function LearnPage() {
+  const publishedGuides = publishedGrowthGuides();
   return (
     <PageShell darkHeader>
       <PageHero
@@ -80,6 +82,22 @@ export default function LearnPage() {
             <h2 className="mt-3 text-2xl font-extrabold text-[var(--navy)]">Free tools for each seller decision</h2>
             <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{tools.map((tool) => <Link key={tool.slug} href={toolPath(tool.slug)} className="rounded-xl border border-[var(--border)] p-4 text-sm font-bold text-[var(--blue)] hover:bg-[var(--surface-soft)]">{tool.title} →</Link>)}</div>
           </section>
+
+          {publishedGuides.length > 0 ? (
+            <section className="mt-10 rounded-[24px] border border-[var(--border)] bg-white p-6 md:p-8">
+              <p className="eyebrow">Practical seller guides</p>
+              <h2 className="mt-3 text-2xl font-extrabold text-[var(--navy)]">Learn with worked examples</h2>
+              <div className="mt-5 grid gap-4 md:grid-cols-2">
+                {publishedGuides.map((guide) => (
+                  <Link key={guide.slug} href={`/learn/${guide.slug}`} className="rounded-xl border border-[var(--border)] p-5 hover:bg-[var(--surface-soft)]">
+                    <h3 className="text-lg font-bold text-[var(--navy)]">{guide.title}</h3>
+                    <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{guide.description}</p>
+                    <span className="mt-3 inline-block text-sm font-bold text-[var(--blue)]">Read guide →</span>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          ) : null}
 
           <div className="mt-10 rounded-[24px] border border-[var(--border)] bg-white p-6 md:p-8">
             <p className="eyebrow">Learning principle</p>
