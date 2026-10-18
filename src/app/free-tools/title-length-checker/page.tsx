@@ -1,3 +1,4 @@
+import { ToolLearning } from "@/components/tools/tool-learning";
 import type { Metadata } from "next";
 import { PageShell } from "@/components/site/page-shell";
 import { TitleLengthChecker } from "@/components/tools/ep11-calculators";
@@ -38,6 +39,7 @@ export default function Page() {
         <div className="site-container">
           <TitleLengthChecker />
           <ToolEditorial slug="title-length-checker" />
+          <ToolLearning slug="title-length-checker" />
         </div>
       </section>
     </PageShell>

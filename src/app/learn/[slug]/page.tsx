@@ -9,7 +9,7 @@ import { breadcrumbSchema, articleSchema } from "@/lib/seo/schema";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { getGrowthGuide, publishedGrowthGuides } from "@/content/growth-guides";
 import { ArticleToc } from "@/components/learn/article-toc";
-import { Callout, ScreenshotFrame } from "@/components/learn/content-blocks";
+import { Callout, ComparisonTable, ProcessFlow, ScreenshotFrame } from "@/components/learn/content-blocks";
 
 type Props = { params: Promise<{ slug: string }> };
 export const dynamicParams = false;
@@ -35,6 +35,7 @@ export default async function GrowthGuidePage({ params }: Props) {
   const guide = getGrowthGuide(slug);
   if (!guide || guide.status !== "published" || !guide.datePublished) notFound();
   const path = `/learn/${guide.slug}`;
+  const related = publishedGrowthGuides().filter((item) => item.slug !== guide.slug).slice(0, 3);
   return (
     <PageShell darkHeader>
       {guide.status === "published" && guide.datePublished ? (
@@ -68,7 +69,7 @@ export default async function GrowthGuidePage({ params }: Props) {
             <span>Published {guide.datePublished}</span>
           </div>
           <div className="article-layout">
-          <ArticleToc entries={guide.sections.map((section, index) => ({ id: `section-${index + 1}`, label: section.heading }))} />
+          <ArticleToc entries={guide.sections.flatMap((section, index) => [{ id: `section-${index + 1}`, label: section.heading, level: 2 as const }, ...(section.subsections ?? []).map((subsection, subIndex) => ({ id: `section-${index + 1}-${subIndex + 1}`, label: subsection.heading, level: 3 as const }))])} />
           <div className="article-content min-w-0">
           {guide.sections.map((section, index) => (
             <section id={`section-${index + 1}`} key={section.heading} className="mb-10">
@@ -76,6 +77,8 @@ export default async function GrowthGuidePage({ params }: Props) {
               {section.paragraphs.map((paragraph) => (
                 <p key={paragraph} className="mb-4 text-base leading-8 text-[var(--muted)]">{paragraph}</p>
               ))}
+              {section.subsections?.map((subsection, subIndex) => <div key={subsection.heading} className="mt-6"><h3 id={`section-${index + 1}-${subIndex + 1}`} className="mb-3 scroll-mt-24 text-xl font-bold text-[var(--navy)]">{subsection.heading}</h3>{subsection.paragraphs.map((paragraph) => <p key={paragraph} className="mb-4 text-base leading-8 text-[var(--muted)]">{paragraph}</p>)}</div>)}
+              {section.table ? <figure className="mb-6"><figcaption className="mb-3 text-sm font-semibold text-[var(--navy)]">{section.table.caption}</figcaption><ComparisonTable headers={section.table.headers} rows={section.table.rows} /></figure> : null}
               {section.bullets ? (
                 <ul className="mb-5 list-disc space-y-2 pl-6 text-base leading-7 text-[var(--muted)]">
                   {section.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}
@@ -83,7 +86,8 @@ export default async function GrowthGuidePage({ params }: Props) {
               ) : null}
             </section>
           ))}
-          <Callout kind="warning" title="Verify changing marketplace facts">Fee schedules, shipping terms and sourcing policies can change. Check the current local marketplace rules before acting.</Callout>
+          <ProcessFlow title="Research decision flow" stages={guide.processFlow} />
+          <div className="mt-6"><Callout kind="warning" title="Verify changing marketplace facts">Fee schedules, shipping terms and sourcing policies can change. Check the current local marketplace rules before acting.</Callout></div>
           <section className="mt-9">
             <h2 className="text-xl font-bold text-[var(--navy)]">Visual evidence</h2>
             {guide.screenshotRequirements.map((requirement) => <ScreenshotFrame key={requirement} alt={requirement} caption={requirement} />)}
@@ -111,6 +115,8 @@ export default async function GrowthGuidePage({ params }: Props) {
               The examples are educational. Fee schedules, shipping costs and marketplace policies can change. Check the rules for your own marketplace and seller account before acting.
             </p>
           </section>
+          {related.length > 0 ? <section className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-6"><h2 className="text-xl font-bold text-[var(--navy)]">Related guides</h2><ul className="mt-3 grid gap-2">{related.map((item) => <li key={item.slug}><Link href={`/learn/${item.slug}`} className="font-semibold text-[var(--blue)] hover:underline">{item.title} →</Link></li>)}</ul></section> : null}
+          <div className="mt-8 flex flex-wrap gap-3"><Link href="/winning-products" className="button button-primary">Browse Winning Products</Link><Link href="/learn" className="button button-secondary">More seller guidance</Link></div>
           </div>
           </div>
         </div>

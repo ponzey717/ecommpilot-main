@@ -996,3 +996,5 @@ textarea.catalog-input {
 .content-callout-pro { border-color:var(--deep-blue); }
 @media(max-width:900px) { .article-layout { display:block; } .article-toc-desktop { display:none; } .article-toc-trigger { display:flex; position:fixed; right:18px; bottom:18px; z-index:60; gap:8px; align-items:center; padding:12px 16px; border-radius:999px; background:var(--navy); color:white; box-shadow:0 8px 28px rgba(7,26,61,.25); } }
 @media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
+
+.toc-link-nested { padding-left:24px; font-size:13px; }

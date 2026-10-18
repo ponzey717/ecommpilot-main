@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-type Entry = { id: string; label: string };
+type Entry = { id: string; label: string; level?: 2 | 3 };
 
 export function ArticleToc({ entries }: { entries: readonly Entry[] }) {
   const [active, setActive] = useState(entries[0]?.id ?? "");
@@ -44,7 +44,7 @@ export function ArticleToc({ entries }: { entries: readonly Entry[] }) {
 
   const links = entries.map((entry) => (
     <a key={entry.id} href={`#${entry.id}`} aria-current={active === entry.id ? "location" : undefined}
-      className={`toc-link ${active === entry.id ? "toc-link-active" : ""}`}
+      className={`toc-link ${entry.level === 3 ? "toc-link-nested" : ""} ${active === entry.id ? "toc-link-active" : ""}`}
       onClick={() => setOpen(false)}>{entry.label}</a>
   ));
 

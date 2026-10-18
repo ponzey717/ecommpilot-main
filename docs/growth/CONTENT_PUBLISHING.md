@@ -6,7 +6,7 @@ Updated 2026-10-18. The two flagship manuscripts in `src/content/growth-guides.t
 
 Keyword research → search intent check → existing URL/cannibalization check → brief → official-source research → draft → fact check → real screenshot requirements → visuals → internal links → SEO audit → staging review → owner approval → publish → post-publication performance review.
 
-Use `docs/KEYWORD_MASTER_MAP.csv` for ownership and `docs/EDITORIAL_BRIEFS.csv` for the first 20 proposed articles. Search volume and difficulty are unavailable; do not invent them. Calculator intent belongs to its calculator URL, including formulas, examples and fee references. A Learn article needs a distinct educational question.
+Use `docs/SEARCH_INTENT_RESEARCH.md` for the qualitative intent spot check. Use `docs/KEYWORD_MASTER_MAP.csv` for ownership and `docs/EDITORIAL_BRIEFS.csv` for the first 20 proposed articles. Search volume and difficulty are unavailable; do not invent them. Calculator intent belongs to its calculator URL, including formulas, examples and fee references. A Learn article needs a distinct educational question.
 
 ## Add or edit a guide
 

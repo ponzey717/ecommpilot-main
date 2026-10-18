@@ -1,3 +1,4 @@
+import { ToolLearning } from "@/components/tools/tool-learning";
 import type { Metadata } from "next";
 import { PageShell } from "@/components/site/page-shell";
 import { ProfitMarginCalculator } from "@/components/tools/ep11-calculators";
@@ -39,6 +40,7 @@ export default function Page() {
         <div className="site-container">
           <ProfitMarginCalculator />
           <ToolEditorial slug="profit-margin-calculator" />
+          <ToolLearning slug="profit-margin-calculator" />
         </div>
       </section>
     </PageShell>

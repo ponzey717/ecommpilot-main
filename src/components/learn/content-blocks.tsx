@@ -23,3 +23,6 @@ export function ScreenshotFrame({ caption, alt, src }: { caption: string; alt: s
 export function RelatedLinks({ title, links }: { title: string; links: readonly { label: string; href: string }[] }) {
   return <aside className="feature-card"><h2 className="text-xl font-bold text-[var(--navy)]">{title}</h2><ul className="mt-3 grid gap-2">{links.map((link) => <li key={link.href}><Link href={link.href} className="font-semibold text-[var(--blue)] hover:underline">{link.label} →</Link></li>)}</ul></aside>;
 }
+export function ProcessFlow({ title, stages }: { title: string; stages: readonly string[] }) {
+  return <figure className="rounded-2xl border border-[var(--border)] bg-white p-6"><figcaption className="mb-4 text-lg font-bold text-[var(--navy)]">{title}</figcaption><ol className="grid gap-3 sm:grid-cols-3">{stages.map((stage, index) => <li key={stage} className="rounded-xl border border-[var(--border)] bg-[var(--surface-soft)] p-4 text-sm font-semibold text-[var(--navy)]"><span className="mb-2 block text-xs font-extrabold text-[var(--blue)]">STEP {index + 1}</span>{stage}</li>)}</ol></figure>;
+}

@@ -1,3 +1,4 @@
+import { ToolLearning } from "@/components/tools/tool-learning";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -33,6 +34,7 @@ export default async function ToolPage({ params }: Props) {
     <section className="tool-page-body"><div className="site-container">
       {slug === "ebay-image-resizer" ? <ImageResizer /> : slug === "ebay-html-description-cleaner" ? <HtmlCleaner /> : <AdvancedCalculator slug={slug as Parameters<typeof AdvancedCalculator>[0]["slug"]} />}
       <ToolEditorial slug={slug} />
+      <ToolLearning slug={slug} />
       <div className="mt-10 grid gap-6 rounded-[24px] border border-[var(--border)] bg-white p-6 md:grid-cols-2 md:p-8"><div><h2 className="text-2xl font-extrabold text-[var(--navy)]">Related free tools</h2><div className="mt-4 flex flex-col gap-3">{tool.related.map((related) => { const item = getTool(related); return item ? <Link key={related} href={toolPath(related)} className="font-bold text-[var(--blue)] hover:underline">{item.title} →</Link> : null; })}</div></div><div><h2 className="text-2xl font-extrabold text-[var(--navy)]">Take the next step</h2><p className="mt-3 text-sm leading-7 text-[var(--muted)]">Explore seller guidance and published Winning Products for your market. Product availability reflects the live public catalogue.</p><div className="mt-5 flex flex-wrap gap-3"><Link href="/winning-products" className="button button-primary">Browse Winning Products</Link><Link href="/learn" className="button button-secondary">Seller guides</Link></div></div></div>
     </div></section>
   </PageShell>;
