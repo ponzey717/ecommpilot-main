@@ -23,7 +23,7 @@ export const growthGuides: GrowthGuide[] = [
     slug: "research-ebay-sold-products",
     title: "How to Research eBay Sold Products and Validate Demand",
     description: "A practical evidence trail for sold results, comparable variations and demand checks in the eBay marketplace where you sell.",
-    primaryKeyword: "eBay sold product research", region: "US, UK, AU and other supported eBay marketplaces", status: "review", dateModified: "2026-10-19", topic: "Research", readingMinutes: 9, processFlow: ["Define the item and market", "Inspect sold results", "Verify variation attribution", "Record the decision"],
+    primaryKeyword: "eBay sold product research", region: "US, UK, AU and other supported eBay marketplaces", status: "review", dateModified: "2026-10-19", topic: "Research", readingMinutes: 5, processFlow: ["Define the item and market", "Inspect sold results", "Verify variation attribution", "Record the decision"],
     lead: "Demand needs evidence of actual transactions. Active listings describe competing offers, not sales. Keep the two observations separate.",
     sections: [
       { heading: "1. Define the item you mean to research", paragraphs: ["Write down the marketplace, category, condition and attributes that make this item distinct: model, design, size, color, pack count and compatible devices where relevant. A search for a whole product family can include accessories and materially different variants. Keep the exact search phrase and any exclusions beside the result.", "Research the buyer market you intend to serve. A US result is not automatically evidence of Australian demand, and a price in another currency is not your local selling price."] },
@@ -40,7 +40,7 @@ export const growthGuides: GrowthGuide[] = [
     slug: "verify-aliexpress-supplier-variations",
     title: "How to Verify a Supplier and Match Product Variations for eBay",
     description: "Match the exact supplier SKU, product attributes, stock, item cost and destination-specific delivery before using an offer.",
-    primaryKeyword: "match AliExpress product variations for eBay", region: "US, UK, AU and other supported buyer destinations", status: "review", dateModified: "2026-10-19", topic: "Suppliers", readingMinutes: 9, processFlow: ["Define exact eBay item", "Resolve supplier SKU", "Quote buyer destination", "Compare alternatives"],
+    primaryKeyword: "match AliExpress product variations for eBay", region: "US, UK, AU and other supported buyer destinations", status: "review", dateModified: "2026-10-19", topic: "Suppliers", readingMinutes: 4, processFlow: ["Define exact eBay item", "Resolve supplier SKU", "Quote buyer destination", "Compare alternatives"],
     lead: "A supplier offer is useful only when it matches the item researched and can be fulfilled under the seller's stated terms. Similar titles and thumbnails are weak evidence.",
     sections: [
       { heading: "1. Define the exact eBay-side item", paragraphs: ["Start with the design, model, material, dimensions, color, compatibility and pack quantity that a buyer would receive. Record the item specifics and any part number from the researched eBay item. A supplier's similar title is only a search lead; it is not a product match."] },
