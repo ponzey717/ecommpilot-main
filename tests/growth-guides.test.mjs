@@ -30,3 +30,18 @@ test("tool intent remains on the calculator page and flagship drafts stay unpubl
   assert.ok(growthGuides.every((guide) => guide.screenshotRequirements.length > 0));
   assert.ok(growthGuides.every((guide) => guide.sources.every((source) => /^\d{4}-\d{2}-\d{2}$/.test(source.checkedAt))));
 });
+
+test("flagship guides meet the requested editorial depth without metadata padding", () => {
+  const words = (value) => value.trim().split(/\s+/).filter(Boolean).length;
+  for (const guide of growthGuides) {
+    const body = [guide.lead, ...guide.sections.flatMap((section) => [
+      section.heading,
+      ...section.paragraphs,
+      ...(section.bullets ?? []),
+      ...(section.subsections ?? []).flatMap((subsection) => [subsection.heading, ...subsection.paragraphs]),
+      ...(section.table ? [section.table.caption, ...section.table.headers, ...section.table.rows.flat()] : []),
+    ])].join(" ");
+    const count = words(body);
+    assert.ok(count >= 2000 && count <= 3500, `${guide.slug}: ${count} editorial words`);
+  }
+});
