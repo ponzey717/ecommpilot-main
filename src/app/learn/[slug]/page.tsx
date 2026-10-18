@@ -31,6 +31,7 @@ export default async function GrowthGuidePage({ params }: Props) {
   if (!guide || guide.status !== "published" || !guide.datePublished) notFound();
   const path = `/learn/${guide.slug}`;
   const supplier = guide.topic === "Suppliers";
+  const listings = guide.topic === "Listings";
   const related = publishedGrowthGuides().filter((item) => item.slug !== guide.slug).slice(0, 3);
   const entries = guide.sections.flatMap((section, index) => [{ id: `section-${index + 1}`, label: section.heading, level: 2 as const }, ...(section.subsections ?? []).map((subsection, subIndex) => ({ id: `section-${index + 1}-${subIndex + 1}`, label: subsection.heading, level: 3 as const }))]);
   return <PageShell darkHeader>
@@ -51,7 +52,7 @@ export default async function GrowthGuidePage({ params }: Props) {
       </header>
       <div className="guide-content-shell">
         <div className="site-container">
-          <div className="guide-intro" id="guide-start"><div><span className="article-kicker">THE SHORT VERSION</span><h2>{supplier ? "Verify the variant, then the destination." : "A sale is useful only when its scope is clear."}</h2></div><p>{supplier ? "Match the exact eBay item to one selected supplier SKU. Confirm its image, attributes, stock, item cost and delivery quote for the buyer destination before treating it as a viable source." : "Define the product and buyer market, inspect genuinely comparable sold results, and label whether a count belongs to an item family or the exact variation you intend to sell."}</p></div>
+          <div className="guide-intro" id="guide-start"><div><span className="article-kicker">THE SHORT VERSION</span><h2>{supplier ? "Verify the variant, then the destination." : listings ? "Every field needs an exact-item source." : "A sale is useful only when its scope is clear."}</h2></div><p>{supplier ? "Match the exact eBay item to one selected supplier SKU. Confirm its image, attributes, stock, item cost and delivery quote for the buyer destination before treating it as a viable source." : listings ? "Choose the correct marketplace and category, map each important item specific to the selected product, and check that the buyer-facing listing stays consistent." : "Define the product and buyer market, inspect genuinely comparable sold results, and label whether a count belongs to an item family or the exact variation you intend to sell."}</p></div>
           <div className="article-layout">
             <ArticleToc entries={entries} />
             <div className="article-content min-w-0">
@@ -64,7 +65,7 @@ export default async function GrowthGuidePage({ params }: Props) {
                   {section.bullets ? <div className="guide-checklist"><strong>Before you move on</strong><ul>{section.bullets.map((bullet) => <li key={bullet}><span aria-hidden="true">✓</span>{bullet}</li>)}</ul></div> : null}
                 </div>
               </section>{index === 2 ? <ArticleDecisionCheck topic={guide.topic} /> : null}</Fragment>)}
-              <ProcessFlow title={supplier ? "Supplier verification flow" : "Research decision flow"} stages={guide.processFlow} />
+              <ProcessFlow title={supplier ? "Supplier verification flow" : listings ? "Item specifics mapping flow" : "Research decision flow"} stages={guide.processFlow} />
               <div className="guide-afterword"><Callout kind="warning" title="Evidence has a shelf life">Prices, stock, delivery quotes and marketplace research results can change. Keep the source and capture date with your decision.</Callout></div>
               <section className="guide-resource-section"><div className="guide-section-heading"><span className="article-kicker">EDITORIAL EVIDENCE</span><h2>See the source, not a reconstruction</h2><p>These guides require real, permission-safe source captures before publication. The space below is reserved for the original evidence.</p></div>{guide.screenshotRequirements.map((requirement) => <ScreenshotFrame key={requirement} alt={requirement} caption={requirement} />)}</section>
               <section className="guide-resource-section"><div className="guide-section-heading"><span className="article-kicker">PUT IT TO WORK</span><h2>Use the right tool for the next decision</h2><p>These tools calculate from your inputs. They do not supply missing marketplace or supplier evidence.</p></div><div className="guide-tool-grid">{guide.tools.map((tool) => <Link href={tool.href} key={tool.href}><span aria-hidden="true">↗</span><strong>{tool.label}</strong><small>Open free tool</small></Link>)}</div></section>

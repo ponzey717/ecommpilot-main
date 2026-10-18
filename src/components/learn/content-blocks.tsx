@@ -27,14 +27,17 @@ export function RelatedLinks({ title, links }: { title: string; links: readonly 
 export function ProcessFlow({ title, stages }: { title: string; stages: readonly string[] }) {
   return <figure className="article-process"><div className="article-process-head"><span className="article-kicker">THE METHOD</span><figcaption>{title}</figcaption><p>Follow the evidence from the original item to a decision you can explain.</p></div><ol className="article-process-grid">{stages.map((stage, index) => <li key={stage}><span className="article-process-index">{String(index + 1).padStart(2, "0")}</span><strong>{stage}</strong><span className="article-process-arrow" aria-hidden="true">↗</span></li>)}</ol></figure>;
 }
-export function ArticleVisual({ topic }: { topic: "Research" | "Suppliers" | "Economics" }) {
+export function ArticleVisual({ topic }: { topic: "Research" | "Suppliers" | "Economics" | "Listings" }) {
   const supplier = topic === "Suppliers";
+  const listings = topic === "Listings";
   const nodes = supplier
     ? [{ icon: "◈", title: "Exact item", detail: "Design, model, pack" }, { icon: "▦", title: "Selected SKU", detail: "Image + attributes" }, { icon: "⌁", title: "Buyer destination", detail: "Freight + ETA" }]
-    : [{ icon: "◉", title: "Sold evidence", detail: "Market + period" }, { icon: "◇", title: "Comparable item", detail: "Condition + design" }, { icon: "✓", title: "Demand decision", detail: "Scope + confidence" }];
-  return <figure className="article-visual" aria-label={supplier ? "Supplier variation verification map" : "Sold demand evidence map"}>
-    <div className="article-visual-top"><span>ECOMMPILOT FIELD GUIDE</span><span>{supplier ? "SUPPLIER VERIFICATION" : "DEMAND VALIDATION"}</span></div>
+    : listings
+      ? [{ icon: "◈", title: "Exact product", detail: "Model + variation" }, { icon: "▦", title: "Category fields", detail: "Required + suggested" }, { icon: "✓", title: "Evidence map", detail: "Value + source" }]
+      : [{ icon: "◉", title: "Sold evidence", detail: "Market + period" }, { icon: "◇", title: "Comparable item", detail: "Condition + design" }, { icon: "✓", title: "Demand decision", detail: "Scope + confidence" }];
+  return <figure className="article-visual" aria-label={supplier ? "Supplier variation verification map" : listings ? "Item specifics evidence map" : "Sold demand evidence map"}>
+    <div className="article-visual-top"><span>ECOMMPILOT FIELD GUIDE</span><span>{supplier ? "SUPPLIER VERIFICATION" : listings ? "LISTING ACCURACY" : "DEMAND VALIDATION"}</span></div>
     <div className="article-visual-grid">{nodes.map((node, index) => <div className="article-visual-node" key={node.title}><span className="article-visual-icon" aria-hidden="true">{node.icon}</span><span className="article-visual-count">0{index + 1}</span><strong>{node.title}</strong><small>{node.detail}</small></div>)}</div>
-    <figcaption>{supplier ? "A parent supplier page is only a starting point. The selected SKU and destination finish the match." : "A sold result becomes useful only after market, product identity and count meaning are checked."}</figcaption>
+    <figcaption>{supplier ? "A parent supplier page is only a starting point. The selected SKU and destination finish the match." : listings ? "A structured field is useful when it describes the selected item and has a traceable source." : "A sold result becomes useful only after market, product identity and count meaning are checked."}</figcaption>
   </figure>;
 }

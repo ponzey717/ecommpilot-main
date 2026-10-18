@@ -22,16 +22,16 @@ test("unapproved draft articles are not published", () => {
   assert.ok(!publishedGrowthGuides().some((guide) => guide.status !== "published"));
 });
 
-test("tool intent remains on the calculator page and flagship drafts stay unpublished", () => {
+test("tool intent remains on the tool page and review guides stay unpublished", () => {
   assert.ok(!growthGuides.some((guide) => guide.primaryKeyword === "ebay profit calculator"));
-  assert.deepEqual(growthGuides.map((guide) => guide.slug).sort(), ["research-ebay-sold-products", "verify-aliexpress-supplier-variations"]);
+  assert.deepEqual(growthGuides.map((guide) => guide.slug).sort(), ["match-ebay-item-specifics", "research-ebay-sold-products", "verify-aliexpress-supplier-variations"]);
   assert.ok(growthGuides.every((guide) => guide.status === "review" && !guide.datePublished));
   assert.equal(publishedGrowthGuides().length, 0);
   assert.ok(growthGuides.every((guide) => guide.screenshotRequirements.length > 0));
   assert.ok(growthGuides.every((guide) => guide.sources.every((source) => /^\d{4}-\d{2}-\d{2}$/.test(source.checkedAt))));
 });
 
-test("flagship guides meet the requested editorial depth without metadata padding", () => {
+test("review guides meet the requested editorial depth without metadata padding", () => {
   const words = (value) => value.trim().split(/\s+/).filter(Boolean).length;
   for (const guide of growthGuides) {
     const body = [guide.lead, ...guide.sections.flatMap((section) => [

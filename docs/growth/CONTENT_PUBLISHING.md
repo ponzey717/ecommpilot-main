@@ -1,6 +1,6 @@
 # eCommPilot editorial publishing workflow
 
-Updated 2026-10-19. The two flagship manuscripts in `src/content/growth-guides.ts` are **review** content. Their proposed public routes return 404, and they do not enter the Learn listing, sitemap, or Article schema. Review source content locally. No owner approval or publication is implied.
+Updated 2026-10-19. The two flagship manuscripts and the item-specifics guide in `src/content/growth-guides.ts` are **review** content. Their proposed public routes return 404, and they do not enter the Learn listing, sitemap, or Article schema. Review source content locally. No owner approval or publication is implied.
 
 ## Workflow
 
@@ -21,5 +21,6 @@ Use `docs/SEARCH_INTENT_RESEARCH.md` for the qualitative intent spot check. Use 
 
 - No authorized Search Console or paid keyword data was available in this local pass. The map uses qualitative priority only.
 - Real Seller Hub and supplier variation screenshots need authenticated owner/editor access and redaction.
-- The two flagship manuscripts require owner fact check and approval. The supplier article remains focused on exact SKU, stock, destination delivery and economics verification; sourcing-policy education is a separate editorial topic and is not a new product gate.
+- The three review manuscripts require owner fact check and approval. The supplier article remains focused on exact SKU, stock, destination delivery and economics verification; sourcing-policy education is a separate editorial topic and is not a new product gate.
+- The item-specifics guide needs a genuine, redacted eBay listing-editor capture and an annotated exact-product field map before publication.
 - Chrome viewport and interaction checks are local evidence only. Hosting, DNS, WordPress redirects and production indexing have not been changed.

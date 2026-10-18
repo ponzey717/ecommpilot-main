@@ -1,6 +1,6 @@
 # Next editorial batch for owner review
 
-These four briefs come from `EDITORIAL_BRIEFS.csv` and keep separate informational intent. No URL should be published until its source evidence, original examples and owner review are complete. Search volume and difficulty are unverified.
+These four briefs come from `EDITORIAL_BRIEFS.csv` and keep separate informational intent. The item-specifics guide now has a full review manuscript; its genuine, redacted editor capture and owner approval remain pending. The other three remain briefs. No URL should be published until its source evidence, original examples and owner review are complete. Search volume and difficulty are unverified.
 
 | Proposed article and URL | Reader question and outline | Evidence to gather | Internal links |
 | --- | --- | --- | --- |
