@@ -694,6 +694,7 @@ textarea.catalog-input {
 .tool-control::placeholder, .tool-number::placeholder { color: #9aa8ba; opacity: 1; }
 .tool-number-wrap { display: flex; align-items: center; padding: 0 12px; color: #718096; font-size: 13px; font-weight: 750; }
 .tool-number { min-width: 0; flex: 1; border: 0; background: transparent; padding: 11px 7px; color: var(--ink); font: 650 14px/1.2 var(--font-inter),sans-serif; outline: 0; }
+.tool-number:focus-visible { outline: none; }
 .tool-number::-webkit-inner-spin-button, .tool-number::-webkit-outer-spin-button, .tool-control[type="number"]::-webkit-inner-spin-button, .tool-control[type="number"]::-webkit-outer-spin-button { margin: 0; appearance: none; }
 .tool-textarea { min-height: 182px; resize: vertical; padding-block: 14px; font-size: 15px; line-height: 1.65; }
 .tool-select { position: relative; min-width: 0; }
