@@ -9,6 +9,12 @@ const feeSource = { label: "eBay US selling fees", href: "https://www.ebay.com/h
 const listingSource = { label: "eBay listing guidance", href: "https://www.ebay.com/help/selling/listings" };
 
 export const toolLearning: Record<string, ToolLearning> = {
+  "ebay-fee-estimator": {
+    steps: ["Choose the listing marketplace and the seller profile that matches your account.", "Confirm the category and any Store, Shop, Pro, international or performance conditions; use manual mode when the preset is not eligible.", "Compare the fee lines and estimated payout with a current transaction or official fee table."],
+    mistake: "A published percentage is rarely the whole charge. Fixed order fees, buyer-paid shipping, tax in a fee base and account-specific extras can change the total.",
+    faq: [{ question: "Is the seller payout my profit?", answer: "No. Payout is revenue after the estimated eBay fees; supplier cost, postage and other expenses still need to be subtracted." }, { question: "Why did the tool switch to manual fees?", answer: "The selected account or marketplace combination is outside the reviewed preset. Enter the rates that apply to your account rather than assuming a universal fee." }],
+    source: feeSource,
+  },
   "profit-margin-calculator": {
     steps: ["Enter the actual listing price and one consistent currency.", "Add the exact supplier variant cost, destination shipping, applicable tax, fees and optional advertising assumptions.", "Read profit, margin and ROI separately; compare the estimate with actual order statements later."],
     mistake: "Supplier shipping, buyer-paid shipping, fees on the full transaction and returns reserves are often omitted. Label any estimated input.",
@@ -47,7 +53,7 @@ export const toolLearning: Record<string, ToolLearning> = {
   "ebay-image-resizer": {
     steps: ["Choose an image you have permission to use.", "Set dimensions and format while preserving the product's truthful appearance.", "Download and inspect the result in the actual eBay listing editor."],
     mistake: "Compression can blur labels or remove metadata, and JPEG cannot preserve transparency. Resizing does not grant image rights.",
-    faq: [{ question: "Are uploads sent to eCommPilot?", answer: "This tool processes the selected image in your browser." }, { question: "Does the tool guarantee eBay compliance?", answer: "No. Check the current image requirements and the final listing preview." }], source: { label: "eBay picture guidance", href: "https://www.ebay.com/help/selling/listings/creating-managing-listings/bulk-listings?id=4148" },
+    faq: [{ question: "Are uploads sent to eCommPilot?", answer: "This tool processes the selected image in your browser." }, { question: "Does the tool guarantee eBay compliance?", answer: "No. Check the current image requirements and the final listing preview." }], source: { label: "eBay picture guidance", href: "https://www.ebay.com/help/selling/listings/creating-managing-listings/x?id=4148" },
   },
   "ebay-html-description-cleaner": {
     steps: ["Paste a description draft you are permitted to use.", "Review the cleaned markup and visible text before copying it.", "Paste into eBay's editor and inspect the published preview for accuracy and accessibility."],

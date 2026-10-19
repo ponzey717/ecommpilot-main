@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { ebayMarkets, getEbayMarket, type CurrencyCode, type EbayMarketCode } from "@/config/ebay-markets";
 import { SavedResults } from "./saved-results";
+import { FieldHelp } from "./field-help";
+import { toolResultHelp } from "@/config/tool-result-help";
 import type { SavedToolRecord } from "@/lib/tools/saved-results";
 
 export type Currency = CurrencyCode;
@@ -40,7 +42,7 @@ export function MarketSelector({ market, onChange }: { market: EbayMarketCode; o
     buttons?.[next]?.focus();
   };
   return <fieldset className="market-selector">
-    <legend>eBay marketplace</legend>
+    <legend>eBay marketplace <FieldHelp helpKey="eBay marketplace" market={market} /></legend>
     <p>Choose the listing site. Seller registration and buyer destination are separate fee inputs.</p>
     <div className="market-grid" role="radiogroup" aria-label="eBay marketplace">
       {ebayMarkets.map((item, index) => <button key={item.code} type="button" role="radio" aria-label={`${item.name} · ${item.site}`} aria-checked={market === item.code} tabIndex={market === item.code ? 0 : -1} className={market === item.code ? "market-option is-selected" : "market-option"} onClick={() => onChange(item.code)} onKeyDown={(event) => move(event, index)} title={`${item.name} · ${item.site}`}>
@@ -52,7 +54,7 @@ export function MarketSelector({ market, onChange }: { market: EbayMarketCode; o
   </fieldset>;
 }
 
-export function NumberField({ label, value, onChange, currency, percent, count, hint, required }: {
+export function NumberField({ label, value, onChange, currency, percent, count, hint, required, market }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
@@ -61,12 +63,15 @@ export function NumberField({ label, value, onChange, currency, percent, count, 
   count?: boolean;
   hint?: string;
   required?: boolean;
+  market?: string;
 }) {
-  return <label className="tool-field">
-    <span>{label}{required ? <b aria-hidden="true"> *</b> : null}</span>
+  const id = useId();
+  return <div className="tool-field">
+    <div className="tool-field-label"><label htmlFor={id}>{label}{required ? <b aria-hidden="true"> *</b> : null}</label><FieldHelp helpKey={label} market={market} /></div>
     <span className="tool-number-wrap">
       {currency ? <span aria-hidden="true">{currencySymbol[currency]}</span> : null}
       <input
+        id={id}
         className="tool-number"
         type="number"
         inputMode={count ? "numeric" : "decimal"}
@@ -81,7 +86,12 @@ export function NumberField({ label, value, onChange, currency, percent, count, 
       {percent ? <span aria-hidden="true">%</span> : null}
     </span>
     {hint ? <small>{hint}</small> : null}
-  </label>;
+  </div>;
+}
+
+export function TextField({ label, value, onChange, placeholder, maxLength }: { label: string; value: string; onChange: (value: string) => void; placeholder?: string; maxLength?: number }) {
+  const id = useId();
+  return <div className="tool-field"><div className="tool-field-label"><label htmlFor={id}>{label}</label><FieldHelp helpKey={label} /></div><input id={id} className="tool-control" value={value} maxLength={maxLength} placeholder={placeholder} onChange={(event) => onChange(event.target.value)} /></div>;
 }
 
 export type SmartSelectOption<T extends string = string> = {
@@ -91,13 +101,14 @@ export type SmartSelectOption<T extends string = string> = {
   icon?: string;
 };
 
-export function SmartSelect<T extends string>({ label, value, options, onChange, hint, className = "" }: {
+export function SmartSelect<T extends string>({ label, value, options, onChange, hint, className = "", market }: {
   label: string;
   value: T;
   options: SmartSelectOption<T>[];
   onChange: (value: T) => void;
   hint?: string;
   className?: string;
+  market?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(Math.max(0, options.findIndex((option) => option.value === value)));
@@ -148,7 +159,7 @@ export function SmartSelect<T extends string>({ label, value, options, onChange,
   }
 
   return <div className={`tool-field tool-select-field ${className}`}>
-    <span id={labelId}>{label}</span>
+    <div className="tool-field-label"><span id={labelId}>{label}</span><FieldHelp helpKey={label} market={market} /></div>
     <div ref={rootRef} className={`tool-select${open ? " is-open" : ""}`}>
       <button
         ref={buttonRef}
@@ -193,10 +204,11 @@ export function SmartSelect<T extends string>({ label, value, options, onChange,
 export type FeeInputValue = { mode: "percent" | "fixed"; value: string; basis: "item" | "buyer-total" | "supplier-cost" };
 
 export function FeeInput({ label, value, onChange, currency, hint }: { label: string; value: FeeInputValue; onChange: (value: FeeInputValue) => void; currency: Currency; hint?: string }) {
+  const id = useId();
   return <div className="tool-field fee-input">
-    <span>{label}</span>
-    <div className="fee-mode" role="group" aria-label={`${label} input mode`}><button type="button" className={value.mode === "percent" ? "is-selected" : ""} aria-pressed={value.mode === "percent"} onClick={() => onChange({ ...value, mode: "percent" })}>%</button><button type="button" className={value.mode === "fixed" ? "is-selected" : ""} aria-pressed={value.mode === "fixed"} onClick={() => onChange({ ...value, mode: "fixed" })}>{currencySymbol[currency]}</button></div>
-    <span className="tool-number-wrap">{value.mode === "fixed" ? <span aria-hidden="true">{currencySymbol[currency]}</span> : null}<input className="tool-number" type="number" inputMode="decimal" min="0" max={value.mode === "percent" ? 100 : undefined} step="0.01" placeholder="0" value={value.value} onChange={(event) => onChange({ ...value, value: event.target.value })} />{value.mode === "percent" ? <span aria-hidden="true">%</span> : null}</span>
+    <div className="tool-field-label"><label htmlFor={id}>{label}</label><FieldHelp helpKey={label} /></div>
+    <div className="fee-mode-row"><div className="fee-mode" role="group" aria-label={`${label} input mode`}><button type="button" className={value.mode === "percent" ? "is-selected" : ""} aria-pressed={value.mode === "percent"} onClick={() => onChange({ ...value, mode: "percent" })}>%</button><button type="button" className={value.mode === "fixed" ? "is-selected" : ""} aria-pressed={value.mode === "fixed"} onClick={() => onChange({ ...value, mode: "fixed" })}>{currencySymbol[currency]}</button></div><FieldHelp helpKey="Amount mode" /></div>
+    <span className="tool-number-wrap">{value.mode === "fixed" ? <span aria-hidden="true">{currencySymbol[currency]}</span> : null}<input id={id} aria-label={label} className="tool-number" type="number" inputMode="decimal" min="0" max={value.mode === "percent" ? 100 : undefined} step="0.01" placeholder="0" value={value.value} onChange={(event) => onChange({ ...value, value: event.target.value })} />{value.mode === "percent" ? <span aria-hidden="true">%</span> : null}</span>
     {value.mode === "percent" ? <SmartSelect label={`${label} percentage basis`} className="fee-basis" value={value.basis} onChange={(basis) => onChange({ ...value, basis })} options={[{ value: "item", label: "Of item price", icon: "◫" }, { value: "buyer-total", label: "Of buyer total", icon: "◎" }, { value: "supplier-cost", label: "Of supplier cost", icon: "◇" }]} /> : null}
     {hint ? <small>{hint}</small> : null}
   </div>;
@@ -215,13 +227,14 @@ export function AdvancedSettings({ children }: { children: ReactNode }) {
   </details>;
 }
 
-export function ToolWorkspace({ inputTitle, inputDescription, inputs, actions, results, resultId = "tool-results", saved }: {
+export function ToolWorkspace({ inputTitle, inputDescription, inputs, actions, results, resultId = "tool-results", resultHelpKey, saved }: {
   inputTitle: string;
   inputDescription: string;
   inputs: ReactNode;
   actions: ReactNode;
   results: ReactNode;
   resultId?: string;
+  resultHelpKey?: string;
   saved?: { toolSlug: string; toolName: string; snapshot: Omit<SavedToolRecord, "id" | "createdAt"> | null };
 }) {
   return <><div className="tool-workspace">
@@ -233,8 +246,13 @@ export function ToolWorkspace({ inputTitle, inputDescription, inputs, actions, r
       {inputs}
       <div className="tool-actions">{actions}</div>
     </section>
-    <section id={resultId} className="tool-results-panel" aria-live="polite" aria-atomic="false">{results}</section>
+    <section id={resultId} className="tool-results-panel" aria-live="polite" aria-atomic="false">{results}{resultHelpKey ? <ResultContext slug={resultHelpKey} /> : null}</section>
   </div>{saved ? <SavedResults {...saved} /> : null}</>;
+}
+
+export function ResultContext({ slug }: { slug: string }) {
+  const text = toolResultHelp[slug];
+  return text ? <aside className="tool-result-context"><span aria-hidden="true">i</span><p><strong>What this result means</strong>{text}</p></aside> : null;
 }
 
 export function ResultHero({ eyebrow, value, description, tone = "default" }: {
@@ -244,12 +262,12 @@ export function ResultHero({ eyebrow, value, description, tone = "default" }: {
   tone?: "default" | "positive" | "negative";
 }) {
   return <div className={`result-hero result-hero-${tone}`}>
-    <p>{eyebrow}</p><strong>{value}</strong><span>{description}</span>
+    <p className="result-label-help">{eyebrow}<FieldHelp helpKey={`metric:${eyebrow}`} /></p><strong>{value}</strong><span>{description}</span>
   </div>;
 }
 
 export function ResultRow({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
-  return <div className={`result-row${strong ? " result-row-strong" : ""}`}><span>{label}</span><b>{value}</b></div>;
+  return <div className={`result-row${strong ? " result-row-strong" : ""}`}><span className="result-label-help">{label}<FieldHelp helpKey={`metric:${label}`} /></span><b>{value}</b></div>;
 }
 
 export function DonutChart({ segments, centerLabel, centerValue }: {

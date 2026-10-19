@@ -1,21 +1,16 @@
-import { ToolLearning } from "@/components/tools/tool-learning";
 import type { Metadata } from "next";
 import { PageShell } from "@/components/site/page-shell";
 import { ProfitMarginCalculator } from "@/components/tools/ep11-calculators";
-import { ToolEditorial } from "@/components/tools/tool-editorial";
+import { ToolGuide } from "@/components/tools/tool-guide";
 import { JsonLd } from "@/components/seo/json-ld";
 import { breadcrumbSchema, softwareApplicationSchema } from "@/lib/seo/schema";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { ToolPageIntro } from "@/components/tools/tool-page-intro";
+import { toolSeo } from "@/config/tool-seo";
 
 const path = "/free-tools/profit-margin-calculator";
 
-export const metadata: Metadata = buildMetadata({
-  title: "Free eBay Profit Margin Calculator",
-  description:
-    "Estimate eBay dropshipping profit margin using selling price, supplier cost, shipping, tax and your marketplace fee assumption.",
-  path,
-});
+export const metadata: Metadata = buildMetadata({ title: toolSeo["profit-margin-calculator"].title, description: toolSeo["profit-margin-calculator"].description, path });
 
 export default function Page() {
   return (
@@ -39,8 +34,7 @@ export default function Page() {
       <section className="tool-page-body">
         <div className="site-container">
           <ProfitMarginCalculator />
-          <ToolEditorial slug="profit-margin-calculator" />
-          <ToolLearning slug="profit-margin-calculator" />
+          <ToolGuide slug="profit-margin-calculator" />
         </div>
       </section>
     </PageShell>
