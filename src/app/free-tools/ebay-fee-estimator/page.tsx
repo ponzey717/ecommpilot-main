@@ -1,20 +1,16 @@
 import type { Metadata } from "next";
 import { PageShell } from "@/components/site/page-shell";
 import { EbayFeeEstimator } from "@/components/tools/ep11-calculators";
-import { ToolEditorial } from "@/components/tools/tool-editorial";
+import { ToolGuide } from "@/components/tools/tool-guide";
 import { JsonLd } from "@/components/seo/json-ld";
 import { breadcrumbSchema, softwareApplicationSchema } from "@/lib/seo/schema";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { ToolPageIntro } from "@/components/tools/tool-page-intro";
+import { toolSeo } from "@/config/tool-seo";
 
 const path = "/free-tools/ebay-fee-estimator";
 
-export const metadata: Metadata = buildMetadata({
-  title: "Free eBay Fee Estimator",
-  description:
-    "Estimate eBay marketplace fees using your actual selling price, fee percentage and fixed transaction fee assumptions.",
-  path,
-});
+export const metadata: Metadata = buildMetadata({ title: toolSeo["ebay-fee-estimator"].title, description: toolSeo["ebay-fee-estimator"].description, path });
 
 export default function Page() {
   return (
@@ -38,7 +34,7 @@ export default function Page() {
       <section className="tool-page-body">
         <div className="site-container">
           <EbayFeeEstimator />
-          <ToolEditorial slug="ebay-fee-estimator" />
+          <ToolGuide slug="ebay-fee-estimator" />
         </div>
       </section>
     </PageShell>

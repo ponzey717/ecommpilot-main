@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/config/site";
 import { tools, toolPath } from "@/config/tools";
+import { publishedGrowthGuides } from "@/content/growth-guides";
 import {
   getPublicCategories,
   getPublicMarketsWithFallback,
@@ -108,5 +109,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }];
   });
 
-  return [...staticEntries, ...marketEntries, ...categoryEntries, ...productEntries];
+  const guideEntries: MetadataRoute.Sitemap = publishedGrowthGuides().map((guide) => ({
+    url: new URL(`/learn/${guide.slug}`, siteConfig.url).toString(),
+    lastModified: new Date(guide.dateModified),
+    changeFrequency: "monthly",
+    priority: 0.7,
+  }));
+  return [...staticEntries, ...guideEntries, ...marketEntries, ...categoryEntries, ...productEntries];
 }
