@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { growthGuides, publishedGrowthGuides } from "../src/content/growth-guides.ts";
+import { growthGuides, isPublicGrowthGuide, publishedGrowthGuides } from "../src/content/growth-guides.ts";
 
 test("growth guide slugs are unique, valid and useful", () => {
   const slugs = growthGuides.map((guide) => guide.slug);
@@ -18,8 +18,16 @@ test("growth guide slugs are unique, valid and useful", () => {
 });
 
 test("unapproved draft articles are not published", () => {
-  assert.ok(publishedGrowthGuides().every((guide) => guide.status === "published" && guide.datePublished));
-  assert.ok(!publishedGrowthGuides().some((guide) => guide.status !== "published"));
+  assert.ok(publishedGrowthGuides().every((guide) => isPublicGrowthGuide(guide)));
+  assert.ok(!publishedGrowthGuides().some((guide) => guide.status === "review" || guide.status === "draft" || guide.status === "paused"));
+});
+
+test("scheduled guides cross the UTC publication boundary without a rebuild", () => {
+  const guide = { ...growthGuides[0], status: "scheduled", publicationAt: "2026-11-01T14:00:00.000Z" };
+  assert.equal(isPublicGrowthGuide(guide, new Date("2026-11-01T13:59:59.999Z")), false);
+  assert.equal(isPublicGrowthGuide(guide, new Date("2026-11-01T14:00:00.000Z")), true);
+  assert.equal(isPublicGrowthGuide({ ...guide, status: "paused" }, new Date("2026-11-02T14:00:00.000Z")), false);
+  assert.equal(isPublicGrowthGuide({ ...guide, publicationAt: "invalid" }, new Date("2026-11-02T14:00:00.000Z")), false);
 });
 
 test("tool intent remains on the tool page and review guides stay unpublished", () => {

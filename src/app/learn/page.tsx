@@ -6,12 +6,14 @@ import { PageShell } from "@/components/site/page-shell";
 import { routes } from "@/config/routes";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { tools, toolPath } from "@/config/tools";
-import { publishedGrowthGuides } from "@/content/growth-guides";
+import { getPublishedAcademyGuides } from "@/lib/api/seller-academy";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Learn eBay Dropshipping & Product Research",
+  title: "eCommPilot Seller Academy | Practical eBay Seller Guides",
   description:
-    "Practical eCommPilot learning paths for eBay product research, supplier validation, fees, profit, listings and product monitoring.",
+    "Practical eBay seller guides, product research and sourcing lessons from eCommPilot Seller Academy.",
   path: "/learn",
 });
 
@@ -54,14 +56,14 @@ const tracks = [
   },
 ] as const;
 
-export default function LearnPage() {
-  const publishedGuides = publishedGrowthGuides();
+export default async function LearnPage() {
+  const publishedGuides = await getPublishedAcademyGuides();
   return (
     <PageShell darkHeader>
       <PageHero
-        eyebrow="Learn"
-        title="Practical eBay dropshipping guidance built around the real workflow."
-        description="Start with product demand, validate the supplier, understand the economics, prepare the listing and keep watching what changes."
+        eyebrow="The eCommPilot Field Guides"
+        title="eCommPilot Seller Academy"
+        description="Practical eBay seller guides, product research and sourcing lessons. Start with demand, verify each exact product and supplier, then make the listing and economics decisions with evidence you can revisit."
       />
       <section className="py-14 md:py-18">
         <div className="site-container">
@@ -86,7 +88,7 @@ export default function LearnPage() {
 
           <section className="mt-10 rounded-[24px] border border-[var(--border)] bg-white p-6 md:p-8">
             <p className="eyebrow">Practical seller guides</p>
-            <h2 className="mt-3 text-2xl font-extrabold text-[var(--navy)]">Read published guides</h2>
+            <h2 className="mt-3 text-2xl font-extrabold text-[var(--navy)]">Explore the Field Guides</h2>
             {publishedGuides.length > 0 ? <LearnLibrary guides={publishedGuides.map((guide) => ({ title: guide.title, description: guide.description, href: `/learn/${guide.slug}`, topic: guide.topic, readingMinutes: guide.readingMinutes, publishedAt: guide.datePublished }))} /> : <p className="mt-4 text-sm leading-7 text-[var(--muted)]">Our first guides are in editorial review. Explore the learning tracks and free tools above while we verify sources and visuals.</p>}
           </section>
 

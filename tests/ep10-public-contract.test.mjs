@@ -7,8 +7,9 @@ async function source(path) {
 }
 
 test("locked navigation and focused homepage journey remain present", async () => {
-  const [header, home] = await Promise.all([
+  const [header, account, home] = await Promise.all([
     source("src/components/site/header.tsx"),
+    source("src/components/site/account-control.tsx"),
     source("src/app/page.tsx"),
   ]);
   for (const label of [
@@ -16,10 +17,11 @@ test("locked navigation and focused homepage journey remain present", async () =
     "Free Tools",
     "How It Works",
     "Pricing",
-    "Learn",
+    "Seller Academy",
   ]) assert.ok(header.includes(label), label);
-  assert.ok(header.includes("Login"));
-  assert.ok(header.includes("Get Started Free"));
+  assert.ok(header.includes("AccountControl"));
+  assert.ok(account.includes("Login"));
+  assert.ok(account.includes("Get Started Free"));
   assert.ok(header.includes("routes.trending"));
   assert.ok(home.includes("Stop Searching."));
   assert.ok(home.includes("Start Listing Winning eBay Products."));

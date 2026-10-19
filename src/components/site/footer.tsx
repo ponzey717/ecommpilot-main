@@ -27,7 +27,7 @@ export function SiteFooter() {
           <p className="footer-heading">Resources</p>
           <div className="mt-4 grid gap-3 text-sm text-[var(--muted)]">
             <Link href={routes.freeTools}>Free eBay Tools</Link>
-            <Link href={routes.learn}>Learn</Link>
+            <Link href={routes.learn}>Seller Academy</Link>
             <Link href={routes.login}>Member Login</Link>
           </div>
         </div>

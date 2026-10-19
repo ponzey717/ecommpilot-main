@@ -27,17 +27,23 @@ export function RelatedLinks({ title, links }: { title: string; links: readonly 
 export function ProcessFlow({ title, stages }: { title: string; stages: readonly string[] }) {
   return <figure className="article-process"><div className="article-process-head"><span className="article-kicker">THE METHOD</span><figcaption>{title}</figcaption><p>Follow the evidence from the original item to a decision you can explain.</p></div><ol className="article-process-grid">{stages.map((stage, index) => <li key={stage}><span className="article-process-index">{String(index + 1).padStart(2, "0")}</span><strong>{stage}</strong><span className="article-process-arrow" aria-hidden="true">↗</span></li>)}</ol></figure>;
 }
-export function ArticleVisual({ topic }: { topic: "Research" | "Suppliers" | "Economics" | "Listings" }) {
+export function ArticleVisual({ topic, stages }: { topic: "Research" | "Suppliers" | "Economics" | "Listings" | "Operations"; stages?: readonly string[] }) {
   const supplier = topic === "Suppliers";
   const listings = topic === "Listings";
+  const economics = topic === "Economics";
+  const operations = topic === "Operations";
   const nodes = supplier
     ? [{ icon: "◈", title: "Exact item", detail: "Design, model, pack" }, { icon: "▦", title: "Selected SKU", detail: "Image + attributes" }, { icon: "⌁", title: "Buyer destination", detail: "Freight + ETA" }]
     : listings
       ? [{ icon: "◈", title: "Exact product", detail: "Model + variation" }, { icon: "▦", title: "Category fields", detail: "Required + suggested" }, { icon: "✓", title: "Evidence map", detail: "Value + source" }]
-      : [{ icon: "◉", title: "Sold evidence", detail: "Market + period" }, { icon: "◇", title: "Comparable item", detail: "Condition + design" }, { icon: "✓", title: "Demand decision", detail: "Scope + confidence" }];
-  return <figure className="article-visual" aria-label={supplier ? "Supplier variation verification map" : listings ? "Item specifics evidence map" : "Sold demand evidence map"}>
-    <div className="article-visual-top"><span>ECOMMPILOT FIELD GUIDE</span><span>{supplier ? "SUPPLIER VERIFICATION" : listings ? "LISTING ACCURACY" : "DEMAND VALIDATION"}</span></div>
-    <div className="article-visual-grid">{nodes.map((node, index) => <div className="article-visual-node" key={node.title}><span className="article-visual-icon" aria-hidden="true">{node.icon}</span><span className="article-visual-count">0{index + 1}</span><strong>{node.title}</strong><small>{node.detail}</small></div>)}</div>
-    <figcaption>{supplier ? "A parent supplier page is only a starting point. The selected SKU and destination finish the match." : listings ? "A structured field is useful when it describes the selected item and has a traceable source." : "A sold result becomes useful only after market, product identity and count meaning are checked."}</figcaption>
+      : economics
+        ? [{ icon: "◈", title: "Sale value", detail: "Price + currency" }, { icon: "▦", title: "Landed cost", detail: "Item + delivery" }, { icon: "✓", title: "Net result", detail: "Fees + reserve" }]
+        : operations
+          ? [{ icon: "◈", title: "Current source", detail: "SKU + timestamp" }, { icon: "▦", title: "Buyer promise", detail: "Stock + service" }, { icon: "✓", title: "Operator action", detail: "Review + record" }]
+        : [{ icon: "◉", title: "Sold evidence", detail: "Market + period" }, { icon: "◇", title: "Comparable item", detail: "Condition + design" }, { icon: "✓", title: "Demand decision", detail: "Scope + confidence" }];
+  return <figure className="article-visual" aria-label={`${topic} guide learning path`}>
+    <div className="article-visual-top"><span>ECOMMPILOT FIELD GUIDE</span><span>{supplier ? "SUPPLIER VERIFICATION" : listings ? "LISTING ACCURACY" : economics ? "PROFIT DECISIONS" : operations ? "SELLER OPERATIONS" : "DEMAND VALIDATION"}</span></div>
+    <div className="article-visual-grid">{nodes.map((node, index) => <div className="article-visual-node" key={node.title}><span className="article-visual-icon" aria-hidden="true">{node.icon}</span><span className="article-visual-count">0{index + 1}</span><strong>{stages?.[index] ?? node.title}</strong><small>{node.detail}</small></div>)}</div>
+    <figcaption>{supplier ? "Confirm the exact supplier item and buyer destination before making a sourcing decision." : listings ? "Map buyer-facing listing details to evidence about the selected item." : economics ? "Keep selling price, landed cost and marketplace charges separate before calculating profit." : operations ? "Connect current supplier evidence to the buyer promise and a documented action." : "Check marketplace, product identity and count meaning before interpreting demand."}</figcaption>
   </figure>;
 }
