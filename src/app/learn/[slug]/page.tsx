@@ -14,6 +14,11 @@ import { ArticleVisual, Callout, ComparisonTable, Faq, ProcessFlow, ScreenshotFr
 type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ preview?: string }> };
 export const dynamic = "force-dynamic";
 
+function displayDate(value: string): string {
+  const date = new Date(value);
+  return Number.isFinite(date.getTime()) ? new Intl.DateTimeFormat("en", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(date) : "DATE PENDING";
+}
+
 export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const { slug } = await params;
   const token = (await searchParams).preview;
@@ -45,7 +50,7 @@ export default async function GrowthGuidePage({ params, searchParams }: Props) {
             <div className="guide-hero-label"><span className="guide-hero-label-mark" aria-hidden="true">✦</span> THE ECOMMPILOT FIELD GUIDE <span className="guide-hero-label-divider" aria-hidden="true" /> {guide.topic.toUpperCase()}</div>
             <h1>{guide.title}</h1>
             <p className="guide-hero-lead">{guide.lead}</p>
-            <div className="guide-hero-meta"><span>{guide.readingMinutes} MIN READ</span><span aria-hidden="true" className="guide-meta-dot" /><span>UPDATED {guide.dateModified}</span><span aria-hidden="true" className="guide-meta-dot" /><span>{guide.region}</span></div>
+            <div className="guide-hero-meta"><span>{guide.readingMinutes} MIN READ</span><span aria-hidden="true" className="guide-meta-dot" /><span>UPDATED {displayDate(guide.dateModified)}</span><span aria-hidden="true" className="guide-meta-dot" /><span>{guide.region}</span></div>
             <a className="guide-hero-jump" href="#guide-start">Start reading <span aria-hidden="true">↓</span></a>
           </div>
           <ArticleVisual topic={guide.topic} stages={guide.processFlow} />

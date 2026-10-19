@@ -4,6 +4,10 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 
 type Guide = { title: string; description: string; href: string; topic: string; readingMinutes?: number; publishedAt?: string };
+function displayDate(value: string): string {
+  const date = new Date(value);
+  return Number.isFinite(date.getTime()) ? new Intl.DateTimeFormat("en", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(date) : "";
+}
 export function LearnLibrary({ guides }: { guides: readonly Guide[] }) {
   const [query, setQuery] = useState("");
   const [topic, setTopic] = useState("All");
@@ -17,6 +21,6 @@ export function LearnLibrary({ guides }: { guides: readonly Guide[] }) {
       <div role="group" aria-label="Filter guides by topic" className="flex flex-wrap gap-2">{topics.map((item) => <button type="button" key={item} aria-pressed={topic === item} onClick={() => { setTopic(item); setLimit(9); }} className={`rounded-full border px-4 py-2 text-sm font-semibold ${topic === item ? "border-[var(--blue)] bg-[var(--blue)] text-white" : "border-[var(--border)] bg-white text-[var(--navy)]"}`}>{item}</button>)}</div>
     </div>
     <p role="status" className="mt-5 text-sm text-[var(--muted)]">{filtered.length} {filtered.length === 1 ? "guide" : "guides"} found</p>
-    {filtered.length ? <><div className="mt-5 grid gap-5 md:grid-cols-2 xl:grid-cols-3">{filtered.slice(0, limit).map((guide) => <Link key={guide.href} href={guide.href} className="feature-card group"><span className="eyebrow">{guide.topic}</span><h2 className="mt-5 text-xl font-extrabold text-[var(--navy)] group-hover:text-[var(--blue)]">{guide.title}</h2><p className="mt-3 text-sm leading-6 text-[var(--muted)]">{guide.description}</p><p className="mt-4 text-xs text-[var(--muted)]">{guide.readingMinutes ? `${guide.readingMinutes} min read` : "Practical guide"}{guide.publishedAt ? ` · ${guide.publishedAt}` : ""}</p><p className="mt-5 text-sm font-extrabold text-[var(--blue)]">Read guide →</p></Link>)}</div>{filtered.length > limit && <button type="button" onClick={() => setLimit((value) => value + 9)} className="button button-secondary mt-7">Show more guides</button>}</> : <div className="feature-card mt-8"><h2 className="text-xl font-bold">No guides match your search</h2><p className="mt-2 text-sm text-[var(--muted)]">Try another phrase or select All topics.</p></div>}
+    {filtered.length ? <><div className="mt-5 grid gap-5 md:grid-cols-2 xl:grid-cols-3">{filtered.slice(0, limit).map((guide) => <Link key={guide.href} href={guide.href} className="feature-card group"><span className="eyebrow">{guide.topic}</span><h2 className="mt-5 text-xl font-extrabold text-[var(--navy)] group-hover:text-[var(--blue)]">{guide.title}</h2><p className="mt-3 text-sm leading-6 text-[var(--muted)]">{guide.description}</p><p className="mt-4 text-xs text-[var(--muted)]">{guide.readingMinutes ? `${guide.readingMinutes} min read` : "Practical guide"}{guide.publishedAt ? ` · ${displayDate(guide.publishedAt)}` : ""}</p><p className="mt-5 text-sm font-extrabold text-[var(--blue)]">Read guide →</p></Link>)}</div>{filtered.length > limit && <button type="button" onClick={() => setLimit((value) => value + 9)} className="button button-secondary mt-7">Show more guides</button>}</> : <div className="feature-card mt-8"><h2 className="text-xl font-bold">No guides match your search</h2><p className="mt-2 text-sm text-[var(--muted)]">Try another phrase or select All topics.</p></div>}
   </>;
 }
