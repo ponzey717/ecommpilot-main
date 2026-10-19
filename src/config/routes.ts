@@ -16,7 +16,7 @@ export const routes = {
   terms: "/terms",
   dataDeletion: "/data-deletion",
   login: `${siteConfig.appUrl}/login`,
-  join: `${siteConfig.appUrl}/register`,
+  join: "/get-started",
   support: `${siteConfig.appUrl}/support`,
   appPrivacy: `${siteConfig.appUrl}/privacy`,
   appTerms: `${siteConfig.appUrl}/terms`,

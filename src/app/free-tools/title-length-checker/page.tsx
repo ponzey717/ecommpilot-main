@@ -1,20 +1,16 @@
 import type { Metadata } from "next";
-import { Breadcrumbs } from "@/components/site/breadcrumbs";
-import { PageHero } from "@/components/site/page-hero";
 import { PageShell } from "@/components/site/page-shell";
-import { TitleLengthChecker } from "@/components/tools/calculators";
+import { TitleLengthChecker } from "@/components/tools/ep11-calculators";
+import { ToolGuide } from "@/components/tools/tool-guide";
 import { JsonLd } from "@/components/seo/json-ld";
 import { breadcrumbSchema, softwareApplicationSchema } from "@/lib/seo/schema";
 import { buildMetadata } from "@/lib/seo/metadata";
+import { ToolPageIntro } from "@/components/tools/tool-page-intro";
+import { toolSeo } from "@/config/tool-seo";
 
 const path = "/free-tools/title-length-checker";
 
-export const metadata: Metadata = buildMetadata({
-  title: "Free eBay Title Length Checker",
-  description:
-    "Draft an eBay listing title and instantly check its length against the 80-character title limit.",
-  path,
-});
+export const metadata: Metadata = buildMetadata({ title: toolSeo["title-length-checker"].title, description: toolSeo["title-length-checker"].description, path });
 
 export default function Page() {
   return (
@@ -33,34 +29,11 @@ export default function Page() {
           ]),
         ]}
       />
-      <PageHero
-        eyebrow="Free eBay tool"
-        title="eBay Title Length Checker"
-        description="Draft your eBay title and check its character count instantly before moving into the listing editor."
-      />
-      <section className="py-12 md:py-16">
+      <ToolPageIntro title="eBay Title Length Checker" description="Draft your listing title and check the standard 80-character limit as you type." />
+      <section className="tool-page-body">
         <div className="site-container">
-          <Breadcrumbs
-            items={[
-              { label: "Home", href: "/" },
-              { label: "Free Tools", href: "/free-tools" },
-              { label: "Title Length Checker" },
-            ]}
-          />
-          <div className="mt-8">
-            <TitleLengthChecker />
-          </div>
-          <article className="feature-card mt-10">
-            <p className="eyebrow">Scope</p>
-            <h2 className="mt-3 text-2xl font-extrabold text-[var(--navy)]">
-              Character count is only one part of a good title.
-            </h2>
-            <p className="mt-4 max-w-4xl text-sm leading-7 text-[var(--muted)]">
-              The checker does not claim that a title will rank or convert. Product
-              accuracy, relevant search terms, item specifics and eBay policy still
-              matter when you prepare the final listing.
-            </p>
-          </article>
+          <TitleLengthChecker />
+          <ToolGuide slug="title-length-checker" />
         </div>
       </section>
     </PageShell>

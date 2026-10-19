@@ -14,7 +14,9 @@ export const metadata: Metadata = buildMetadata({
 
 const plans = [
   {
+    id: "free",
     name: "Free",
+    action: "Get Started Free",
     headline: "Explore eCommPilot before you pay.",
     points: [
       "Public and member Winning Product access according to the Free entitlement",
@@ -24,7 +26,9 @@ const plans = [
     ],
   },
   {
+    id: "pro",
     name: "Pro",
+    action: "Choose Pro",
     headline: "For sellers building a repeatable product workflow.",
     points: [
       "Broader Winning Product access",
@@ -34,7 +38,9 @@ const plans = [
     ],
   },
   {
+    id: "premium",
     name: "Premium",
+    action: "Choose Premium",
     headline: "For the deepest product and research access.",
     points: [
       "Highest configured Winning Product access",
@@ -78,6 +84,12 @@ export default function PricingPage() {
                 <ul className="mt-6 grid gap-3 text-sm leading-6 text-[var(--muted)]">
                   {plan.points.map((item) => <li key={item}>✓ {item}</li>)}
                 </ul>
+                <Link
+                  href={`${routes.join}?plan=${plan.id}`}
+                  className={plan.name === "Pro" ? "button button-primary mt-7 w-full" : "button button-secondary mt-7 w-full"}
+                >
+                  {plan.action}
+                </Link>
               </article>
             ))}
           </div>
@@ -101,7 +113,6 @@ export default function PricingPage() {
           </section>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Link href={routes.join} className="button button-primary">Get Started Free</Link>
             <Link href={routes.winningProducts} className="button button-secondary">Browse Winning Products</Link>
           </div>
           <p className="mt-4 text-xs leading-5 text-[var(--muted)]">

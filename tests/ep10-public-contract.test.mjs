@@ -6,24 +6,29 @@ async function source(path) {
   return readFile(new URL("../" + path, import.meta.url), "utf8");
 }
 
-test("locked primary navigation and homepage positioning remain present", async () => {
+test("locked navigation and focused homepage journey remain present", async () => {
   const [header, home] = await Promise.all([
     source("src/components/site/header.tsx"),
     source("src/app/page.tsx"),
   ]);
   for (const label of [
     "Winning Products",
-    "What's Trending",
+    "Free Tools",
     "How It Works",
     "Pricing",
     "Learn",
   ]) assert.ok(header.includes(label), label);
   assert.ok(header.includes("Login"));
-  assert.ok(header.includes("Get Started"));
-  assert.ok(home.includes("Stop Searching. Start Listing Winning eBay Products."));
-  assert.ok(home.includes("You only need your eBay account. We handle the product work."));
-  assert.ok(home.includes("Your eBay account is ready. Your products should be too."));
-  assert.ok(home.includes("See How It Works"));
+  assert.ok(header.includes("Get Started Free"));
+  assert.ok(header.includes("routes.trending"));
+  assert.ok(home.includes("Stop Searching."));
+  assert.ok(home.includes("Start Listing Winning eBay Products."));
+  assert.ok(home.includes("Browse winning products"));
+  assert.ok(home.includes("From discovery to decision."));
+  assert.ok(home.includes("All free tools"));
+  assert.ok(home.includes("Research at your pace."));
+  assert.ok(home.includes("CatalogProductGrid"));
+  assert.equal(home.includes("invented sales"), false);
   const shell = await source("src/components/site/page-shell.tsx");
   assert.ok(shell.includes('href="#main-content"'));
   assert.ok(shell.includes('id="main-content"'));
@@ -160,21 +165,23 @@ test("Winning Products category search and supplier preserve the active server f
 });
 
 
-test("public calculators are US UK AU aware and do not hardcode a universal fee rate", async () => {
-  const calculators = await source("src/components/tools/calculators.tsx");
+test("public calculators use the 18-market model and do not hardcode a universal fee rate", async () => {
+  const calculators = [
+    await source("src/components/tools/ep11-calculators.tsx"),
+    await source("src/components/tools/tool-workspace.tsx"),
+    await source("src/config/ebay-markets.ts"),
+  ].join("\n");
   for (const currency of ["USD", "GBP", "AUD"]) {
     assert.ok(calculators.includes(currency), currency);
   }
-  assert.ok(calculators.includes("Mandatory fixed transaction fees"));
-  assert.ok(calculators.includes("Fixed transaction fee (if any)"));
-  assert.ok(calculators.includes('useState("")'));
+  assert.ok(calculators.includes("Fixed transaction fee"));
+  assert.ok(calculators.includes("eBay selling fee rate"));
+  assert.ok(calculators.includes('useState<Record<string, string>>({})'));
   assert.equal(calculators.includes('useState("13.25")'), false);
-  assert.ok(calculators.includes("Optional promoted-listing or ad spend is not included."));
-  assert.ok(calculators.includes('max={100}'));
-  assert.ok(calculators.includes('const feeReady = feeRate.trim() !== ""'));
-  assert.ok(calculators.includes('marketplaceFee: null'));
-  assert.ok(calculators.includes("before treating the profit estimate as complete"));
-  assert.ok(calculators.includes("to calculate an estimate"));
+  assert.ok(calculators.includes("Promoted Listings General rate"));
+  assert.ok(calculators.includes('max={percent ? 100 : undefined}'));
+  assert.ok(calculators.includes('values.feeRate !== ""'));
+  assert.ok(calculators.includes("ROI on landed cost"));
 });
 
 
@@ -312,7 +319,8 @@ test("documented public and app URL environment variables drive runtime links", 
   assert.ok(site.includes("process.env.NEXT_PUBLIC_SITE_URL"));
   assert.ok(site.includes("process.env.NEXT_PUBLIC_APP_URL"));
   assert.ok(routes.includes("${siteConfig.appUrl}/login"));
-  assert.ok(routes.includes("${siteConfig.appUrl}/register"));
+  assert.ok(routes.includes('join: "/get-started"'));
+  assert.equal(routes.includes("${siteConfig.appUrl}/register"), false);
   assert.ok(routes.includes("${siteConfig.appUrl}/support"));
   assert.ok(routes.includes("${siteConfig.appUrl}/data-deletion"));
 
@@ -326,6 +334,24 @@ test("documented public and app URL environment variables drive runtime links", 
   assert.ok(terms.includes("routes.support"));
   assert.ok(deletion.includes("routes.support"));
   assert.ok(product.includes("routes.join"));
+});
+
+test("pricing keeps every plan action truthful and plan-aware while registration is closed", async () => {
+  const [pricing, getStarted] = await Promise.all([
+    source("src/app/pricing/page.tsx"),
+    source("src/app/get-started/page.tsx"),
+  ]);
+
+  for (const action of ["Get Started Free", "Choose Pro", "Choose Premium"]) {
+    assert.ok(pricing.includes(action), action);
+  }
+  for (const plan of ["free", "pro", "premium"]) {
+    assert.ok(pricing.includes(`id: "${plan}"`), plan);
+  }
+  assert.ok(pricing.includes("?plan=${plan.id}"));
+  assert.ok(getStarted.includes("does not grant paid access"));
+  assert.ok(getStarted.includes("We recorded no account or entitlement"));
+  assert.equal(getStarted.includes("/register"), false);
 });
 
 
@@ -370,13 +396,13 @@ test("brand metadata and logo loading stay explicit and efficient", async () => 
     source("src/components/site/header.tsx"),
     source("src/components/products/public-product-card.tsx"),
   ]);
-  assert.ok(manifest.includes('src: "/icon.svg"'));
-  assert.ok(manifest.includes('type: "image/svg+xml"'));
-  assert.ok(schema.includes('logo: toAbsoluteUrl("/icon.svg")'));
+  assert.ok(manifest.includes('src: "/brand/ecommpilot-icon-original.png"'));
+  assert.ok(manifest.includes('type: "image/png"'));
+  assert.ok(schema.includes('logo: toAbsoluteUrl("/brand/ecommpilot-logo-original.png")'));
   assert.ok(schema.includes("inLanguage: siteConfig.locale"));
   assert.ok(logo.includes("priority = false"));
   assert.ok(logo.includes("priority={priority}"));
-  assert.ok(header.includes("<Logo light={dark} priority />"));
+  assert.ok(header.includes("<Logo priority />"));
   assert.ok(card.includes('sizes="(min-width: 1280px) 31vw, (min-width: 768px) 48vw, 100vw"'));
 });
 
@@ -502,10 +528,30 @@ test("faceted catalog and Trending URLs are noindex while clean routes stay cano
 
 
 test("title checker counts Unicode code points rather than UTF-16 code units", async () => {
-  const calculators = await source("src/components/tools/calculators.tsx");
-  assert.ok(calculators.includes("const titleLength = Array.from(title).length"));
-  assert.ok(calculators.includes("{titleLength}/80"));
+  const calculators = await source("src/components/tools/ep11-calculators.tsx");
+  assert.ok(calculators.includes("const length = Array.from(title).length"));
+  assert.ok(calculators.includes("{length}/80"));
   assert.equal(calculators.includes("{title.length}/80"), false);
+});
+
+test("all professional tools use intentional results and progressive disclosure", async () => {
+  const [core, advanced, workspace, image, cleaner] = await Promise.all([
+    source("src/components/tools/ep11-calculators.tsx"),
+    source("src/components/tools/advanced-calculator.tsx"),
+    source("src/components/tools/tool-workspace.tsx"),
+    source("src/components/tools/image-resizer.tsx"),
+    source("src/components/tools/html-cleaner.tsx"),
+  ]);
+  assert.ok(workspace.includes("Advanced settings"));
+  assert.ok(core.includes("Estimated net loss"));
+  assert.ok(core.includes("Negative values are never shown as a pie slice"));
+  for (const outcome of ["Minimum break-even selling price", "Profit after advertising", "Offer meets target", "Which shipping strategy leaves more profit?", "Estimated sell-through ratio"]) {
+    assert.ok(advanced.includes(outcome), outcome);
+  }
+  assert.ok(image.includes("Your file never leaves this browser"));
+  assert.ok(image.includes("Protect original aspect ratio"));
+  assert.ok(cleaner.includes('sandbox=""'));
+  assert.ok(cleaner.includes("ALLOW_DATA_ATTR: false"));
 });
 
 
