@@ -6,33 +6,40 @@ import { PageShell } from "@/components/site/page-shell";
 import { JsonLd } from "@/components/seo/json-ld";
 import { breadcrumbSchema, articleSchema } from "@/lib/seo/schema";
 import { buildMetadata } from "@/lib/seo/metadata";
-import { getGrowthGuide, isPublicGrowthGuide, publishedGrowthGuides } from "@/content/growth-guides";
+import { getPreviewAcademyGuide, getPublishedAcademyGuide, getPublishedAcademyGuides } from "@/lib/api/seller-academy";
 import { ArticleToc } from "@/components/learn/article-toc";
 import { ArticleDecisionCheck } from "@/components/learn/article-decision-check";
 import { ArticleVisual, Callout, ComparisonTable, ProcessFlow, ScreenshotFrame } from "@/components/learn/content-blocks";
 
-type Props = { params: Promise<{ slug: string }> };
+type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ preview?: string }> };
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const guide = getGrowthGuide(slug);
-  if (!guide || !isPublicGrowthGuide(guide)) return buildMetadata({ title: "Article unavailable", path: `/learn/${slug}`, noIndex: true });
+  const token = (await searchParams).preview;
+  if (token) {
+    const preview = await getPreviewAcademyGuide(slug, token);
+    return buildMetadata({ title: preview?.title ?? "Article unavailable", path: `/learn/${slug}`, noIndex: true });
+  }
+  const guide = await getPublishedAcademyGuide(slug);
+  if (!guide) return buildMetadata({ title: "Article unavailable", path: `/learn/${slug}`, noIndex: true });
   return buildMetadata({ title: guide.title, description: guide.description, path: `/learn/${slug}` });
 }
 
-export default async function GrowthGuidePage({ params }: Props) {
+export default async function GrowthGuidePage({ params, searchParams }: Props) {
   const { slug } = await params;
-  const guide = getGrowthGuide(slug);
-  if (!guide || !isPublicGrowthGuide(guide)) notFound();
+  const token = (await searchParams).preview;
+  const guide = token ? await getPreviewAcademyGuide(slug, token) : await getPublishedAcademyGuide(slug);
+  if (!guide) notFound();
   const path = `/learn/${guide.slug}`;
   const supplier = guide.topic === "Suppliers";
   const listings = guide.topic === "Listings";
-  const related = publishedGrowthGuides().filter((item) => item.slug !== guide.slug).slice(0, 3);
+  const related = (await getPublishedAcademyGuides()).filter((item) => item.slug !== guide.slug).slice(0, 3);
   const entries = guide.sections.flatMap((section, index) => [{ id: `section-${index + 1}`, label: section.heading, level: 2 as const }, ...(section.subsections ?? []).map((subsection, subIndex) => ({ id: `section-${index + 1}-${subIndex + 1}`, label: subsection.heading, level: 3 as const }))]);
   return <PageShell darkHeader>
-    <JsonLd data={[articleSchema({ headline: guide.title, description: guide.description, path, datePublished: guide.publicationAt ?? guide.datePublished ?? "", dateModified: guide.dateModified }), breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Seller Academy", path: "/learn" }, { name: guide.title, path }])]} />
+    {!token && <JsonLd data={[articleSchema({ headline: guide.title, description: guide.description, path, datePublished: guide.publicationAt ?? guide.datePublished ?? "", dateModified: guide.dateModified }), breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Seller Academy", path: "/learn" }, { name: guide.title, path }])]} />}
     <article id="article-top" className="guide-article">
+      {token && <p className="site-container rounded-xl border border-amber-500 bg-amber-50 p-4 font-bold text-amber-950">Private editorial preview · This article is not public.</p>}
       <header className="guide-hero">
         <div className="site-container guide-hero-grid">
           <div className="guide-hero-copy">

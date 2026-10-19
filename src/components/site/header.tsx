@@ -6,6 +6,7 @@ import { Logo } from "./logo";
 import { routes } from "@/config/routes";
 import { toolPath, tools } from "@/config/tools";
 import { NavLink } from "./nav-link";
+import { AccountControl } from "./account-control";
 
 const nav = [["How It Works", routes.howItWorks], ["Pricing", routes.pricing]] as const;
 type MenuName = "products" | "tools" | "learn";
@@ -102,8 +103,7 @@ export function SiteHeader({ dark = false }: { dark?: boolean }) {
           </div>
         </nav>
         <div className="flex items-center gap-2">
-          <Link href={routes.login} className="button button-ghost header-login">Login</Link>
-          <Link href={routes.join} className="button button-cyan header-cta">Get Started Free</Link>
+          <AccountControl />
           <details className="relative xl:hidden">
             <summary className="menu-button" aria-label="Navigation menu"><span></span><span></span><span></span></summary>
             <nav className="mobile-menu" aria-label="Mobile navigation">
@@ -114,7 +114,6 @@ export function SiteHeader({ dark = false }: { dark?: boolean }) {
               ))}
               <NavLink href={routes.learn} className="mobile-menu-link" activeClassName="bg-[var(--surface-soft)] !text-[var(--blue)]">Seller Academy</NavLink>
               <Link href={routes.trending} className="mobile-menu-link">What&apos;s Trending</Link>
-              <Link href={routes.login} className="mobile-menu-link">Login</Link>
             </nav>
           </details>
         </div>

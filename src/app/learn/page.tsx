@@ -6,7 +6,7 @@ import { PageShell } from "@/components/site/page-shell";
 import { routes } from "@/config/routes";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { tools, toolPath } from "@/config/tools";
-import { publishedGrowthGuides } from "@/content/growth-guides";
+import { getPublishedAcademyGuides } from "@/lib/api/seller-academy";
 
 export const dynamic = "force-dynamic";
 
@@ -56,8 +56,8 @@ const tracks = [
   },
 ] as const;
 
-export default function LearnPage() {
-  const publishedGuides = publishedGrowthGuides();
+export default async function LearnPage() {
+  const publishedGuides = await getPublishedAcademyGuides();
   return (
     <PageShell darkHeader>
       <PageHero
