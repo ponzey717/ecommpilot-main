@@ -9,6 +9,11 @@ export type GrowthGuide = {
   datePublished?: string;
   dateModified: string;
   lead: string;
+  introTitle?: string;
+  introSummary?: string;
+  processFlowTitle?: string;
+  decisionCheckTitle?: string;
+  decisionChecks?: string[];
   sections: { heading: string; paragraphs: string[]; bullets?: string[]; subsections?: { heading: string; paragraphs: string[] }[]; table?: { caption: string; headers: string[]; rows: string[][] } }[];
   tools: { label: string; href: string }[];
   sources: { label: string; url: string; checkedAt: string }[];
