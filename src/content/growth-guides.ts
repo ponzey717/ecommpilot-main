@@ -18,7 +18,7 @@ export type GrowthGuide = {
   tools: { label: string; href: string }[];
   sources: { label: string; url: string; checkedAt: string }[];
   screenshotRequirements: string[];
-  topic: "Research" | "Suppliers" | "Economics" | "Listings";
+  topic: "Research" | "Suppliers" | "Economics" | "Listings" | "Operations";
   readingMinutes: number;
   processFlow: string[];
 };

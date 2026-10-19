@@ -9,7 +9,7 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import { getPreviewAcademyGuide, getPublishedAcademyGuide, getPublishedAcademyGuides } from "@/lib/api/seller-academy";
 import { ArticleToc } from "@/components/learn/article-toc";
 import { ArticleDecisionCheck } from "@/components/learn/article-decision-check";
-import { ArticleVisual, Callout, ComparisonTable, ProcessFlow, ScreenshotFrame } from "@/components/learn/content-blocks";
+import { ArticleVisual, Callout, ComparisonTable, Faq, ProcessFlow, ScreenshotFrame } from "@/components/learn/content-blocks";
 
 type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ preview?: string }> };
 export const dynamic = "force-dynamic";
@@ -60,7 +60,10 @@ export default async function GrowthGuidePage({ params, searchParams }: Props) {
               {guide.sections.map((section, index) => <Fragment key={section.heading}><section id={`section-${index + 1}`} className="guide-chapter">
                 <div className="guide-chapter-head"><span className="guide-chapter-number">{String(index + 1).padStart(2, "0")}</span><div><span className="article-kicker">CHAPTER {String(index + 1).padStart(2, "0")}</span><h2>{section.heading.replace(/^\d+\.\s*/, "")}</h2></div></div>
                 <div className="guide-chapter-body">
-                  {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+                  {/frequently asked questions/i.test(section.heading) ? <Faq items={section.paragraphs.map((paragraph) => {
+                    const at = paragraph.indexOf("?");
+                    return at > 0 ? { question: paragraph.slice(0, at + 1), answer: paragraph.slice(at + 1).trim() } : { question: paragraph, answer: "Review the source notes and the preceding chapters for the relevant evidence." };
+                  })} /> : section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
                   {section.subsections?.map((subsection, subIndex) => <div key={subsection.heading} className="guide-subsection"><h3 id={`section-${index + 1}-${subIndex + 1}`}>{subsection.heading}</h3>{subsection.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div>)}
                   {section.table ? <figure className="guide-table-figure"><figcaption><span className="article-kicker">COMPARE THE EVIDENCE</span><strong>{section.table.caption}</strong></figcaption><ComparisonTable caption={section.table.caption} headers={section.table.headers} rows={section.table.rows} /></figure> : null}
                   {section.bullets ? <div className="guide-checklist"><strong>Before you move on</strong><ul>{section.bullets.map((bullet) => <li key={bullet}><span aria-hidden="true">✓</span>{bullet}</li>)}</ul></div> : null}
@@ -68,7 +71,7 @@ export default async function GrowthGuidePage({ params, searchParams }: Props) {
               </section>{index === 2 ? <ArticleDecisionCheck topic={guide.topic} title={guide.decisionCheckTitle} checks={guide.decisionChecks} /> : null}</Fragment>)}
               <ProcessFlow title={guide.processFlowTitle ?? `${guide.topic} decision flow`} stages={guide.processFlow} />
               <div className="guide-afterword"><Callout kind="warning" title="Evidence has a shelf life">Prices, stock, delivery quotes and marketplace research results can change. Keep the source and capture date with your decision.</Callout></div>
-              <section className="guide-resource-section"><div className="guide-section-heading"><span className="article-kicker">EDITORIAL EVIDENCE</span><h2>See the source, not a reconstruction</h2><p>These guides require real, permission-safe source captures before publication. The space below is reserved for the original evidence.</p></div>{guide.screenshotRequirements.map((requirement) => <ScreenshotFrame key={requirement} alt={requirement} caption={requirement} />)}</section>
+              {guide.screenshotRequirements.length > 0 && <section className="guide-resource-section"><div className="guide-section-heading"><span className="article-kicker">EDITORIAL EVIDENCE</span><h2>See the source, not a reconstruction</h2><p>Source captures for this manuscript are being verified.</p></div>{guide.screenshotRequirements.map((requirement) => <ScreenshotFrame key={requirement} alt={requirement} caption={requirement} />)}</section>}
               <section className="guide-resource-section"><div className="guide-section-heading"><span className="article-kicker">PUT IT TO WORK</span><h2>Use the right tool for the next decision</h2><p>These tools calculate from your inputs. They do not supply missing marketplace or supplier evidence.</p></div><div className="guide-tool-grid">{guide.tools.map((tool) => <Link href={tool.href} key={tool.href}><span aria-hidden="true">↗</span><strong>{tool.label}</strong><small>Open free tool</small></Link>)}</div></section>
               <section className="guide-resource-section guide-sources"><div className="guide-section-heading"><span className="article-kicker">SOURCE NOTES</span><h2>Sources and verification</h2></div><ul>{guide.sources.map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer">{source.label} <span aria-hidden="true">↗</span></a><small>Checked {source.checkedAt}</small></li>)}</ul><p>Examples are educational. Verify changing marketplace facts and supplier terms for your own account and buyer destination.</p></section>
               {related.length > 0 ? <section className="guide-resource-section guide-related"><div className="guide-section-heading"><span className="article-kicker">CONTINUE LEARNING</span><h2>Related guides</h2></div><div className="guide-tool-grid">{related.map((item) => <Link href={`/learn/${item.slug}`} key={item.slug}><span aria-hidden="true">↗</span><strong>{item.title}</strong><small>{item.readingMinutes} min read</small></Link>)}</div></section> : null}

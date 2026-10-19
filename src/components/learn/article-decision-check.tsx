@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export function ArticleDecisionCheck({ topic, title, checks: customChecks }: { topic: "Research" | "Suppliers" | "Economics" | "Listings"; title?: string; checks?: string[] }) {
+export function ArticleDecisionCheck({ topic, title, checks: customChecks }: { topic: "Research" | "Suppliers" | "Economics" | "Listings" | "Operations"; title?: string; checks?: string[] }) {
   const supplier = topic === "Suppliers";
   const listings = topic === "Listings";
   const economics = topic === "Economics";
