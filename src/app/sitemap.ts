@@ -2,6 +2,8 @@ import type { MetadataRoute } from "next";
 import { siteConfig } from "@/config/site";
 import { tools, toolPath } from "@/config/tools";
 import { publishedGrowthGuides } from "@/content/growth-guides";
+
+export const dynamic = "force-dynamic";
 import {
   getPublicCategories,
   getPublicMarketsWithFallback,

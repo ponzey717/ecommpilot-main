@@ -4,7 +4,8 @@ export type GrowthGuide = {
   description: string;
   primaryKeyword: string;
   region: string;
-  status: "draft" | "review" | "approved" | "published";
+  status: "draft" | "review" | "approved" | "scheduled" | "published" | "paused";
+  publicationAt?: string;
   datePublished?: string;
   dateModified: string;
   lead: string;
@@ -100,4 +101,13 @@ export const growthGuides: GrowthGuide[] = [
 ];
 
 export function getGrowthGuide(slug: string): GrowthGuide | undefined { return growthGuides.find((guide) => guide.slug === slug); }
-export function publishedGrowthGuides(): GrowthGuide[] { return growthGuides.filter((guide) => guide.status === "published" && Boolean(guide.datePublished)); }
+export function isPublicGrowthGuide(guide: GrowthGuide, now = new Date()): boolean {
+  const release = guide.publicationAt ?? guide.datePublished;
+  const releaseTime = release ? Date.parse(release) : NaN;
+  return (guide.status === "published" || guide.status === "scheduled") &&
+    Number.isFinite(releaseTime) && releaseTime <= now.getTime();
+}
+
+export function publishedGrowthGuides(now = new Date()): GrowthGuide[] {
+  return growthGuides.filter((guide) => isPublicGrowthGuide(guide, now));
+}

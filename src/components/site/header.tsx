@@ -89,12 +89,12 @@ export function SiteHeader({ dark = false }: { dark?: boolean }) {
 
           <div className={`nav-dropdown ${openMenu === "learn" ? "is-open" : ""}`}>
             <button type="button" className={`nav-trigger ${textClass}`} aria-expanded={openMenu === "learn"} aria-controls="learn-menu" onClick={() => toggleMenu("learn")}>
-              Learn <span aria-hidden="true">⌄</span>
+              Seller Academy <span aria-hidden="true">⌄</span>
             </button>
             {openMenu === "learn" && (
               <div id="learn-menu" className="nav-popover nav-popover-right" onClickCapture={() => setOpenMenu(null)}>
                 <p>Resources</p>
-                <NavLink href={routes.learn} className="nav-popover-link" activeClassName="is-active"><b>Seller Guides</b><span>Practical product and profit guidance.</span></NavLink>
+                <NavLink href={routes.learn} className="nav-popover-link" activeClassName="is-active"><b>Seller Academy</b><span>Practical product and profit guidance.</span></NavLink>
                 <NavLink href={routes.about} className="nav-popover-link" activeClassName="is-active"><b>About eCommPilot</b><span>How the public research platform works.</span></NavLink>
                 <NavLink href={routes.contact} className="nav-popover-link" activeClassName="is-active"><b>Contact</b><span>Support and account routes.</span></NavLink>
               </div>
@@ -112,7 +112,7 @@ export function SiteHeader({ dark = false }: { dark?: boolean }) {
               {nav.map(([label, href]) => (
                 <NavLink key={href} href={href} className="mobile-menu-link" activeClassName="bg-[var(--surface-soft)] !text-[var(--blue)]">{label}</NavLink>
               ))}
-              <NavLink href={routes.learn} className="mobile-menu-link" activeClassName="bg-[var(--surface-soft)] !text-[var(--blue)]">Learn</NavLink>
+              <NavLink href={routes.learn} className="mobile-menu-link" activeClassName="bg-[var(--surface-soft)] !text-[var(--blue)]">Seller Academy</NavLink>
               <Link href={routes.trending} className="mobile-menu-link">What&apos;s Trending</Link>
               <Link href={routes.login} className="mobile-menu-link">Login</Link>
             </nav>

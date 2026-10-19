@@ -6,41 +6,37 @@ import { PageShell } from "@/components/site/page-shell";
 import { JsonLd } from "@/components/seo/json-ld";
 import { breadcrumbSchema, articleSchema } from "@/lib/seo/schema";
 import { buildMetadata } from "@/lib/seo/metadata";
-import { getGrowthGuide, publishedGrowthGuides } from "@/content/growth-guides";
+import { getGrowthGuide, isPublicGrowthGuide, publishedGrowthGuides } from "@/content/growth-guides";
 import { ArticleToc } from "@/components/learn/article-toc";
 import { ArticleDecisionCheck } from "@/components/learn/article-decision-check";
 import { ArticleVisual, Callout, ComparisonTable, ProcessFlow, ScreenshotFrame } from "@/components/learn/content-blocks";
 
 type Props = { params: Promise<{ slug: string }> };
-export const dynamicParams = false;
-
-export function generateStaticParams() {
-  return publishedGrowthGuides().map((guide) => ({ slug: guide.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const guide = getGrowthGuide(slug);
-  if (!guide || guide.status !== "published") return buildMetadata({ title: "Article unavailable", path: `/learn/${slug}`, noIndex: true });
+  if (!guide || !isPublicGrowthGuide(guide)) return buildMetadata({ title: "Article unavailable", path: `/learn/${slug}`, noIndex: true });
   return buildMetadata({ title: guide.title, description: guide.description, path: `/learn/${slug}` });
 }
 
 export default async function GrowthGuidePage({ params }: Props) {
   const { slug } = await params;
   const guide = getGrowthGuide(slug);
-  if (!guide || guide.status !== "published" || !guide.datePublished) notFound();
+  if (!guide || !isPublicGrowthGuide(guide)) notFound();
   const path = `/learn/${guide.slug}`;
   const supplier = guide.topic === "Suppliers";
   const listings = guide.topic === "Listings";
   const related = publishedGrowthGuides().filter((item) => item.slug !== guide.slug).slice(0, 3);
   const entries = guide.sections.flatMap((section, index) => [{ id: `section-${index + 1}`, label: section.heading, level: 2 as const }, ...(section.subsections ?? []).map((subsection, subIndex) => ({ id: `section-${index + 1}-${subIndex + 1}`, label: subsection.heading, level: 3 as const }))]);
   return <PageShell darkHeader>
-    <JsonLd data={[articleSchema({ headline: guide.title, description: guide.description, path, datePublished: guide.datePublished, dateModified: guide.dateModified }), breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Learn", path: "/learn" }, { name: guide.title, path }])]} />
+    <JsonLd data={[articleSchema({ headline: guide.title, description: guide.description, path, datePublished: guide.publicationAt ?? guide.datePublished ?? "", dateModified: guide.dateModified }), breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Seller Academy", path: "/learn" }, { name: guide.title, path }])]} />
     <article id="article-top" className="guide-article">
       <header className="guide-hero">
         <div className="site-container guide-hero-grid">
           <div className="guide-hero-copy">
-            <nav aria-label="Breadcrumb" className="guide-breadcrumb"><Link href="/">Home</Link><span aria-hidden="true">/</span><Link href="/learn">Learn</Link><span aria-hidden="true">/</span><span>{guide.topic} guide</span></nav>
+            <nav aria-label="Breadcrumb" className="guide-breadcrumb"><Link href="/">Home</Link><span aria-hidden="true">/</span><Link href="/learn">Seller Academy</Link><span aria-hidden="true">/</span><span>{guide.topic} guide</span></nav>
             <div className="guide-hero-label"><span className="guide-hero-label-mark" aria-hidden="true">✦</span> THE ECOMMPILOT FIELD GUIDE <span className="guide-hero-label-divider" aria-hidden="true" /> {guide.topic.toUpperCase()}</div>
             <h1>{guide.title}</h1>
             <p className="guide-hero-lead">{guide.lead}</p>

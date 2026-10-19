@@ -16,7 +16,7 @@ test("locked navigation and focused homepage journey remain present", async () =
     "Free Tools",
     "How It Works",
     "Pricing",
-    "Learn",
+    "Seller Academy",
   ]) assert.ok(header.includes(label), label);
   assert.ok(header.includes("Login"));
   assert.ok(header.includes("Get Started Free"));
